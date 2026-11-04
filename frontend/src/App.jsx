@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
+import LoginPage from "./pages/LoginPage";
 
 // Pages
 import DashboardPage from "./pages/DashboardPage";
@@ -20,13 +21,20 @@ function MainApp() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center text-white text-xs font-mono">
-        <div className="space-y-3 text-center">
-          <div className="w-10 h-10 border-2 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <div>Connecting to Allisons African Pharma Backend Engine...</div>
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-white text-xs font-mono">
+        <div className="space-y-4 text-center">
+          <div className="w-12 h-12 border-3 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto shadow-lg shadow-purple-500/20"></div>
+          <div className="text-slate-300 font-medium tracking-wide">
+            Connecting to Allisons African Pharma Portal...
+          </div>
         </div>
       </div>
     );
+  }
+
+  // Not authenticated: render Login Portal
+  if (!user) {
+    return <LoginPage />;
   }
 
   function renderView() {
@@ -74,3 +82,4 @@ export default function App() {
     </AuthProvider>
   );
 }
+

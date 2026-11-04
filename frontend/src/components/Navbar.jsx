@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { useAuth, DEMO_USERS } from "../context/AuthContext";
-import { MapPin, Shield, Calendar, Bell, User as UserIcon, ChevronDown, Check } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
+import { MapPin, Shield, Calendar, Bell, ChevronDown, Check, LogOut, User as UserIcon } from "lucide-react";
 
 export default function Navbar() {
-  const { user, activeWarehouse, setActiveWarehouse, login, logout } = useAuth();
+  const { user, activeWarehouse, setActiveWarehouse, logout } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showWhMenu, setShowWhMenu] = useState(false);
 
@@ -67,7 +67,7 @@ export default function Navbar() {
         {/* Role Badge */}
         <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-purple-50 border border-purple-200 text-purple-700 text-xs font-semibold">
           <Shield className="w-3 h-3 text-purple-600" />
-          <span>{user?.role?.name || "Guest"}</span>
+          <span>{user?.role?.name || "User"}</span>
         </div>
 
         {/* Date Display */}
@@ -82,62 +82,46 @@ export default function Navbar() {
           <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500"></span>
         </button>
 
-        {/* User Persona Switcher (For Pair Testing) */}
+        {/* User Profile & Sign Out Menu */}
         <div className="relative">
           <button
             onClick={() => setShowUserMenu(!showUserMenu)}
-            className="flex items-center gap-2 pl-2 pr-1 py-1 rounded-xl hover:bg-slate-100 transition-colors border border-transparent hover:border-slate-200"
+            className="flex items-center gap-2 pl-2 pr-1 py-1 rounded-xl hover:bg-slate-100 transition-colors border border-transparent hover:border-slate-200 cursor-pointer"
           >
-            <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-700 font-bold flex items-center justify-center text-xs border border-purple-200">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 text-white font-bold flex items-center justify-center text-xs shadow-xs">
               {user?.full_name ? user.full_name.split(" ").map((n) => n[0]).join("") : "U"}
             </div>
             <div className="text-left hidden lg:block">
-              <div className="text-xs font-semibold text-slate-900 leading-tight">{user?.full_name}</div>
-              <div className="text-[10px] text-slate-500">{user?.username}</div>
+              <div className="text-xs font-bold text-slate-900 leading-tight">{user?.full_name}</div>
+              <div className="text-[10px] text-purple-700 font-medium">{user?.role?.name}</div>
             </div>
             <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
           </button>
 
           {showUserMenu && (
-            <div className="absolute top-full mt-1.5 right-0 w-72 bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-40">
-              <div className="px-4 py-2 border-b border-slate-100">
+            <div className="absolute top-full mt-1.5 right-0 w-64 bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-40 animate-fadeIn">
+              <div className="px-4 py-3 border-b border-slate-100 bg-slate-50/50 rounded-t-xl">
                 <div className="text-xs font-bold text-slate-900">{user?.full_name}</div>
-                <div className="text-[11px] text-slate-500">{user?.role?.name} • {user?.warehouse?.name || "All Angola"}</div>
+                <div className="text-[11px] text-slate-500 mt-0.5">{user?.email || user?.username}</div>
+                <div className="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 text-[10px] font-bold">
+                  <Shield className="w-2.5 h-2.5 text-purple-600" />
+                  <span>{user?.role?.name}</span>
+                </div>
+                <div className="text-[10px] text-slate-500 mt-1">
+                  Scope: <span className="font-semibold text-slate-700">{user?.warehouse?.name || "National (HQ All Angola)"}</span>
+                </div>
               </div>
 
-              <div className="px-3 pt-2 pb-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                Quick Role Persona Switcher
-              </div>
-
-              <div className="max-h-60 overflow-y-auto">
-                {DEMO_USERS.map((du) => (
-                  <button
-                    key={du.username}
-                    onClick={async () => {
-                      await login(du.username, "admin123");
-                      setShowUserMenu(false);
-                    }}
-                    className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between transition-colors ${
-                      user?.username === du.username
-                        ? "bg-purple-50 text-purple-700 font-bold"
-                        : "hover:bg-slate-50 text-slate-700"
-                    }`}
-                  >
-                    <span>{du.label}</span>
-                    {user?.username === du.username && <Check className="w-3.5 h-3.5 text-purple-600" />}
-                  </button>
-                ))}
-              </div>
-
-              <div className="border-t border-slate-100 mt-2 pt-1 px-2">
+              <div className="p-2">
                 <button
                   onClick={() => {
                     logout();
                     setShowUserMenu(false);
                   }}
-                  className="w-full text-left px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 rounded-lg font-semibold"
+                  className="w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-red-50 rounded-lg font-bold flex items-center gap-2 transition-colors cursor-pointer"
                 >
-                  Logout
+                  <LogOut className="w-3.5 h-3.5 text-red-600" />
+                  <span>Sign Out</span>
                 </button>
               </div>
             </div>
@@ -147,4 +131,5 @@ export default function Navbar() {
     </header>
   );
 }
+
 
