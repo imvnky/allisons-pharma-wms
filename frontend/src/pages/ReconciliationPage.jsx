@@ -92,6 +92,7 @@ export default function ReconciliationPage() {
   }
 
   const records = sheetData?.records || [];
+  const isLocked = sheetData?.session?.status === "INVENTORY_DONE";
   const filteredRecords = records.filter((r) => {
     const matchesSearch =
       r.product_name.toLowerCase().includes(search.toLowerCase()) ||
@@ -145,13 +146,20 @@ export default function ReconciliationPage() {
           </button>
 
           {(user?.role?.code === "SUPERVISOR" || user?.role?.code === "SUPER_ADMIN") && (
-            <button
-              onClick={() => setFinalizeModal(true)}
-              className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold flex items-center gap-2 shadow-sm transition-colors"
-            >
-              <Send className="w-3.5 h-3.5" />
-              <span>Finalize & Submit to HQ</span>
-            </button>
+            isLocked ? (
+              <div className="px-4 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-1.5 shadow-xs">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                <span>Audit Finalized & Locked</span>
+              </div>
+            ) : (
+              <button
+                onClick={() => setFinalizeModal(true)}
+                className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold flex items-center gap-2 shadow-sm transition-colors cursor-pointer"
+              >
+                <Send className="w-3.5 h-3.5" />
+                <span>Finalize & Submit to HQ</span>
+              </button>
+            )
           )}
         </div>
       </div>
@@ -277,6 +285,7 @@ export default function ReconciliationPage() {
                       <div className="flex items-center justify-end gap-1">
                         <input
                           type="number"
+                          disabled={isLocked}
                           value={editingSales[r.record_id] ?? r.sales_qty}
                           onChange={(e) =>
                             setEditingSales({
@@ -284,8 +293,12 @@ export default function ReconciliationPage() {
                               [r.record_id]: e.target.value,
                             })
                           }
-                          onBlur={() => handleSaveSales(r.record_id)}
-                          className="w-20 text-right font-bold text-xs p-1.5 rounded-lg border border-purple-200 focus:outline-none focus:border-purple-600 bg-white shadow-xs"
+                          onBlur={() => !isLocked && handleSaveSales(r.record_id)}
+                          className={`w-20 text-right font-bold text-xs p-1.5 rounded-lg border shadow-xs ${
+                            isLocked
+                              ? "bg-slate-100 text-slate-500 border-slate-200 cursor-not-allowed"
+                              : "border-purple-200 focus:outline-none focus:border-purple-600 bg-white"
+                          }`}
                         />
                       </div>
                     </td>
@@ -328,7 +341,8 @@ export default function ReconciliationPage() {
                     <td className="p-3">
                       <input
                         type="text"
-                        placeholder="Add reason/remark..."
+                        disabled={isLocked}
+                        placeholder={isLocked ? "Audit locked" : "Add reason/remark..."}
                         value={editingRemarks[r.record_id] ?? r.remarks}
                         onChange={(e) =>
                           setEditingRemarks({
@@ -336,8 +350,12 @@ export default function ReconciliationPage() {
                             [r.record_id]: e.target.value,
                           })
                         }
-                        onBlur={() => handleSaveRemarks(r.record_id)}
-                        className="w-full text-xs p-1.5 rounded-lg border border-slate-200 focus:outline-none focus:border-purple-600 bg-white"
+                        onBlur={() => !isLocked && handleSaveRemarks(r.record_id)}
+                        className={`w-full text-xs p-1.5 rounded-lg border focus:outline-none focus:border-purple-600 ${
+                          isLocked
+                            ? "bg-slate-100 text-slate-500 border-slate-200 cursor-not-allowed"
+                            : "bg-white border-slate-200"
+                        }`}
                       />
                     </td>
                   </tr>

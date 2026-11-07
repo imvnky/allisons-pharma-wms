@@ -9,6 +9,11 @@ export default function RolesManagerPage() {
   const [tilesData, setTilesData] = useState([]);
   const [availableRoles, setAvailableRoles] = useState([]);
   const [usersList, setUsersList] = useState([]);
+  const [warehousesList, setWarehousesList] = useState([
+    { id: 1, name: "Mulemba Warehouse (Luanda North)" },
+    { id: 2, name: "Palanca Warehouse (Luanda South)" },
+    { id: 3, name: "Lobito Warehouse (Benguela)" },
+  ]);
   
   // Drawer state for editing a tile's permissions
   const [selectedTile, setSelectedTile] = useState(null);
@@ -42,6 +47,12 @@ export default function RolesManagerPage() {
     apiRequest("/admin/users")
       .then(setUsersList)
       .catch(console.log);
+
+    apiRequest("/admin/warehouses")
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) setWarehousesList(data);
+      })
+      .catch(console.log);
   }
 
   function handleOpenDrawer(tile) {
@@ -72,12 +83,13 @@ export default function RolesManagerPage() {
   async function handleCreateUser(e) {
     e.preventDefault();
     try {
+      const whId = parseInt(newUserWarehouse, 10);
       await apiRequest("/admin/users", "POST", {
         username: newUsername,
         full_name: newFullName,
         password: newUserPassword,
         role_id: parseInt(newUserRole, 10),
-        warehouse_id: parseInt(newUserWarehouse, 10),
+        warehouse_id: whId > 0 ? whId : null,
       });
       alert(`User ${newUsername} created successfully!`);
       setAddUserModal(false);
@@ -431,9 +443,10 @@ export default function RolesManagerPage() {
                   onChange={(e) => setNewUserWarehouse(e.target.value)}
                   className="w-full p-2 rounded-xl border border-slate-200"
                 >
-                  <option value="1">Mulemba Warehouse (Luanda North)</option>
-                  <option value="2">Palanca Warehouse (Luanda South)</option>
-                  <option value="3">Lobito Warehouse (Benguela)</option>
+                  <option value="0">Global / National HQ (No single branch lock)</option>
+                  {warehousesList.map((wh) => (
+                    <option key={wh.id} value={wh.id}>{wh.name}</option>
+                  ))}
                 </select>
               </div>
               <div>

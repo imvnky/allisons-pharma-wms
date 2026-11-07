@@ -28,27 +28,45 @@ export default function DashboardPage({ setCurrentView }) {
   const [feed, setFeed] = useState([]);
 
   useEffect(() => {
-    // Fetch live counts and submissions to build activity stream
+    const today = new Date().toISOString().split("T")[0];
+
+    // Fetch live reconciliation data for stats
     apiRequest(`/reconciliation/sheet?warehouse_id=${activeWarehouse.id}`)
       .then((data) => {
         const records = data.records || [];
         const diffs = records.filter((r) => r.difference !== 0);
+        const countedCarton = records.filter((r) => r.carton_count > 0).length;
+        const countedLoose = records.filter((r) => r.loose_count > 0).length;
+        const total = records.length || 1;
+
         setStats((prev) => ({
           ...prev,
+          cartonPct: Math.round((countedCarton / total) * 100),
+          loosePct: Math.round((countedLoose / total) * 100),
           discrepanciesCount: diffs.length,
           statusText: data.session.status === "INVENTORY_DONE" ? "Inventory Done" : "Under Process",
         }));
       })
       .catch((err) => console.log("Reconciliation load err:", err));
 
-    // Simulated / live feed
+    // Fetch pending inward transfers
+    apiRequest("/shipments/transfers")
+      .then((trfs) => {
+        if (Array.isArray(trfs)) {
+          const pending = trfs.filter((t) => t.is_incoming && t.status === "IN_TRANSIT").length;
+          setStats((prev) => ({ ...prev, pendingTransfers: pending }));
+        }
+      })
+      .catch(() => {});
+
+    // Activity feed
     setFeed([
-      { time: "10:45 AM", user: "Carlos Mendes (Carton Staff)", text: "Submitted 85 Cartons for Amoxicillin 500mg (Aisle B-02)", type: "carton" },
-      { time: "10:20 AM", user: "Joao Pinto (Display Staff)", text: "Verified Pharmacy Counter Display - 100% Reconciled", type: "display" },
-      { time: "09:50 AM", user: "Antonio Silva (Loose Staff)", text: "Submitted 42 Loose Units for Paracetamol Syrup 100ml", type: "loose" },
-      { time: "08:00 AM", user: "System Automation", text: "Initialized Daily Audit Cycle #2026-11-04 for " + activeWarehouse.name, type: "system" },
+      { time: "Live", user: "Inventory Stream", text: `Active Daily Inventory Cycle #${today} initialized for ${activeWarehouse.name}`, type: "system" },
+      { time: "Recent", user: "Reconciliation Monitor", text: "Physical counting, inward arrivals and transfers synced", type: "carton" },
     ]);
   }, [activeWarehouse]);
+
+  const todayDateStr = new Date().toISOString().split("T")[0];
 
   return (
     <div className="p-8 space-y-8 max-w-7xl mx-auto">
@@ -57,7 +75,7 @@ export default function DashboardPage({ setCurrentView }) {
         <div className="space-y-1.5">
           <div className="text-xs font-bold text-purple-300 uppercase tracking-widest flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            Daily Inventory Cycle #2026-11-04 • {activeWarehouse.name}
+            Daily Inventory Cycle #{todayDateStr} • {activeWarehouse.name}
           </div>
           <h1 className="text-2xl font-black tracking-tight">
             Welcome back, {user?.full_name?.split(" ")[0] || "User"}

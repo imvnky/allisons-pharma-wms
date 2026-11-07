@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { apiRequest } from "../services/api";
-import { Boxes, Box, Store, Search, CheckCircle2, AlertTriangle, Save, RotateCcw } from "lucide-react";
+import { Boxes, Box, Store, Search, CheckCircle2, AlertTriangle, Save, RotateCcw, Trash2 } from "lucide-react";
 
 export default function StockCountingPage() {
   const { user, activeWarehouse } = useAuth();
@@ -55,7 +55,7 @@ export default function StockCountingPage() {
   }
 
   async function handleSubmit(e) {
-    e.preventDefault();
+    if (e?.preventDefault) e.preventDefault();
     if (!selectedProduct) return;
 
     if (countMode === "DISPLAY" && countInput !== 5 && !displayReason) {
@@ -81,6 +81,16 @@ export default function StockCountingPage() {
       alert("Submission error: " + err.message);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleDeleteSubmission(submissionId) {
+    if (!confirm("Are you sure you want to remove this count submission?")) return;
+    try {
+      await apiRequest(`/counts/${submissionId}`, "DELETE");
+      loadSubmissions();
+    } catch (err) {
+      alert("Error removing count: " + err.message);
     }
   }
 
@@ -159,7 +169,7 @@ export default function StockCountingPage() {
               <Search className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
               <input
                 type="text"
-                placeholder="Scan barcode or type SKU / Medicine Name..."
+                placeholder="Search by Medicine Name or SKU Code..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-purple-600 bg-slate-50"
@@ -313,9 +323,19 @@ export default function StockCountingPage() {
                 <div key={sub.id} className="p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-900">{sub.product_name}</span>
-                    <span className="text-xs font-extrabold text-purple-700 bg-white px-2 py-0.5 rounded-md border border-slate-200">
-                      {sub.quantity} {sub.count_type}
-                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs font-extrabold text-purple-700 bg-white px-2 py-0.5 rounded-md border border-slate-200">
+                        {sub.quantity} {sub.count_type}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteSubmission(sub.id)}
+                        title="Delete submission"
+                        className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
                   <div className="flex items-center justify-between text-[10px] text-slate-400">
                     <span>{sub.sku} • {sub.category}</span>

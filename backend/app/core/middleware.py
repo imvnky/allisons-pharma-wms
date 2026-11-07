@@ -69,6 +69,10 @@ class ApiLoggingMiddleware(BaseHTTPMiddleware):
                     db.add(log_entry)
                     db.commit()
                 except Exception as log_err:
+                    try:
+                        db.rollback()
+                    except Exception:
+                        pass
                     print(f"Failed to write API log: {log_err}")
                 finally:
                     db.close()

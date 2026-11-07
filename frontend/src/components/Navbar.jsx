@@ -1,17 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { apiRequest } from "../services/api";
 import { MapPin, Shield, Calendar, Bell, ChevronDown, Check, LogOut, User as UserIcon } from "lucide-react";
 
 export default function Navbar() {
   const { user, activeWarehouse, setActiveWarehouse, logout } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showWhMenu, setShowWhMenu] = useState(false);
-
-  const warehouses = [
+  const [warehouses, setWarehouses] = useState([
     { id: 1, code: "MULEMBA", name: "Mulemba Warehouse (Luanda North)" },
     { id: 2, code: "PALANCA", name: "Palanca Warehouse (Luanda South)" },
     { id: 3, code: "LOBITO", name: "Lobito Warehouse (Benguela)" },
-  ];
+  ]);
+
+  useEffect(() => {
+    apiRequest("/admin/warehouses")
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setWarehouses(data);
+        }
+      })
+      .catch((err) => {
+        // Fallback to initial default warehouses gracefully
+        console.warn("Could not load dynamic warehouses list, using defaults:", err);
+      });
+  }, []);
 
   return (
     <header className="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between sticky top-0 z-30 shadow-xs">

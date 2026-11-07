@@ -9,6 +9,11 @@ export default function ShipmentsTransfersPage() {
   const [arrivals, setArrivals] = useState([]);
   const [transfers, setTransfers] = useState([]);
   const [products, setProducts] = useState([]);
+  const [warehouses, setWarehouses] = useState([
+    { id: 1, name: "Mulemba Warehouse (Luanda North)" },
+    { id: 2, name: "Palanca Warehouse (Luanda South)" },
+    { id: 3, name: "Lobito Warehouse (Benguela)" },
+  ]);
   const [addArrivalModal, setAddArrivalModal] = useState(false);
   const [createTransferModal, setCreateTransferModal] = useState(false);
 
@@ -32,7 +37,21 @@ export default function ShipmentsTransfersPage() {
 
   useEffect(() => {
     loadData();
-    apiRequest("/counts/products").then(setProducts).catch(console.log);
+    apiRequest("/counts/products").then((prods) => {
+      setProducts(prods);
+      if (prods.length > 0) {
+        setArrivalProduct(prods[0].id);
+        setTransferProduct(prods[0].id);
+      }
+    }).catch(console.log);
+
+    apiRequest("/admin/warehouses").then((whs) => {
+      if (Array.isArray(whs) && whs.length > 0) {
+        setWarehouses(whs);
+        const otherWh = whs.find((w) => w.id !== activeWarehouse.id);
+        if (otherWh) setDestWarehouseId(otherWh.id);
+      }
+    }).catch(console.log);
   }, [activeWarehouse, tab]);
 
   function loadData() {
@@ -453,9 +472,13 @@ export default function ShipmentsTransfersPage() {
                   onChange={(e) => setDestWarehouseId(e.target.value)}
                   className="w-full p-2 rounded-xl border border-slate-200 font-bold text-purple-900"
                 >
-                  <option value="1">Mulemba Warehouse (Luanda North)</option>
-                  <option value="2">Palanca Warehouse (Luanda South)</option>
-                  <option value="3">Lobito Warehouse (Benguela)</option>
+                  {warehouses
+                    .filter((w) => w.id !== activeWarehouse.id)
+                    .map((wh) => (
+                      <option key={wh.id} value={wh.id}>
+                        {wh.name}
+                      </option>
+                    ))}
                 </select>
               </div>
 

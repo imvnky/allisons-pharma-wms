@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
@@ -16,8 +16,31 @@ import LookupsManagerPage from "./pages/LookupsManagerPage";
 import ApiLogsPage from "./pages/ApiLogsPage";
 
 function MainApp() {
-  const [currentView, setCurrentView] = useState("dashboard");
+  const getInitialView = () => {
+    const hash = window.location.hash.replace(/^#\/?/, "");
+    const validViews = ["dashboard", "counting", "reconciliation", "shipments", "alerts", "hq", "roles", "lookups", "logs"];
+    return validViews.includes(hash) ? hash : "dashboard";
+  };
+
+  const [currentView, setCurrentViewState] = useState(getInitialView);
   const { user, loading } = useAuth();
+
+  const setCurrentView = (view) => {
+    window.location.hash = `#/${view}`;
+    setCurrentViewState(view);
+  };
+
+  useEffect(() => {
+    const onHashChange = () => {
+      const hash = window.location.hash.replace(/^#\/?/, "");
+      const validViews = ["dashboard", "counting", "reconciliation", "shipments", "alerts", "hq", "roles", "lookups", "logs"];
+      if (validViews.includes(hash)) {
+        setCurrentViewState(hash);
+      }
+    };
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
 
   if (loading) {
     return (
