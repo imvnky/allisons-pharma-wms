@@ -1,5 +1,6 @@
 import React from "react";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import {
   LayoutDashboard,
   Boxes,
@@ -19,6 +20,7 @@ import {
 
 export default function Sidebar({ currentView, setCurrentView }) {
   const { user, canAccessTile } = useAuth();
+  const { t } = useLanguage();
 
   const isSuperAdmin = user?.role?.code === "SUPER_ADMIN";
   const isHQ = user?.role?.code === "HQ_ADMIN" || isSuperAdmin;
@@ -29,53 +31,53 @@ export default function Sidebar({ currentView, setCurrentView }) {
 
   const menuSections = [
     {
-      title: "Core",
+      title: t("nav.core", "Core"),
       items: [
-        { id: "dashboard", label: "Home / Dashboard", icon: LayoutDashboard, visible: true },
+        { id: "dashboard", label: t("nav.dashboard", "Home / Dashboard"), icon: LayoutDashboard, visible: true },
       ],
     },
     {
-      title: "Stock Counting",
+      title: t("nav.stockCounting", "Stock Counting"),
       visible: isCarton || isLoose || isDisplay,
       items: [
-        { id: "counting", label: "Floor Counting Terminal", icon: Boxes, visible: isCarton || isLoose || isDisplay },
+        { id: "counting", label: t("nav.floorCounting", "Floor Counting Terminal"), icon: Boxes, visible: isCarton || isLoose || isDisplay },
       ],
     },
     {
-      title: "Reconciliation",
+      title: t("nav.reconciliation", "Reconciliation"),
       visible: isSupervisor || isHQ,
       items: [
-        { id: "reconciliation", label: "Daily Reconciliation Sheet", icon: FileSpreadsheet, visible: isSupervisor || isHQ },
+        { id: "reconciliation", label: t("nav.reconciliationSheet", "Daily Reconciliation Sheet"), icon: FileSpreadsheet, visible: isSupervisor || isHQ },
       ],
     },
     {
-      title: "Shipments & Transfers",
+      title: t("nav.shipmentsTransfers", "Shipments & Transfers"),
       visible: isSupervisor || isHQ,
       items: [
-        { id: "shipments", label: "Arrivals & Transfers Hub", icon: Ship, visible: isSupervisor || isHQ },
+        { id: "shipments", label: t("nav.shipmentsHub", "Arrivals & Transfers Hub"), icon: Ship, visible: isSupervisor || isHQ },
       ],
     },
     {
-      title: "Alerts & Quality",
+      title: t("nav.alertsQuality", "Alerts & Quality"),
       visible: isSupervisor || isHQ,
       items: [
-        { id: "alerts", label: "Differences & Expiry", icon: AlertTriangle, visible: isSupervisor || isHQ },
+        { id: "alerts", label: t("nav.alerts", "Differences & Expiry"), icon: AlertTriangle, visible: isSupervisor || isHQ },
       ],
     },
     {
-      title: "HQ Executive",
+      title: t("nav.hqExecutive", "HQ Executive"),
       visible: isHQ,
       items: [
-        { id: "hq", label: "HQ Master Angola Stock", icon: Globe, visible: isHQ },
+        { id: "hq", label: t("nav.hqMaster", "HQ Master Angola Stock"), icon: Globe, visible: isHQ },
       ],
     },
     {
-      title: "Administration",
+      title: t("nav.administration", "Administration"),
       visible: isSuperAdmin,
       items: [
-        { id: "roles", label: "Roles & Authorization", icon: ShieldCheck, visible: isSuperAdmin },
-        { id: "lookups", label: "Master Dropdowns", icon: ListFilter, visible: isSuperAdmin },
-        { id: "logs", label: "API & System Logs", icon: Terminal, visible: isSuperAdmin },
+        { id: "roles", label: t("nav.rolesManager", "Roles & Authorization"), icon: ShieldCheck, visible: isSuperAdmin },
+        { id: "lookups", label: t("nav.lookupsManager", "Master Dropdowns"), icon: ListFilter, visible: isSuperAdmin },
+        { id: "logs", label: t("nav.apiLogs", "API & System Logs"), icon: Terminal, visible: isSuperAdmin },
       ],
     },
   ];

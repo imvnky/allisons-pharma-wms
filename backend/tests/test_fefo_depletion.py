@@ -142,3 +142,4 @@ def test_fefo_near_expiry_api_endpoint(client, db_session):
     assert item["remaining_units"] == 100
     assert item["urgency"] == "CRITICAL"
     assert "value_aoa" in item
+

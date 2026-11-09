@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import { apiRequest } from "../services/api";
 import {
   FileSpreadsheet,
@@ -17,6 +18,7 @@ import {
 
 export default function DashboardPage({ setCurrentView }) {
   const { user, activeWarehouse } = useAuth();
+  const { language, t } = useLanguage();
   const [stats, setStats] = useState({
     cartonPct: 85,
     loosePct: 60,
@@ -75,22 +77,24 @@ export default function DashboardPage({ setCurrentView }) {
         <div className="space-y-1.5">
           <div className="text-xs font-bold text-purple-300 uppercase tracking-widest flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            Daily Inventory Cycle #{todayDateStr} • {activeWarehouse.name}
+            {language === "pt" ? `Ciclo de Inventário Diário #${todayDateStr} • ${activeWarehouse.name}` : `Daily Inventory Cycle #${todayDateStr} • ${activeWarehouse.name}`}
           </div>
           <h1 className="text-2xl font-black tracking-tight">
-            Welcome back, {user?.full_name?.split(" ")[0] || "User"}
+            {language === "pt" ? `Bem-vindo de volta, ${user?.full_name?.split(" ")[0] || "Operador"}` : `Welcome back, ${user?.full_name?.split(" ")[0] || "User"}`}
           </h1>
           <p className="text-xs text-purple-200/90 max-w-xl">
-            Track real-time counting streams, review auto-calculated stock differences, and manage inter-warehouse transfers across Angola.
+            {language === "pt"
+              ? "Acompanhe as contagens em tempo real, consulte as diferenças de estoque calculadas automaticamente e faça a gestão de transferências entre armazéns em Angola."
+              : "Track real-time counting streams, review auto-calculated stock differences, and manage inter-warehouse transfers across Angola."}
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <div className="px-4 py-2.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 text-left">
-            <div className="text-[10px] text-purple-200 font-semibold uppercase">Daily Status</div>
+            <div className="text-[10px] text-purple-200 font-semibold uppercase">{language === "pt" ? "Estado do Dia" : "Daily Status"}</div>
             <div className="text-sm font-bold text-emerald-300 flex items-center gap-1.5 mt-0.5">
               <CheckCircle2 className="w-4 h-4" />
-              <span>{stats.statusText}</span>
+              <span>{stats.statusText === "Inventory Done" ? (language === "pt" ? "Inventário Concluído" : "Inventory Done") : (language === "pt" ? "Em Processamento" : "Under Process")}</span>
             </div>
           </div>
         </div>
@@ -101,14 +105,14 @@ export default function DashboardPage({ setCurrentView }) {
         {/* KPI 1 */}
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Today's Status</span>
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{language === "pt" ? "Estado de Hoje" : "Today's Status"}</span>
             <div className="p-2 rounded-xl bg-purple-50 text-purple-600">
               <Activity className="w-4 h-4" />
             </div>
           </div>
           <div>
-            <div className="text-lg font-black text-slate-900">{stats.statusText}</div>
-            <div className="text-xs text-slate-500 mt-0.5">Started 08:00 AM • Target: 18:00</div>
+            <div className="text-lg font-black text-slate-900">{stats.statusText === "Inventory Done" ? (language === "pt" ? "Inventário Concluído" : "Inventory Done") : (language === "pt" ? "Em Processamento" : "Under Process")}</div>
+            <div className="text-xs text-slate-500 mt-0.5">{language === "pt" ? "Início 08:00 • Limite: 18:00" : "Started 08:00 AM • Target: 18:00"}</div>
           </div>
           <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
             <div className="bg-gradient-to-r from-purple-600 to-indigo-600 h-2 rounded-full w-[72%]"></div>
@@ -118,21 +122,21 @@ export default function DashboardPage({ setCurrentView }) {
         {/* KPI 2 */}
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Physical Progress</span>
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{language === "pt" ? "Progresso Físico" : "Physical Progress"}</span>
             <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600">
               <Boxes className="w-4 h-4" />
             </div>
           </div>
           <div className="space-y-1.5 text-xs font-semibold text-slate-700">
             <div className="flex justify-between items-center">
-              <span className="text-slate-500">Cartons</span>
+              <span className="text-slate-500">{language === "pt" ? "Caixas" : "Cartons"}</span>
               <span className="font-bold text-purple-600">{stats.cartonPct}%</span>
             </div>
             <div className="w-full bg-slate-100 rounded-full h-1.5">
               <div className="bg-purple-600 h-1.5 rounded-full" style={{ width: `${stats.cartonPct}%` }}></div>
             </div>
             <div className="flex justify-between items-center pt-1">
-              <span className="text-slate-500">Loose</span>
+              <span className="text-slate-500">{language === "pt" ? "Soltas" : "Loose"}</span>
               <span className="font-bold text-pink-600">{stats.loosePct}%</span>
             </div>
             <div className="w-full bg-slate-100 rounded-full h-1.5">
@@ -144,20 +148,20 @@ export default function DashboardPage({ setCurrentView }) {
         {/* KPI 3 */}
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Pending Transfers</span>
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{language === "pt" ? "Transferências Pendentes" : "Pending Transfers"}</span>
             <div className="p-2 rounded-xl bg-amber-50 text-amber-600">
               <Truck className="w-4 h-4" />
             </div>
           </div>
           <div className="my-2">
             <div className="text-2xl font-black text-slate-900">{stats.pendingTransfers}</div>
-            <div className="text-xs text-slate-500 mt-0.5">Inward dispatches awaiting approval</div>
+            <div className="text-xs text-slate-500 mt-0.5">{language === "pt" ? "Entradas a aguardar confirmação" : "Inward dispatches awaiting approval"}</div>
           </div>
           <button
             onClick={() => setCurrentView("shipments")}
-            className="text-xs font-bold text-amber-700 hover:text-amber-800 flex items-center gap-1.5 transition-colors"
+            className="text-xs font-bold text-amber-700 hover:text-amber-800 flex items-center gap-1.5 transition-colors cursor-pointer"
           >
-            <span>Review & Approve</span>
+            <span>{language === "pt" ? "Rever e Confirmar" : "Review & Approve"}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
@@ -165,29 +169,29 @@ export default function DashboardPage({ setCurrentView }) {
         {/* KPI 4 */}
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Discrepancies</span>
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{language === "pt" ? "Discrepâncias" : "Discrepancies"}</span>
             <div className="p-2 rounded-xl bg-red-50 text-red-600">
               <AlertTriangle className="w-4 h-4" />
             </div>
           </div>
           <div className="my-2">
             <div className="text-2xl font-black text-red-600">{stats.discrepanciesCount}</div>
-            <div className="text-xs text-slate-500 mt-0.5">Products with stock variance</div>
+            <div className="text-xs text-slate-500 mt-0.5">{language === "pt" ? "Produtos com variação de estoque" : "Products with stock variance"}</div>
           </div>
           <button
             onClick={() => setCurrentView("alerts")}
-            className="text-xs font-bold text-red-700 hover:text-red-800 flex items-center gap-1.5 transition-colors"
+            className="text-xs font-bold text-red-700 hover:text-red-800 flex items-center gap-1.5 transition-colors cursor-pointer"
           >
-            <span>View Differences</span>
+            <span>{language === "pt" ? "Ver Diferenças" : "View Differences"}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
 
-      {/* Priority Action Cards (Instead of 13 cluttered tiles) */}
+      {/* Priority Action Cards */}
       <div className="space-y-3">
         <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider px-1">
-          Today's Priority Workflows
+          {language === "pt" ? "Fluxos Operacionais Prioritários" : "Today's Priority Workflows"}
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -197,16 +201,18 @@ export default function DashboardPage({ setCurrentView }) {
               <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
                 <FileSpreadsheet className="w-5 h-5" />
               </div>
-              <h3 className="text-base font-bold text-slate-900">Daily Reconciliation Sheet</h3>
+              <h3 className="text-base font-bold text-slate-900">{t("reconciliation.title")}</h3>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Review live physical counts, enter manual sales figures, and inspect auto-calculated differences across all 13 columns.
+                {language === "pt"
+                  ? "Consulte contagens físicas em tempo real, introduza vendas diárias e inspecione diferenças automáticas nas 13 colunas."
+                  : "Review live physical counts, enter manual sales figures, and inspect auto-calculated differences across all 13 columns."}
               </p>
             </div>
             <button
               onClick={() => setCurrentView("reconciliation")}
-              className="w-full py-2.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-colors"
+              className="w-full py-2.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-colors cursor-pointer"
             >
-              <span>Open Reconciliation Sheet</span>
+              <span>{language === "pt" ? "Abrir Folha de Reconciliação" : "Open Reconciliation Sheet"}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -217,16 +223,18 @@ export default function DashboardPage({ setCurrentView }) {
               <div className="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center">
                 <Boxes className="w-5 h-5" />
               </div>
-              <h3 className="text-base font-bold text-slate-900">Floor Stock Counting</h3>
+              <h3 className="text-base font-bold text-slate-900">{t("counting.title")}</h3>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Dedicated tablet/scanner terminal for Carton Staff, Loose Staff, and Display Staff to submit verified physical quantities.
+                {language === "pt"
+                  ? "Terminal para operadores de Caixas, Unidades Soltas e Exposição registarem contagens físicas verificadas."
+                  : "Dedicated tablet/scanner terminal for Carton Staff, Loose Staff, and Display Staff to submit verified physical quantities."}
               </p>
             </div>
             <button
               onClick={() => setCurrentView("counting")}
-              className="w-full py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-colors"
+              className="w-full py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-colors cursor-pointer"
             >
-              <span>Launch Counting Terminal</span>
+              <span>{language === "pt" ? "Abrir Terminal de Contagem" : "Launch Counting Terminal"}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -237,16 +245,18 @@ export default function DashboardPage({ setCurrentView }) {
               <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
                 <Ship className="w-5 h-5" />
               </div>
-              <h3 className="text-base font-bold text-slate-900">Shipments & Transfers Hub</h3>
+              <h3 className="text-base font-bold text-slate-900">{t("shipments.title")}</h3>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Receive new Sea Container shipments directly into stock, and dispatch/approve inter-warehouse transfers between branches.
+                {language === "pt"
+                  ? "Receba remessas marítimas e locais diretamente em estoque e despache/aprove transferências entre armazéns."
+                  : "Receive new Sea Container shipments directly into stock, and dispatch/approve inter-warehouse transfers between branches."}
               </p>
             </div>
             <button
               onClick={() => setCurrentView("shipments")}
-              className="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-colors"
+              className="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-colors cursor-pointer"
             >
-              <span>Manage Shipments & Transfers</span>
+              <span>{language === "pt" ? "Gerir Remessas e Transferências" : "Manage Shipments & Transfers"}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -260,9 +270,9 @@ export default function DashboardPage({ setCurrentView }) {
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <h3 className="text-sm font-bold text-slate-900">Live Floor Counting Stream</h3>
+              <h3 className="text-sm font-bold text-slate-900">{language === "pt" ? "Fluxo de Contagem em Tempo Real" : "Live Floor Counting Stream"}</h3>
             </div>
-            <span className="text-xs text-slate-400 font-medium">Real-Time Audit Feed</span>
+            <span className="text-xs text-slate-400 font-medium">{language === "pt" ? "Registo de Auditoria ao Vivo" : "Real-Time Audit Feed"}</span>
           </div>
 
           <div className="space-y-3.5">
@@ -286,47 +296,47 @@ export default function DashboardPage({ setCurrentView }) {
         {/* Right Column (5 cols): Warehouse Stock Health & Expiry */}
         <div className="lg:col-span-5 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4 flex flex-col justify-between">
           <div className="border-b border-slate-100 pb-3">
-            <h3 className="text-sm font-bold text-slate-900">Warehouse Stock Health</h3>
-            <p className="text-xs text-slate-500 mt-0.5">Critical batch monitoring & inbound arrivals</p>
+            <h3 className="text-sm font-bold text-slate-900">{language === "pt" ? "Saúde do Estoque do Armazém" : "Warehouse Stock Health"}</h3>
+            <p className="text-xs text-slate-500 mt-0.5">{language === "pt" ? "Monitorização de lotes com validade próxima" : "Critical batch monitoring & inbound arrivals"}</p>
           </div>
 
           <div className="space-y-3">
             <div className="p-3.5 rounded-xl bg-red-50 border border-red-100 flex items-center justify-between">
               <div className="space-y-0.5">
-                <div className="text-xs font-bold text-red-900">Near Expiry Alert</div>
-                <div className="text-xs text-red-700">3 Batches expiring within 30 days</div>
+                <div className="text-xs font-bold text-red-900">{language === "pt" ? "Alerta de Validade Próxima" : "Near Expiry Alert"}</div>
+                <div className="text-xs text-red-700">{language === "pt" ? "Lotes a expirar dentro de 30 dias" : "Batches expiring within 30 days"}</div>
               </div>
               <button
                 onClick={() => setCurrentView("alerts")}
-                className="px-2.5 py-1 rounded-lg bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold"
+                className="px-2.5 py-1 rounded-lg bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold cursor-pointer"
               >
-                Inspect
+                {language === "pt" ? "Inspecionar" : "Inspect"}
               </button>
             </div>
 
             <div className="p-3.5 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-between">
               <div className="space-y-0.5">
-                <div className="text-xs font-bold text-indigo-900">Sea Shipment In Transit</div>
-                <div className="text-xs text-indigo-700">Vessel MSC Luisa scheduled arrival: 15:30</div>
+                <div className="text-xs font-bold text-indigo-900">{language === "pt" ? "Remessa Marítima em Trânsito" : "Sea Shipment In Transit"}</div>
+                <div className="text-xs text-indigo-700">{language === "pt" ? "Chegada prevista de contentor" : "Scheduled vessel container arrival"}</div>
               </div>
-              <span className="text-xs font-bold text-indigo-600">Port Cleared</span>
+              <span className="text-xs font-bold text-indigo-600">{language === "pt" ? "Desembaraçado" : "Port Cleared"}</span>
             </div>
 
             <div className="p-3.5 rounded-xl bg-purple-50 border border-purple-100 flex items-center justify-between">
               <div className="space-y-0.5">
-                <div className="text-xs font-bold text-purple-900">Manual Sales Recorded Today</div>
-                <div className="text-xs text-purple-700">Supervisor entered sales across 8 SKUs</div>
+                <div className="text-xs font-bold text-purple-900">{language === "pt" ? "Vendas Registadas Hoje" : "Manual Sales Recorded Today"}</div>
+                <div className="text-xs text-purple-700">{language === "pt" ? "Vendas lançadas pelo supervisor" : "Supervisor entered sales across SKUs"}</div>
               </div>
-              <span className="text-xs font-bold text-purple-700">142 Units</span>
+              <span className="text-xs font-bold text-purple-700">{stats.statusText === "Inventory Done" ? (language === "pt" ? "Fechado" : "Closed") : (language === "pt" ? "Ativo" : "Active")}</span>
             </div>
           </div>
 
           <div className="text-center pt-2">
             <button
               onClick={() => setCurrentView("reconciliation")}
-              className="text-xs font-bold text-purple-600 hover:text-purple-700"
+              className="text-xs font-bold text-purple-600 hover:text-purple-700 cursor-pointer"
             >
-              View Full Warehouse Ledger →
+              {language === "pt" ? "Ver Livro-Mestre Completo →" : "View Full Warehouse Ledger →"}
             </button>
           </div>
         </div>

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import { apiRequest } from "../services/api";
-import { MapPin, Shield, Calendar, Bell, ChevronDown, Check, LogOut, User as UserIcon } from "lucide-react";
+import { MapPin, Shield, Calendar, Bell, ChevronDown, Check, LogOut, Globe } from "lucide-react";
 
 export default function Navbar() {
   const { user, activeWarehouse, setActiveWarehouse, logout } = useAuth();
+  const { language, setLanguage, t } = useLanguage();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showWhMenu, setShowWhMenu] = useState(false);
   const [warehouses, setWarehouses] = useState([
@@ -35,12 +37,40 @@ export default function Navbar() {
         </div>
         <div>
           <div className="text-sm font-bold text-slate-900 leading-tight">Allisons African Pharma</div>
-          <div className="text-xs text-purple-700 font-medium">Warehouse Management System</div>
+          <div className="text-xs text-purple-700 font-medium">{t("appSubtitle")}</div>
         </div>
       </div>
 
       {/* Center & Right Controls */}
       <div className="flex items-center gap-4">
+        {/* Language Selector Pill */}
+        <div className="flex items-center p-0.5 rounded-xl bg-slate-100 border border-slate-200 text-[11px] font-bold">
+          <button
+            onClick={() => setLanguage("pt")}
+            title="Português (Angola)"
+            className={`px-2 py-1 rounded-lg transition-all flex items-center gap-1 cursor-pointer ${
+              language === "pt"
+                ? "bg-white text-purple-700 shadow-xs"
+                : "text-slate-500 hover:text-slate-900"
+            }`}
+          >
+            <span>🇦🇴</span>
+            <span>PT</span>
+          </button>
+          <button
+            onClick={() => setLanguage("en")}
+            title="English"
+            className={`px-2 py-1 rounded-lg transition-all flex items-center gap-1 cursor-pointer ${
+              language === "en"
+                ? "bg-white text-purple-700 shadow-xs"
+                : "text-slate-500 hover:text-slate-900"
+            }`}
+          >
+            <span>🇬🇧</span>
+            <span>EN</span>
+          </button>
+        </div>
+
         {/* Active Warehouse Selector */}
         <div className="relative">
           <button
@@ -58,7 +88,7 @@ export default function Navbar() {
           {showWhMenu && (
             <div className="absolute top-full mt-1.5 right-0 w-64 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-40">
               <div className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                Select Warehouse Scope
+                {t("warehouseScope")}
               </div>
               {warehouses.map((wh) => (
                 <button
@@ -86,7 +116,14 @@ export default function Navbar() {
         {/* Date Display */}
         <div className="hidden md:flex items-center gap-1.5 text-xs text-slate-500 font-medium">
           <Calendar className="w-3.5 h-3.5 text-slate-400" />
-          <span>{new Date().toLocaleDateString("en-US", { weekday: "short", day: "2-digit", month: "short", year: "numeric" })}</span>
+          <span>
+            {new Date().toLocaleDateString(language === "pt" ? "pt-AO" : "en-US", {
+              weekday: "short",
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            })}
+          </span>
         </div>
 
         {/* Notifications */}
@@ -121,7 +158,7 @@ export default function Navbar() {
                   <span>{user?.role?.name}</span>
                 </div>
                 <div className="text-[10px] text-slate-500 mt-1">
-                  Scope: <span className="font-semibold text-slate-700">{user?.warehouse?.name || "National (HQ All Angola)"}</span>
+                  Scope: <span className="font-semibold text-slate-700">{user?.warehouse?.name || t("nationalScope")}</span>
                 </div>
               </div>
 
@@ -134,7 +171,7 @@ export default function Navbar() {
                   className="w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-red-50 rounded-lg font-bold flex items-center gap-2 transition-colors cursor-pointer"
                 >
                   <LogOut className="w-3.5 h-3.5 text-red-600" />
-                  <span>Sign Out</span>
+                  <span>{t("signOut")}</span>
                 </button>
               </div>
             </div>

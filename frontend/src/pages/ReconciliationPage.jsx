@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import { apiRequest } from "../services/api";
 import { exportToCsv } from "../utils/exportUtils";
 import {
@@ -17,6 +18,7 @@ import {
 
 export default function ReconciliationPage() {
   const { user, activeWarehouse } = useAuth();
+  const { language, t, formatCurrency } = useLanguage();
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
   const [sheetData, setSheetData] = useState(null);
   const [search, setSearch] = useState("");
@@ -164,15 +166,15 @@ export default function ReconciliationPage() {
         <div className="flex justify-between items-start">
           <div>
             <h1 className="text-xl font-bold uppercase tracking-tight text-slate-900">
-              Allisons African Pharma — Daily Warehouse Inventory Audit
+              Allisons African Pharma — {language === "pt" ? "Auditoria Diária de Estoque do Armazém" : "Daily Warehouse Inventory Audit"}
             </h1>
             <p className="text-xs text-slate-600 mt-1">
-              Branch: <span className="font-bold">{activeWarehouse?.name}</span> ({activeWarehouse?.code}) | Audit Date: <span className="font-bold">{selectedDate}</span>
+              {language === "pt" ? "Armazém" : "Branch"}: <span className="font-bold">{activeWarehouse?.name}</span> ({activeWarehouse?.code}) | {language === "pt" ? "Data da Auditoria" : "Audit Date"}: <span className="font-bold">{selectedDate}</span>
             </p>
           </div>
           <div className="text-right text-xs text-slate-600">
-            <p>Audit Status: <span className="font-bold uppercase">{sheetData?.session?.status || "UNDER_PROCESS"}</span></p>
-            <p>Printed On: {new Date().toLocaleString()}</p>
+            <p>{language === "pt" ? "Estado da Auditoria" : "Audit Status"}: <span className="font-bold uppercase">{sheetData?.session?.status || (language === "pt" ? "EM PROCESSAMENTO" : "UNDER_PROCESS")}</span></p>
+            <p>{language === "pt" ? "Impresso em" : "Printed On"}: {new Date().toLocaleString()}</p>
           </div>
         </div>
       </div>
@@ -180,13 +182,13 @@ export default function ReconciliationPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-4">
         <div>
           <h1 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-            <span>Daily Reconciliation Sheet</span>
+            <span>{t("reconciliation.title")}</span>
             <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800">
-              {sheetData?.session?.status || "UNDER_PROCESS"}
+              {isLocked ? (language === "pt" ? "INVENTÁRIO CONCLUÍDO" : "INVENTORY_DONE") : (language === "pt" ? "EM PROCESSAMENTO" : "UNDER_PROCESS")}
             </span>
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            {activeWarehouse.name} • 13 Core Ledger Columns with Live Calculations
+            {activeWarehouse.name} • {t("reconciliation.subtitle")}
           </p>
         </div>
 
@@ -204,15 +206,15 @@ export default function ReconciliationPage() {
 
           <button
             onClick={handleExportCsv}
-            title="Download 13-Column Reconciliation Sheet (Excel CSV)"
+            title={language === "pt" ? "Descarregar Livro de 13 Colunas (Excel CSV)" : "Download 13-Column Reconciliation Sheet (Excel CSV)"}
             className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
           >
             <Download className="w-3.5 h-3.5 text-purple-600" />
-            <span>Export CSV</span>
+            <span>{t("exportCsv")}</span>
           </button>
           <button
             onClick={() => window.print()}
-            title="Print Official Audit Sheet"
+            title={language === "pt" ? "Imprimir Folha Oficial de Auditoria" : "Print Official Audit Sheet"}
             className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
           >
             <Printer className="w-3.5 h-3.5" />
@@ -222,7 +224,7 @@ export default function ReconciliationPage() {
             isLocked ? (
               <div className="px-4 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-1.5 shadow-xs">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Audit Finalized & Locked</span>
+                <span>{t("reconciliation.auditLocked")}</span>
               </div>
             ) : (
               <button
@@ -230,7 +232,7 @@ export default function ReconciliationPage() {
                 className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold flex items-center gap-2 shadow-sm transition-colors cursor-pointer"
               >
                 <Send className="w-3.5 h-3.5" />
-                <span>Finalize & Submit to HQ</span>
+                <span>{t("reconciliation.finalizeBtn")}</span>
               </button>
             )
           )}
@@ -240,32 +242,32 @@ export default function ReconciliationPage() {
       {/* Summary KPI Strip */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3.5">
         <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
-          <div className="text-[10px] font-bold text-slate-400 uppercase">Reconciled Progress</div>
+          <div className="text-[10px] font-bold text-slate-400 uppercase">{t("reconciliation.progress")}</div>
           <div className="text-base font-black text-slate-900 mt-1">
             {records.length - diffCount} / {records.length} SKUs
           </div>
         </div>
         <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
-          <div className="text-[10px] font-bold text-slate-400 uppercase">Total Required Stock</div>
-          <div className="text-base font-black text-indigo-700 mt-1">{totalRequired.toLocaleString()} Units</div>
+          <div className="text-[10px] font-bold text-slate-400 uppercase">{t("reconciliation.totalRequired")}</div>
+          <div className="text-base font-black text-indigo-700 mt-1">{totalRequired.toLocaleString()} {t("units")}</div>
         </div>
         <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
-          <div className="text-[10px] font-bold text-slate-400 uppercase">Total Physical Stock</div>
-          <div className="text-base font-black text-purple-700 mt-1">{totalPhysical.toLocaleString()} Units</div>
+          <div className="text-[10px] font-bold text-slate-400 uppercase">{t("reconciliation.totalPhysical")}</div>
+          <div className="text-base font-black text-purple-700 mt-1">{totalPhysical.toLocaleString()} {t("units")}</div>
         </div>
         <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
-          <div className="text-[10px] font-bold text-slate-400 uppercase">Net Discrepancy</div>
+          <div className="text-[10px] font-bold text-slate-400 uppercase">{t("reconciliation.netDiscrepancy")}</div>
           <div
             className={`text-base font-black mt-1 ${
               totalDifference < 0 ? "text-red-600" : totalDifference > 0 ? "text-amber-600" : "text-emerald-600"
             }`}
           >
-            {totalDifference > 0 ? `+${totalDifference}` : totalDifference} Units
+            {totalDifference > 0 ? `+${totalDifference}` : totalDifference} {t("units")}
           </div>
         </div>
         <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
-          <div className="text-[10px] font-bold text-slate-400 uppercase">Sales Entered Today</div>
-          <div className="text-base font-black text-slate-800 mt-1">{totalSales.toLocaleString()} Units</div>
+          <div className="text-[10px] font-bold text-slate-400 uppercase">{t("reconciliation.salesToday")}</div>
+          <div className="text-base font-black text-slate-800 mt-1">{totalSales.toLocaleString()} {t("units")}</div>
         </div>
       </div>
 
@@ -275,7 +277,7 @@ export default function ReconciliationPage() {
           <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
           <input
             type="text"
-            placeholder="Search SKU or Product Description..."
+            placeholder={language === "pt" ? "Pesquisar por SKU ou Descrição do Medicamento..." : "Search SKU or Product Description..."}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-9 pr-4 py-1.5 rounded-lg border border-slate-200 text-xs focus:outline-none focus:border-purple-600"
@@ -291,7 +293,7 @@ export default function ReconciliationPage() {
           }`}
         >
           <Filter className="w-3.5 h-3.5" />
-          <span>Show Discrepancies Only ({diffCount})</span>
+          <span>{t("reconciliation.filterDiffOnly")} ({diffCount})</span>
         </button>
       </div>
 
@@ -301,25 +303,25 @@ export default function ReconciliationPage() {
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-600 uppercase tracking-wider">
-                <th className="p-3 sticky left-0 bg-slate-50 z-10 w-28">1. SKU</th>
-                <th className="p-3 min-w-44">2. Description & Pack</th>
-                <th className="p-3 text-right">3. Opening</th>
-                <th className="p-3 text-right text-emerald-700 bg-emerald-50/40">4. Arrivals</th>
-                <th className="p-3 text-right text-amber-700 bg-amber-50/40">5. Transfers</th>
+                <th className="p-3 sticky left-0 bg-slate-50 z-10 w-28">{t("reconciliation.colSku")}</th>
+                <th className="p-3 min-w-44">{t("reconciliation.colDescription")}</th>
+                <th className="p-3 text-right">{t("reconciliation.colOpening")}</th>
+                <th className="p-3 text-right text-emerald-700 bg-emerald-50/40">{t("reconciliation.colArrivals")}</th>
+                <th className="p-3 text-right text-amber-700 bg-amber-50/40">{t("reconciliation.colTransfers")}</th>
                 <th className="p-3 text-right bg-purple-50/80 text-purple-900 min-w-28 font-black">
-                  6. Sales ✍️
+                  {t("reconciliation.colSales")} ✍️
                 </th>
-                <th className="p-3 text-right">7. Cartons</th>
-                <th className="p-3 text-right">8. Loose</th>
-                <th className="p-3 text-right">9. Display</th>
+                <th className="p-3 text-right">{t("reconciliation.colCartons")}</th>
+                <th className="p-3 text-right">{t("reconciliation.colLoose")}</th>
+                <th className="p-3 text-right">{t("reconciliation.colDisplay")}</th>
                 <th className="p-3 text-right bg-slate-100/80 font-black text-slate-800">
-                  10. Required
+                  {t("reconciliation.colRequired")}
                 </th>
                 <th className="p-3 text-right bg-slate-100/80 font-black text-slate-800">
-                  11. Physical
+                  {t("reconciliation.colPhysical")}
                 </th>
-                <th className="p-3 text-center min-w-28 font-black">12. Difference</th>
-                <th className="p-3 min-w-48 font-black">13. Remarks ✍️</th>
+                <th className="p-3 text-center min-w-28 font-black">{t("reconciliation.colDifference")}</th>
+                <th className="p-3 min-w-48 font-black">{t("reconciliation.colRemarks")} ✍️</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -335,7 +337,7 @@ export default function ReconciliationPage() {
                     {/* 2. Description */}
                     <td className="p-3">
                       <div className="font-bold text-slate-900">{r.product_name}</div>
-                      <div className="text-[10px] text-slate-400">1 Ctn = {r.units_per_carton} Units</div>
+                      <div className="text-[10px] text-slate-400">1 {t("ctns")} = {r.units_per_carton} {t("units")}</div>
                     </td>
 
                     {/* 3. Opening */}
@@ -406,7 +408,7 @@ export default function ReconciliationPage() {
                             : "bg-amber-100 text-amber-800"
                         }`}
                       >
-                        {r.difference === 0 ? "Balanced 🟢" : `${r.difference > 0 ? "+" : ""}${r.difference} 🔴`}
+                        {r.difference === 0 ? `${t("reconciliation.balanced")} 🟢` : `${r.difference > 0 ? "+" : ""}${r.difference} 🔴`}
                       </span>
                     </td>
 
@@ -415,7 +417,7 @@ export default function ReconciliationPage() {
                       <input
                         type="text"
                         disabled={isLocked}
-                        placeholder={isLocked ? "Audit locked" : "Add reason/remark..."}
+                        placeholder={isLocked ? t("reconciliation.auditLocked") : (language === "pt" ? "Adicionar motivo / observação..." : "Add reason/remark...")}
                         value={editingRemarks[r.record_id] ?? r.remarks}
                         onChange={(e) =>
                           setEditingRemarks({
@@ -443,16 +445,16 @@ export default function ReconciliationPage() {
       <div className="print-only-block mt-8 pt-4 border-t border-slate-400">
         <div className="grid grid-cols-3 gap-8 text-xs text-slate-700">
           <div>
-            <p className="font-bold mb-10">Stock Counter (Floor Staff):</p>
-            <div className="border-t border-slate-600 pt-1">Signature / Date</div>
+            <p className="font-bold mb-10">{language === "pt" ? "Responsável pela Contagem (Operador):" : "Stock Counter (Floor Staff):"}</p>
+            <div className="border-t border-slate-600 pt-1">{language === "pt" ? "Assinatura / Data" : "Signature / Date"}</div>
           </div>
           <div>
-            <p className="font-bold mb-10">Warehouse Supervisor:</p>
-            <div className="border-t border-slate-600 pt-1">Signature / Date</div>
+            <p className="font-bold mb-10">{language === "pt" ? "Supervisor do Armazém:" : "Warehouse Supervisor:"}</p>
+            <div className="border-t border-slate-600 pt-1">{language === "pt" ? "Assinatura / Data" : "Signature / Date"}</div>
           </div>
           <div>
-            <p className="font-bold mb-10">HQ Verification / Compliance:</p>
-            <div className="border-t border-slate-600 pt-1">Stamp & Seal</div>
+            <p className="font-bold mb-10">{language === "pt" ? "Verificação da Sede / Conformidade (HQ):" : "HQ Verification / Compliance:"}</p>
+            <div className="border-t border-slate-600 pt-1">{language === "pt" ? "Carimbo e Selo" : "Stamp & Seal"}</div>
           </div>
         </div>
       </div>
@@ -465,15 +467,19 @@ export default function ReconciliationPage() {
               <FileSpreadsheet className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-slate-900">Finalize & Submit Daily Inventory</h3>
+              <h3 className="text-lg font-bold text-slate-900">{t("reconciliation.finalizeTitle")}</h3>
               <p className="text-xs text-slate-500 mt-1">
-                You are submitting the finalized stock audit for <span className="font-bold">{activeWarehouse.name}</span> on {selectedDate}.
+                {language === "pt"
+                  ? `Está a submeter o inventário diário para ${activeWarehouse.name} na data ${selectedDate}.`
+                  : `You are submitting the finalized stock audit for ${activeWarehouse.name} on ${selectedDate}.`}
               </p>
             </div>
 
             {diffCount > 0 && (
               <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800">
-                ⚠️ Notice: There are {diffCount} products with variance flagged. Please ensure remarks are documented for the HQ audit.
+                {language === "pt"
+                  ? `⚠️ Atenção: Existem ${diffCount} produtos com variação assinalada. Certifique-se de que as observações foram registadas para a auditoria da Sede.`
+                  : `⚠️ Notice: There are ${diffCount} products with variance flagged. Please ensure remarks are documented for the HQ audit.`}
               </div>
             )}
 
@@ -482,13 +488,13 @@ export default function ReconciliationPage() {
                 onClick={() => setFinalizeModal(false)}
                 className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50"
               >
-                Cancel
+                {t("cancel")}
               </button>
               <button
                 onClick={handleFinalize}
                 className="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md"
               >
-                Confirm & Submit to HQ
+                {t("reconciliation.finalizeBtn")}
               </button>
             </div>
           </div>

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import { apiRequest } from "../services/api";
 import { exportToCsv } from "../utils/exportUtils";
 import { Globe, Activity, Search, Filter, Download, CheckCircle2, Clock, AlertTriangle, Building2, Printer } from "lucide-react";
 
 export default function HQMasterPage() {
+  const { language, t } = useLanguage();
   const [tab, setTab] = useState("monitor"); // 'monitor' | 'master'
   const [warehouseStatuses, setWarehouseStatuses] = useState([]);
   const [masterInventory, setMasterInventory] = useState([]);
@@ -138,10 +140,10 @@ export default function HQMasterPage() {
         <div>
           <h1 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
             <Globe className="w-6 h-6 text-indigo-600" />
-            <span>Headquarters (HQ) National Master Control</span>
+            <span>{t("hq.title")}</span>
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Consolidated Angola Stock Surveillance & Multi-Branch Audit Monitoring
+            {t("hq.subtitle")}
           </p>
         </div>
 
@@ -150,25 +152,25 @@ export default function HQMasterPage() {
           <div className="flex items-center p-1 rounded-xl bg-slate-100 border border-slate-200 text-xs font-bold">
             <button
               onClick={() => setTab("monitor")}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all ${
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${
                 tab === "monitor"
                   ? "bg-white text-indigo-700 shadow-xs"
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
               <Activity className="w-3.5 h-3.5" />
-              <span>Live Audit Monitor</span>
+              <span>{t("hq.tabMonitor")}</span>
             </button>
             <button
               onClick={() => setTab("master")}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all ${
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${
                 tab === "master"
                   ? "bg-white text-purple-700 shadow-xs"
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
               <Globe className="w-3.5 h-3.5" />
-              <span>Master Angola Inventory</span>
+              <span>{t("hq.tabMaster")}</span>
             </button>
           </div>
 
@@ -176,15 +178,15 @@ export default function HQMasterPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={tab === "master" ? handleExportMasterCsv : handleExportMonitorCsv}
-              title="Export Current View to CSV (Excel Compatible)"
+              title={language === "pt" ? "Exportar visualização para CSV (Excel)" : "Export Current View to CSV (Excel Compatible)"}
               className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <Download className="w-3.5 h-3.5 text-indigo-600" />
-              <span>Export CSV</span>
+              <span>{t("exportCsv")}</span>
             </button>
             <button
               onClick={() => window.print()}
-              title="Print Official HQ Report"
+              title={language === "pt" ? "Imprimir Relatório Oficial da Sede" : "Print Official HQ Report"}
               className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
@@ -196,32 +198,32 @@ export default function HQMasterPage() {
       {/* National KPI Strip */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs">
-          <div className="text-[10px] font-bold text-slate-400 uppercase">Total Angola Physical Stock</div>
-          <div className="text-xl font-black text-indigo-700 mt-1">{nationalStock.toLocaleString()} Units</div>
+          <div className="text-[10px] font-bold text-slate-400 uppercase">{t("hq.nationalStock")}</div>
+          <div className="text-xl font-black text-indigo-700 mt-1">{nationalStock.toLocaleString()} {t("units")}</div>
           <div className="text-[10px] text-slate-400 mt-0.5">Mulemba + Palanca + Lobito</div>
         </div>
         <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs">
-          <div className="text-[10px] font-bold text-slate-400 uppercase">National Daily Sales</div>
-          <div className="text-xl font-black text-purple-700 mt-1">{nationalSales.toLocaleString()} Units</div>
-          <div className="text-[10px] text-slate-400 mt-0.5">Booked across 3 branches</div>
+          <div className="text-[10px] font-bold text-slate-400 uppercase">{t("hq.nationalSales")}</div>
+          <div className="text-xl font-black text-purple-700 mt-1">{nationalSales.toLocaleString()} {t("units")}</div>
+          <div className="text-[10px] text-slate-400 mt-0.5">{language === "pt" ? "Registadas nas 3 filiais" : "Booked across 3 branches"}</div>
         </div>
         <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs">
-          <div className="text-[10px] font-bold text-slate-400 uppercase">Branches Finalized</div>
+          <div className="text-[10px] font-bold text-slate-400 uppercase">{t("hq.branchesFinalized")}</div>
           <div className="text-xl font-black text-emerald-600 mt-1">
             {warehouseStatuses.filter((w) => w.status === "INVENTORY_DONE").length} / {warehouseStatuses.length}
           </div>
-          <div className="text-[10px] text-slate-400 mt-0.5">Daily audit completion</div>
+          <div className="text-[10px] text-slate-400 mt-0.5">{language === "pt" ? "Conclusão da auditoria diária" : "Daily audit completion"}</div>
         </div>
         <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs">
-          <div className="text-[10px] font-bold text-slate-400 uppercase">Countrywide Net Variance</div>
+          <div className="text-[10px] font-bold text-slate-400 uppercase">{t("hq.countrywideVariance")}</div>
           <div
             className={`text-xl font-black mt-1 ${
               nationalDiff < 0 ? "text-red-600" : nationalDiff > 0 ? "text-amber-600" : "text-emerald-600"
             }`}
           >
-            {nationalDiff > 0 ? `+${nationalDiff}` : nationalDiff} Units
+            {nationalDiff > 0 ? `+${nationalDiff}` : nationalDiff} {t("units")}
           </div>
-          <div className="text-[10px] text-slate-400 mt-0.5">Total variance across Angola</div>
+          <div className="text-[10px] text-slate-400 mt-0.5">{language === "pt" ? "Variação líquida consolidada" : "Total variance across Angola"}</div>
         </div>
       </div>
 

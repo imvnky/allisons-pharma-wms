@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import { apiRequest } from "../services/api";
 import { Boxes, Box, Store, Search, CheckCircle2, AlertTriangle, Save, RotateCcw, Trash2 } from "lucide-react";
 
 export default function StockCountingPage() {
   const { user, activeWarehouse } = useAuth();
+  const { language, t } = useLanguage();
   
   // Determine initial mode based on user role
   const initialMode =
@@ -27,11 +29,11 @@ export default function StockCountingPage() {
   const [successMsg, setSuccessMsg] = useState("");
 
   const displayReasons = [
-    { key: "BROKEN_DISPLAY", label: "Broken / Damaged on Display Floor" },
-    { key: "EXPIRED_SHOWCASE", label: "Expired on Showcase Shelf" },
-    { key: "CUSTOMER_SAMPLING", label: "Authorized Doctor / Customer Sampling" },
-    { key: "REPLACED_BATCH", label: "Replaced with Fresh Batch from Stock" },
-    { key: "AUDIT_CORRECTION", label: "Previous Day Miscount Correction" },
+    { key: "BROKEN_DISPLAY", label: language === "pt" ? "Danificado / Quebrado na Área de Exposição" : "Broken / Damaged on Display Floor" },
+    { key: "EXPIRED_SHOWCASE", label: language === "pt" ? "Expirado na Prateleira de Exposição" : "Expired on Showcase Shelf" },
+    { key: "CUSTOMER_SAMPLING", label: language === "pt" ? "Amostra Autorizada a Médico / Cliente" : "Authorized Doctor / Customer Sampling" },
+    { key: "REPLACED_BATCH", label: language === "pt" ? "Substituído por Lote Novo do Estoque" : "Replaced with Fresh Batch from Stock" },
+    { key: "AUDIT_CORRECTION", label: language === "pt" ? "Correção de Erro de Contagem Anterior" : "Previous Day Miscount Correction" },
   ];
 
   // Load products & submissions
@@ -85,7 +87,7 @@ export default function StockCountingPage() {
   }
 
   async function handleDeleteSubmission(submissionId) {
-    if (!confirm("Are you sure you want to remove this count submission?")) return;
+    if (!confirm(t("counting.deleteConfirm"))) return;
     try {
       await apiRequest(`/counts/${submissionId}`, "DELETE");
       loadSubmissions();
@@ -105,9 +107,9 @@ export default function StockCountingPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
         <div>
-          <h1 className="text-xl font-black text-slate-900 tracking-tight">Floor Stock Counting Terminal</h1>
+          <h1 className="text-xl font-black text-slate-900 tracking-tight">{t("counting.title")}</h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Logged in as <span className="font-bold text-purple-700">{user?.full_name}</span> ({user?.role?.name}) • {activeWarehouse.name}
+            {language === "pt" ? "Sessão iniciada como" : "Logged in as"} <span className="font-bold text-purple-700">{user?.full_name}</span> ({user?.role?.name}) • {activeWarehouse?.name}
           </p>
         </div>
 
@@ -123,7 +125,7 @@ export default function StockCountingPage() {
             }`}
           >
             <Boxes className="w-3.5 h-3.5" />
-            <span>Cartons</span>
+            <span>{t("counting.tabCarton")}</span>
           </button>
           <button
             onClick={() => setCountMode("LOOSE")}
@@ -135,7 +137,7 @@ export default function StockCountingPage() {
             }`}
           >
             <Box className="w-3.5 h-3.5" />
-            <span>Loose Units</span>
+            <span>{t("counting.tabLoose")}</span>
           </button>
           <button
             onClick={() => setCountMode("DISPLAY")}
@@ -147,7 +149,7 @@ export default function StockCountingPage() {
             }`}
           >
             <Store className="w-3.5 h-3.5" />
-            <span>Floor Display</span>
+            <span>{t("counting.tabDisplay")}</span>
           </button>
         </div>
       </div>
@@ -164,12 +166,14 @@ export default function StockCountingPage() {
         {/* Left Form: Select & Enter Count (7 cols) */}
         <div className="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-5">
           <div className="space-y-3">
-            <label className="text-xs font-bold text-slate-700">1. Select Product to Count</label>
+            <label className="text-xs font-bold text-slate-700">
+              {language === "pt" ? "1. Selecionar Medicamento para Contar" : "1. Select Product to Count"}
+            </label>
             <div className="relative">
               <Search className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
               <input
                 type="text"
-                placeholder="Search by Medicine Name or SKU Code..."
+                placeholder={t("counting.searchPlaceholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-purple-600 bg-slate-50"
@@ -215,22 +219,24 @@ export default function StockCountingPage() {
               {countMode === "DISPLAY" && (
                 <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-xs text-amber-900 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold">Opening Display Stock (Auto-rolled):</span>
-                    <span className="font-extrabold text-amber-950 px-2 py-0.5 rounded-sm bg-amber-100">5 Units</span>
+                    <span className="font-bold">{language === "pt" ? "Estoque de Exposição Inicial (Automático):" : "Opening Display Stock (Auto-rolled):"}</span>
+                    <span className="font-extrabold text-amber-950 px-2 py-0.5 rounded-sm bg-amber-100">5 {t("units")}</span>
                   </div>
                   <p className="text-[11px] text-amber-800">
-                    Display stock is fixed. If entering an amount other than 5, you must select an approved reason below.
+                    {language === "pt"
+                      ? "O estoque de exposição é fixo. Se introduzir um valor diferente de 5, selecione um motivo aprovado abaixo."
+                      : "Display stock is fixed. If entering an amount other than 5, you must select an approved reason below."}
                   </p>
                   <div>
                     <label className="text-[10px] font-bold uppercase text-amber-800 block mb-1">
-                      Reason for Display Variance (Mandatory if Changed):
+                      {language === "pt" ? "Motivo da Variação de Exposição (Obrigatório se alterado):" : "Reason for Display Variance (Mandatory if Changed):"}
                     </label>
                     <select
                       value={displayReason}
                       onChange={(e) => setDisplayReason(e.target.value)}
                       className="w-full text-xs p-2 rounded-lg bg-white border border-amber-200"
                     >
-                      <option value="">Select an approved reason...</option>
+                      <option value="">{language === "pt" ? "Selecione um motivo aprovado..." : "Select an approved reason..."}</option>
                       {displayReasons.map((dr) => (
                         <option key={dr.key} value={dr.key}>
                           {dr.label}
@@ -243,17 +249,19 @@ export default function StockCountingPage() {
 
               {/* Stepper Input */}
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-700">2. Enter Counted Physical Quantity:</label>
+                <label className="text-xs font-bold text-slate-700">
+                  {language === "pt" ? "2. Inserir Quantidade Física Contada:" : "2. Enter Counted Physical Quantity:"}
+                </label>
                 <div className="flex items-center justify-center gap-2">
                   <button
                     onClick={() => setCountInput(Math.max(0, countInput - 10))}
-                    className="px-3.5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 font-bold text-xs text-slate-700"
+                    className="px-3.5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 font-bold text-xs text-slate-700 cursor-pointer"
                   >
                     -10
                   </button>
                   <button
                     onClick={() => setCountInput(Math.max(0, countInput - 1))}
-                    className="px-3.5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 font-bold text-xs text-slate-700"
+                    className="px-3.5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 font-bold text-xs text-slate-700 cursor-pointer"
                   >
                     -1
                   </button>
@@ -265,13 +273,13 @@ export default function StockCountingPage() {
                   />
                   <button
                     onClick={() => setCountInput(countInput + 1)}
-                    className="px-3.5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 font-bold text-xs text-slate-700"
+                    className="px-3.5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 font-bold text-xs text-slate-700 cursor-pointer"
                   >
                     +1
                   </button>
                   <button
                     onClick={() => setCountInput(countInput + 10)}
-                    className="px-3.5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 font-bold text-xs text-slate-700"
+                    className="px-3.5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 font-bold text-xs text-slate-700 cursor-pointer"
                   >
                     +10
                   </button>
@@ -283,18 +291,24 @@ export default function StockCountingPage() {
                 <button
                   type="button"
                   onClick={() => setCountInput(0)}
-                  className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 flex items-center gap-1.5"
+                  className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 flex items-center gap-1.5 cursor-pointer"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
-                  <span>Reset</span>
+                  <span>{language === "pt" ? "Limpar" : "Reset"}</span>
                 </button>
                 <button
                   onClick={handleSubmit}
                   disabled={loading}
-                  className="px-6 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs flex items-center gap-2 shadow-md transition-colors"
+                  className="px-6 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs flex items-center gap-2 shadow-md transition-colors cursor-pointer"
                 >
                   <Save className="w-3.5 h-3.5" />
-                  <span>{loading ? "Submitting..." : "Save & Submit Count ↵"}</span>
+                  <span>
+                    {loading
+                      ? t("loading")
+                      : language === "pt"
+                      ? "Guardar e Registar Contagem ↵"
+                      : "Save & Submit Count ↵"}
+                  </span>
                 </button>
               </div>
             </div>
@@ -305,18 +319,20 @@ export default function StockCountingPage() {
         <div className="lg:col-span-5 bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
-              <h3 className="text-sm font-bold text-slate-900">My Submissions Today</h3>
-              <p className="text-[11px] text-slate-400">Strictly showing counts entered by you</p>
+              <h3 className="text-sm font-bold text-slate-900">{t("counting.mySubmissions")}</h3>
+              <p className="text-[11px] text-slate-400">
+                {language === "pt" ? "Apenas contagens registadas pelo seu utilizador" : "Strictly showing counts entered by you"}
+              </p>
             </div>
             <span className="text-xs font-bold text-purple-700 bg-purple-50 px-2.5 py-1 rounded-full">
-              {mySubmissions.length} Entries
+              {mySubmissions.length} {language === "pt" ? "Registos" : "Entries"}
             </span>
           </div>
 
           <div className="max-h-[460px] overflow-y-auto space-y-2 pr-1">
             {mySubmissions.length === 0 ? (
               <div className="text-center py-12 text-xs text-slate-400">
-                No submissions logged by you yet today in this mode.
+                {t("counting.noSubmissions")}
               </div>
             ) : (
               mySubmissions.map((sub) => (
