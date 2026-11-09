@@ -61,8 +61,10 @@ export default function AlertsPage() {
       "Expiry Date",
       "Days Remaining",
       "Urgency Level",
-      "In-Stock Cartons",
-      "In-Stock Units",
+      "Initial Received Units",
+      "Units Depleted (FEFO)",
+      "In-Stock Remaining Units",
+      "In-Stock Remaining Cartons",
       "Batch Stock Value (AOA)",
       "Warehouse",
       "Export Date",
@@ -75,8 +77,10 @@ export default function AlertsPage() {
       it.expiry_date,
       it.days_remaining,
       it.urgency,
-      it.cartons,
+      it.initial_units ?? it.units,
+      it.depleted_units ?? 0,
       it.units,
+      it.cartons,
       it.value_aoa,
       activeWarehouse?.name || "",
       new Date().toISOString().split("T")[0],
@@ -309,8 +313,15 @@ export default function AlertsPage() {
                             {it.days_remaining} Days
                           </span>
                         </td>
-                        <td className="p-3 text-right font-extrabold text-slate-900">
-                          {it.units.toLocaleString()} Units ({it.cartons} Ctns)
+                        <td className="p-3 text-right">
+                          <div className="font-extrabold text-slate-900">
+                            {it.units.toLocaleString()} Units {it.cartons > 0 ? `(${it.cartons} Ctns)` : ""}
+                          </div>
+                          {it.depleted_units > 0 && (
+                            <div className="text-[10px] text-slate-400 font-medium">
+                              {it.depleted_units.toLocaleString()} units depleted (FEFO)
+                            </div>
+                          )}
                         </td>
                         <td className="p-3 text-right font-bold text-slate-700">
                           AOA {it.value_aoa.toLocaleString()}

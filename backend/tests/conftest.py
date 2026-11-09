@@ -146,3 +146,4 @@ def make_auth_headers(username: str, role_code: str, user_id: int, warehouse_id:
         "warehouse_id": warehouse_id
     })
     return {"Authorization": f"Bearer {token}"}
+

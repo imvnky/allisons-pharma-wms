@@ -136,3 +136,4 @@ def test_sync_session_calculations_frozen_on_finalized_session(db_session):
 
     db_session.refresh(rec)
     assert rec.carton_count == 50, "Finalized session was erroneously mutated by sync_session_calculations"
+

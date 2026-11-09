@@ -69,7 +69,7 @@ export default function LookupsManagerPage() {
             className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold flex items-center gap-2 shadow-xs transition-colors"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>+ Add Option to {selectedType.type_name}</span>
+            <span>Add Option to {selectedType.type_name}</span>
           </button>
         )}
       </div>
@@ -89,11 +89,10 @@ export default function LookupsManagerPage() {
                 <button
                   key={lt.type_code}
                   onClick={() => setSelectedType(lt)}
-                  className={`w-full text-left p-3 rounded-xl text-xs flex items-center justify-between transition-colors ${
-                    isSelected
-                      ? "bg-purple-50 text-purple-900 font-bold border border-purple-200"
-                      : "hover:bg-slate-50 text-slate-700"
-                  }`}
+                  className={`w-full text-left p-3 rounded-xl text-xs flex items-center justify-between transition-colors ${isSelected
+                    ? "bg-purple-50 text-purple-900 font-bold border border-purple-200"
+                    : "hover:bg-slate-50 text-slate-700"
+                    }`}
                 >
                   <div className="space-y-0.5">
                     <div>{lt.type_name}</div>

@@ -115,3 +115,4 @@ def test_warehouse_scoping_isolation(client, db_session):
 
     assert tamper_resp.status_code == 403
     assert "another warehouse" in tamper_resp.json()["detail"].lower()
+

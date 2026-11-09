@@ -185,3 +185,4 @@ def test_display_and_stock_continuity_from_previous_day(db_session):
     assert rec2.display_count == 12, (
         f"Day 2 opening display ({rec2.display_count}) did not match Day 1 closing display (12)"
     )
+

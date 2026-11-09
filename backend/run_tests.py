@@ -110,10 +110,36 @@ def run_standalone_verification():
         day2_opening_display = day1_closing_display
         assert day2_opening_display == 14
 
+    def test_fefo_depletion_logic():
+        # Batch A (earlier): 200 units, Batch B (later): 300 units
+        batches = [
+            {"batch": "BAT-A", "exp_days": 20, "units": 200},
+            {"batch": "BAT-B", "exp_days": 60, "units": 300},
+        ]
+        batches.sort(key=lambda x: x["exp_days"])
+        sales_to_deplete = 250
+
+        remaining_outflow = sales_to_deplete
+        for b in batches:
+            if remaining_outflow >= b["units"]:
+                b["depleted"] = b["units"]
+                remaining_outflow -= b["units"]
+                b["remaining"] = 0
+            else:
+                b["depleted"] = remaining_outflow
+                b["remaining"] = b["units"] - remaining_outflow
+                remaining_outflow = 0
+
+        assert batches[0]["remaining"] == 0, "Earliest batch should be 100% depleted"
+        assert batches[0]["depleted"] == 200
+        assert batches[1]["remaining"] == 250, "Second batch should have 250 remaining units"
+        assert batches[1]["depleted"] == 50
+
     test("Required Stock & Physical Stock Mathematical Formula", test_stock_math)
     test("Balanced Zero-Variance Reconciled State", test_balanced_case)
     test("Surplus Positive-Variance Calculation", test_surplus_case)
     test("Display Continuity Day-to-Day Propagation Rule", test_display_continuity_rule)
+    test("FEFO First-Expired First-Out Dynamic Batch Depletion", test_fefo_depletion_logic)
 
     print("\n" + "-"*70)
     print(f"Results: {passed} Passed, {failed} Failed.")

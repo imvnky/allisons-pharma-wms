@@ -98,3 +98,4 @@ def test_transfer_receiving_approval_and_authorization(client, db_session):
     reapprove_resp = client.post(f"/api/v1/shipments/transfers/{transfer.id}/approve", headers=headers_palanca)
     assert reapprove_resp.status_code == 400
     assert "already been approved" in reapprove_resp.json()["detail"].lower()
+
