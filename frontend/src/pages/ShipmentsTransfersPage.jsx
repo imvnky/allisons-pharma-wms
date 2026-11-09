@@ -455,12 +455,6 @@ export default function ShipmentsTransfersPage() {
           </div>
         </div>
       )}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Modal 1: Add Shipment Arrival */}
       {addArrivalModal && (
