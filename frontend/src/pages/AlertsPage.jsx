@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { apiRequest } from "../services/api";
-import { AlertTriangle, Clock, ShieldAlert, CheckCircle2, DollarSign, Calendar } from "lucide-react";
+import { exportToCsv } from "../utils/exportUtils";
+import { AlertTriangle, Clock, ShieldAlert, CheckCircle2, DollarSign, Calendar, Download, Printer } from "lucide-react";
 
 export default function AlertsPage() {
   const { user, activeWarehouse } = useAuth();
@@ -15,8 +16,96 @@ export default function AlertsPage() {
     apiRequest(`/alerts/near-expiry?days_threshold=${expiryThreshold}`).then((d) => setNearExpiry(d.items || [])).catch(console.log);
   }, [activeWarehouse, expiryThreshold]);
 
+  function handleExportDiffCsv() {
+    if (!differences || differences.length === 0) return;
+    const headers = [
+      "SKU",
+      "Product Name",
+      "Therapeutic Category",
+      "Required Stock",
+      "Physical Stock",
+      "Variance Qty",
+      "Variance %",
+      "Estimated Financial Impact (AOA)",
+      "Supervisor Remarks",
+      "Audit Status",
+      "Warehouse",
+      "Export Date",
+    ];
+
+    const rows = differences.map((d) => [
+      d.sku,
+      d.product_name,
+      d.category,
+      d.required_stock,
+      d.physical_stock,
+      d.difference,
+      `${d.variance_pct}%`,
+      d.financial_impact_aoa,
+      d.remarks || "",
+      d.status,
+      activeWarehouse?.name || "",
+      new Date().toISOString().split("T")[0],
+    ]);
+
+    const dateStr = new Date().toISOString().split("T")[0];
+    exportToCsv(`Allisons_Discrepancies_${activeWarehouse?.code || "WH"}_${dateStr}.csv`, headers, rows);
+  }
+
+  function handleExportExpiryCsv() {
+    if (!nearExpiry || nearExpiry.length === 0) return;
+    const headers = [
+      "SKU",
+      "Product Description",
+      "Batch Number",
+      "Expiry Date",
+      "Days Remaining",
+      "Urgency Level",
+      "In-Stock Cartons",
+      "In-Stock Units",
+      "Batch Stock Value (AOA)",
+      "Warehouse",
+      "Export Date",
+    ];
+
+    const rows = nearExpiry.map((it) => [
+      it.sku,
+      it.product_name,
+      it.batch_number,
+      it.expiry_date,
+      it.days_remaining,
+      it.urgency,
+      it.cartons,
+      it.units,
+      it.value_aoa,
+      activeWarehouse?.name || "",
+      new Date().toISOString().split("T")[0],
+    ]);
+
+    const dateStr = new Date().toISOString().split("T")[0];
+    exportToCsv(`Allisons_NearExpiry_${activeWarehouse?.code || "WH"}_${expiryThreshold}Days_${dateStr}.csv`, headers, rows);
+  }
+
   return (
     <div className="p-8 space-y-6 max-w-7xl mx-auto">
+      {/* Print-Only Official Alerts & Quality Audit Header */}
+      <div className="print-only-block mb-6 border-b-2 border-slate-900 pb-3">
+        <div className="flex justify-between items-start">
+          <div>
+            <h1 className="text-xl font-bold uppercase tracking-tight text-slate-900">
+              Allisons African Pharma — {tab === "diff" ? "Product Variances & Discrepancies Audit" : "Near-Expiry Batch Surveillance Report"}
+            </h1>
+            <p className="text-xs text-slate-600 mt-1">
+              Warehouse: <span className="font-bold">{activeWarehouse?.name}</span> ({activeWarehouse?.code}) | Report Date: <span className="font-bold">{new Date().toISOString().split("T")[0]}</span>
+            </p>
+          </div>
+          <div className="text-right text-xs text-slate-600">
+            <p>Active Tab: <span className="font-bold uppercase">{tab === "diff" ? "Stock Variances" : `Expiry (< ${expiryThreshold} Days)`}</span></p>
+            <p>Printed On: {new Date().toLocaleString()}</p>
+          </div>
+        </div>
+      </div>
+
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
         <div>
@@ -25,32 +114,53 @@ export default function AlertsPage() {
             <span>Quality & Discrepancy Alerts</span>
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            {activeWarehouse.name} • Variance Monitoring & Batch Expiry Surveillance
+            {activeWarehouse?.name} • Variance Monitoring & Batch Expiry Surveillance
           </p>
         </div>
 
-        {/* Tab switch */}
-        <div className="flex items-center p-1 rounded-xl bg-slate-100 border border-slate-200 text-xs font-bold">
-          <button
-            onClick={() => setTab("diff")}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all ${tab === "diff"
-                ? "bg-white text-red-700 shadow-xs"
-                : "text-slate-600 hover:text-slate-900"
-              }`}
-          >
-            <AlertTriangle className="w-3.5 h-3.5" />
-            <span>Product Differences ({differences.length})</span>
-          </button>
-          <button
-            onClick={() => setTab("expiry")}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all ${tab === "expiry"
-                ? "bg-white text-amber-700 shadow-xs"
-                : "text-slate-600 hover:text-slate-900"
-              }`}
-          >
-            <Clock className="w-3.5 h-3.5" />
-            <span>Near Expiry Goods ({nearExpiry.length})</span>
-          </button>
+        <div className="flex items-center gap-3">
+          {/* Tab switch */}
+          <div className="flex items-center p-1 rounded-xl bg-slate-100 border border-slate-200 text-xs font-bold">
+            <button
+              onClick={() => setTab("diff")}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all ${tab === "diff"
+                  ? "bg-white text-red-700 shadow-xs"
+                  : "text-slate-600 hover:text-slate-900"
+                }`}
+            >
+              <AlertTriangle className="w-3.5 h-3.5" />
+              <span>Product Differences ({differences.length})</span>
+            </button>
+            <button
+              onClick={() => setTab("expiry")}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all ${tab === "expiry"
+                  ? "bg-white text-amber-700 shadow-xs"
+                  : "text-slate-600 hover:text-slate-900"
+                }`}
+            >
+              <Clock className="w-3.5 h-3.5" />
+              <span>Near Expiry Goods ({nearExpiry.length})</span>
+            </button>
+          </div>
+
+          {/* Export & Print Actions */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={tab === "diff" ? handleExportDiffCsv : handleExportExpiryCsv}
+              title="Export Current View to CSV (Excel Compatible)"
+              className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+            >
+              <Download className="w-3.5 h-3.5 text-red-600" />
+              <span>Export CSV</span>
+            </button>
+            <button
+              onClick={() => window.print()}
+              title="Print Official Quality Audit Sheet"
+              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
+            >
+              <Printer className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -222,6 +332,24 @@ export default function AlertsPage() {
           </div>
         </div>
       )}
+
+      {/* Print-Only Quality Review Sign-off Section */}
+      <div className="print-only-block mt-8 pt-4 border-t border-slate-400">
+        <div className="grid grid-cols-3 gap-8 text-xs text-slate-700">
+          <div>
+            <p className="font-bold mb-10">Warehouse Inventory Supervisor:</p>
+            <div className="border-t border-slate-600 pt-1">Signature / Date</div>
+          </div>
+          <div>
+            <p className="font-bold mb-10">Quality Assurance Officer:</p>
+            <div className="border-t border-slate-600 pt-1">Signature / Date</div>
+          </div>
+          <div>
+            <p className="font-bold mb-10">HQ Operations Oversight:</p>
+            <div className="border-t border-slate-600 pt-1">Stamp & Seal</div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

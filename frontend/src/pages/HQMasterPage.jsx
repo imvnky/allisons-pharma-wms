@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { apiRequest } from "../services/api";
-import { Globe, Activity, Search, Filter, Download, CheckCircle2, Clock, AlertTriangle, Building2 } from "lucide-react";
+import { exportToCsv } from "../utils/exportUtils";
+import { Globe, Activity, Search, Filter, Download, CheckCircle2, Clock, AlertTriangle, Building2, Printer } from "lucide-react";
 
 export default function HQMasterPage() {
   const [tab, setTab] = useState("monitor"); // 'monitor' | 'master'
@@ -42,8 +43,96 @@ export default function HQMasterPage() {
   const nationalSales = masterInventory.reduce((acc, i) => acc + i.total_sales_today, 0);
   const nationalDiff = masterInventory.reduce((acc, i) => acc + i.net_difference, 0);
 
+  function handleExportMonitorCsv() {
+    if (!warehouseStatuses || warehouseStatuses.length === 0) return;
+    const headers = [
+      "Warehouse Code",
+      "Warehouse Name",
+      "City / Province",
+      "Daily Audit Status",
+      "Counted SKUs",
+      "Total Active SKUs",
+      "Progress %",
+      "Total Physical Stock Counted",
+      "Total Sales Today",
+      "Discrepancies Flagged",
+      "Assigned Supervisor",
+      "Audit Date",
+    ];
+
+    const rows = warehouseStatuses.map((wh) => [
+      wh.warehouse_code,
+      wh.warehouse_name,
+      wh.city,
+      wh.status,
+      wh.counted_skus,
+      wh.total_skus,
+      `${wh.progress_pct}%`,
+      wh.total_stock,
+      wh.total_sales,
+      wh.discrepancies_count,
+      wh.supervisor_name,
+      selectedDate,
+    ]);
+
+    exportToCsv(`Allisons_HQ_Audit_Progress_${selectedDate}.csv`, headers, rows);
+  }
+
+  function handleExportMasterCsv() {
+    if (!filteredMaster || filteredMaster.length === 0) return;
+    const headers = [
+      "SKU",
+      "Product Name",
+      "Therapeutic Category",
+      "Units / Carton Spec",
+      "Mulemba Stock",
+      "Palanca Stock",
+      "Lobito Stock",
+      "Total Angola Stock (Units)",
+      "Today's Sales Across Angola",
+      "Net Discrepancy",
+      "Stock Health Status",
+      "Audit Date",
+    ];
+
+    const rows = filteredMaster.map((item) => [
+      item.sku,
+      item.product_name,
+      item.category,
+      item.units_per_carton,
+      item.mulemba_stock,
+      item.palanca_stock,
+      item.lobito_stock,
+      item.total_angola_stock,
+      item.total_sales_today,
+      item.net_difference,
+      item.status,
+      selectedDate,
+    ]);
+
+    exportToCsv(`Allisons_HQ_Master_Inventory_${selectedDate}.csv`, headers, rows);
+  }
+
   return (
     <div className="p-8 space-y-6 max-w-7xl mx-auto">
+      {/* Print-Only Official HQ Audit Header */}
+      <div className="print-only-block mb-6 border-b-2 border-slate-900 pb-3">
+        <div className="flex justify-between items-start">
+          <div>
+            <h1 className="text-xl font-bold uppercase tracking-tight text-slate-900">
+              Allisons African Pharma — HQ National Master Inventory Report
+            </h1>
+            <p className="text-xs text-slate-600 mt-1">
+              National Multi-Branch Surveillance (Mulemba, Palanca, Lobito) | Audit Date: <span className="font-bold">{selectedDate}</span>
+            </p>
+          </div>
+          <div className="text-right text-xs text-slate-600">
+            <p>Scope: <span className="font-bold uppercase">National Angola Master</span></p>
+            <p>Printed On: {new Date().toLocaleString()}</p>
+          </div>
+        </div>
+      </div>
+
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
         <div>
@@ -56,30 +145,51 @@ export default function HQMasterPage() {
           </p>
         </div>
 
-        {/* Tab switch */}
-        <div className="flex items-center p-1 rounded-xl bg-slate-100 border border-slate-200 text-xs font-bold">
-          <button
-            onClick={() => setTab("monitor")}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all ${
-              tab === "monitor"
-                ? "bg-white text-indigo-700 shadow-xs"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            <Activity className="w-3.5 h-3.5" />
-            <span>Live Audit Monitor</span>
-          </button>
-          <button
-            onClick={() => setTab("master")}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all ${
-              tab === "master"
-                ? "bg-white text-purple-700 shadow-xs"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            <Globe className="w-3.5 h-3.5" />
-            <span>Master Angola Inventory</span>
-          </button>
+        <div className="flex items-center gap-3">
+          {/* Tab switch */}
+          <div className="flex items-center p-1 rounded-xl bg-slate-100 border border-slate-200 text-xs font-bold">
+            <button
+              onClick={() => setTab("monitor")}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all ${
+                tab === "monitor"
+                  ? "bg-white text-indigo-700 shadow-xs"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              <Activity className="w-3.5 h-3.5" />
+              <span>Live Audit Monitor</span>
+            </button>
+            <button
+              onClick={() => setTab("master")}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all ${
+                tab === "master"
+                  ? "bg-white text-purple-700 shadow-xs"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              <Globe className="w-3.5 h-3.5" />
+              <span>Master Angola Inventory</span>
+            </button>
+          </div>
+
+          {/* Export & Print Actions */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={tab === "master" ? handleExportMasterCsv : handleExportMonitorCsv}
+              title="Export Current View to CSV (Excel Compatible)"
+              className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+            >
+              <Download className="w-3.5 h-3.5 text-indigo-600" />
+              <span>Export CSV</span>
+            </button>
+            <button
+              onClick={() => window.print()}
+              title="Print Official HQ Report"
+              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
+            >
+              <Printer className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -323,6 +433,24 @@ export default function HQMasterPage() {
           </div>
         </div>
       )}
+
+      {/* Print-Only HQ Official Sign-off Section */}
+      <div className="print-only-block mt-8 pt-4 border-t border-slate-400">
+        <div className="grid grid-cols-3 gap-8 text-xs text-slate-700">
+          <div>
+            <p className="font-bold mb-10">HQ Operations Director:</p>
+            <div className="border-t border-slate-600 pt-1">Signature / Date</div>
+          </div>
+          <div>
+            <p className="font-bold mb-10">Chief Pharmacist / Compliance:</p>
+            <div className="border-t border-slate-600 pt-1">Signature / Date</div>
+          </div>
+          <div>
+            <p className="font-bold mb-10">Allisons African Pharma HQ:</p>
+            <div className="border-t border-slate-600 pt-1">Official Executive Seal</div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

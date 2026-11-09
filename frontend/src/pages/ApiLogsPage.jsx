@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { apiRequest } from "../services/api";
-import { Terminal, Download, Search, RefreshCw, Info, Code2, AlertCircle, Calendar, Filter } from "lucide-react";
+import { exportToCsv } from "../utils/exportUtils";
+import { Terminal, Download, Search, RefreshCw, Info, Code2, AlertCircle, Calendar, Filter, FileSpreadsheet } from "lucide-react";
 
 export default function ApiLogsPage() {
   const [logs, setLogs] = useState([]);
@@ -42,6 +43,40 @@ export default function ApiLogsPage() {
     a.click();
   }
 
+  function handleExportCsv() {
+    if (!logs || logs.length === 0) return;
+    const headers = [
+      "Log ID",
+      "Timestamp",
+      "Level",
+      "Message",
+      "Status Code",
+      "Username",
+      "Warehouse ID",
+      "Latency (ms)",
+      "Module Name",
+      "File Name",
+      "Method Name",
+    ];
+
+    const rows = logs.map((l) => [
+      l.id,
+      l.created_at,
+      l.level,
+      l.message,
+      l.status_code,
+      l.username || "Anonymous",
+      l.warehouse_id || "",
+      l.latency_ms,
+      l.module_name || "",
+      l.file_name || "",
+      l.method_name || "",
+    ]);
+
+    const dateStr = new Date().toISOString().split("T")[0];
+    exportToCsv(`Allisons_ApiLogs_${dateStr}.csv`, headers, rows);
+  }
+
   return (
     <div className="p-8 space-y-6 max-w-[1500px] mx-auto">
       {/* Top Header */}
@@ -64,11 +99,19 @@ export default function ApiLogsPage() {
             <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
           </button>
           <button
+            onClick={handleExportCsv}
+            title="Download Logs as CSV (Excel Compatible)"
+            className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+          >
+            <FileSpreadsheet className="w-3.5 h-3.5 text-purple-600" />
+            <span>Export CSV</span>
+          </button>
+          <button
             onClick={handleDownload}
-            className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold flex items-center gap-2 shadow-xs transition-colors"
+            className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold flex items-center gap-2 shadow-xs transition-colors cursor-pointer"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>Download Logs (JSON)</span>
+            <span>JSON</span>
           </button>
         </div>
       </div>

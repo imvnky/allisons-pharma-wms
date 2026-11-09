@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { apiRequest } from "../services/api";
+import { exportToCsv } from "../utils/exportUtils";
 import {
   FileSpreadsheet,
   Download,
@@ -10,7 +11,8 @@ import {
   AlertTriangle,
   Send,
   Save,
-  Filter
+  Filter,
+  Printer
 } from "lucide-react";
 
 export default function ReconciliationPage() {
@@ -109,8 +111,71 @@ export default function ReconciliationPage() {
   const totalSales = records.reduce((acc, r) => acc + r.sales_qty, 0);
   const diffCount = records.filter((r) => r.difference !== 0).length;
 
+  function handleExportCsv() {
+    if (!filteredRecords || filteredRecords.length === 0) return;
+    const headers = [
+      "1. Product SKU",
+      "2. Product Description",
+      "Category",
+      "Units / Carton Spec",
+      "Unit Price (AOA)",
+      "3. Opening Stock",
+      "4. Arrivals Qty",
+      "5. Transfers Qty",
+      "6. Sales Qty",
+      "7. Cartons Counted",
+      "8. Loose Units Counted",
+      "9. Floor Display Counted",
+      "10. Required Stock",
+      "11. Physical Stock",
+      "12. Difference (Variance)",
+      "Variance Status",
+      "13. Supervisor Remarks",
+    ];
+
+    const rows = filteredRecords.map((r) => [
+      r.sku,
+      r.product_name,
+      r.category,
+      r.units_per_carton,
+      r.unit_price,
+      r.opening_stock,
+      r.arrivals_qty,
+      r.transfers_qty,
+      r.sales_qty,
+      r.carton_count,
+      r.loose_count,
+      r.display_count,
+      r.required_stock,
+      r.physical_stock,
+      r.difference,
+      r.difference === 0 ? "Balanced" : r.difference < 0 ? "Shortage" : "Surplus",
+      r.remarks || "",
+    ]);
+
+    const filename = `Allisons_Reconciliation_${activeWarehouse?.code || "WH"}_${selectedDate}.csv`;
+    exportToCsv(filename, headers, rows);
+  }
+
   return (
     <div className="p-8 space-y-6 max-w-[1500px] mx-auto">
+      {/* Print-Only Official Audit Header */}
+      <div className="print-only-block mb-6 border-b-2 border-slate-900 pb-3">
+        <div className="flex justify-between items-start">
+          <div>
+            <h1 className="text-xl font-bold uppercase tracking-tight text-slate-900">
+              Allisons African Pharma — Daily Warehouse Inventory Audit
+            </h1>
+            <p className="text-xs text-slate-600 mt-1">
+              Branch: <span className="font-bold">{activeWarehouse?.name}</span> ({activeWarehouse?.code}) | Audit Date: <span className="font-bold">{selectedDate}</span>
+            </p>
+          </div>
+          <div className="text-right text-xs text-slate-600">
+            <p>Audit Status: <span className="font-bold uppercase">{sheetData?.session?.status || "UNDER_PROCESS"}</span></p>
+            <p>Printed On: {new Date().toLocaleString()}</p>
+          </div>
+        </div>
+      </div>
       {/* Top Header & Historical Date Picker */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-4">
         <div>
@@ -138,11 +203,19 @@ export default function ReconciliationPage() {
           </div>
 
           <button
-            onClick={() => window.print()}
-            className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-colors"
+            onClick={handleExportCsv}
+            title="Download 13-Column Reconciliation Sheet (Excel CSV)"
+            className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
           >
-            <Download className="w-3.5 h-3.5" />
-            <span>Export</span>
+            <Download className="w-3.5 h-3.5 text-purple-600" />
+            <span>Export CSV</span>
+          </button>
+          <button
+            onClick={() => window.print()}
+            title="Print Official Audit Sheet"
+            className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
+          >
+            <Printer className="w-3.5 h-3.5" />
           </button>
 
           {(user?.role?.code === "SUPERVISOR" || user?.role?.code === "SUPER_ADMIN") && (
@@ -363,6 +436,24 @@ export default function ReconciliationPage() {
               })}
             </tbody>
           </table>
+        </div>
+      </div>
+
+      {/* Print-Only Formal Sign-off Section */}
+      <div className="print-only-block mt-8 pt-4 border-t border-slate-400">
+        <div className="grid grid-cols-3 gap-8 text-xs text-slate-700">
+          <div>
+            <p className="font-bold mb-10">Stock Counter (Floor Staff):</p>
+            <div className="border-t border-slate-600 pt-1">Signature / Date</div>
+          </div>
+          <div>
+            <p className="font-bold mb-10">Warehouse Supervisor:</p>
+            <div className="border-t border-slate-600 pt-1">Signature / Date</div>
+          </div>
+          <div>
+            <p className="font-bold mb-10">HQ Verification / Compliance:</p>
+            <div className="border-t border-slate-600 pt-1">Stamp & Seal</div>
+          </div>
         </div>
       </div>
 

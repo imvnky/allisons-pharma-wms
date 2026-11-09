@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { apiRequest } from "../services/api";
-import { Ship, ArrowLeftRight, Plus, CheckCircle2, Truck, Calendar, Check, AlertCircle } from "lucide-react";
+import { exportToCsv } from "../utils/exportUtils";
+import { Ship, ArrowLeftRight, Plus, CheckCircle2, Truck, Calendar, Check, AlertCircle, Download, Printer } from "lucide-react";
 
 export default function ShipmentsTransfersPage() {
   const { user, activeWarehouse } = useAuth();
@@ -120,28 +121,121 @@ export default function ShipmentsTransfersPage() {
     }
   }
 
+  function handleExportArrivalsCsv() {
+    if (!arrivals || arrivals.length === 0) return;
+    const headers = [
+      "Arrival ID",
+      "Shipment Type",
+      "Vessel / Supplier Name",
+      "Container / BL Number",
+      "Total Units",
+      "Received Date",
+      "Status",
+      "Receiving Warehouse",
+    ];
+
+    const rows = arrivals.map((a) => [
+      a.arrival_number,
+      a.arrival_type,
+      a.vessel_name,
+      a.tracking_bl_number,
+      a.total_units,
+      a.received_date,
+      a.status,
+      activeWarehouse?.name || "",
+    ]);
+
+    const dateStr = new Date().toISOString().split("T")[0];
+    exportToCsv(`Allisons_Arrivals_${activeWarehouse?.code || "WH"}_${dateStr}.csv`, headers, rows);
+  }
+
+  function handleExportTransfersCsv() {
+    if (!transfers || transfers.length === 0) return;
+    const headers = [
+      "Transfer Number",
+      "Origin Warehouse",
+      "Destination Warehouse",
+      "Driver Name",
+      "Vehicle Plate",
+      "Dispatched Date",
+      "Transfer Status",
+      "Notes / Waybill Ref",
+    ];
+
+    const rows = transfers.map((t) => [
+      t.transfer_number,
+      t.from_warehouse?.name || t.from_warehouse_id,
+      t.to_warehouse?.name || t.to_warehouse_id,
+      t.driver_name || "N/A",
+      t.vehicle_plate || "N/A",
+      t.dispatched_at ? t.dispatched_at.split("T")[0] : "",
+      t.status,
+      t.notes || "",
+    ]);
+
+    const dateStr = new Date().toISOString().split("T")[0];
+    exportToCsv(`Allisons_Transfers_${activeWarehouse?.code || "WH"}_${dateStr}.csv`, headers, rows);
+  }
+
   return (
     <div className="p-8 space-y-6 max-w-7xl mx-auto">
+      {/* Print-Only Logistics & Consignment Audit Header */}
+      <div className="print-only-block mb-6 border-b-2 border-slate-900 pb-3">
+        <div className="flex justify-between items-start">
+          <div>
+            <h1 className="text-xl font-bold uppercase tracking-tight text-slate-900">
+              Allisons African Pharma — {tab === "arrivals" ? "Inward Shipments & Deliveries Manifest" : "Inter-Warehouse Transfer Consignment Note"}
+            </h1>
+            <p className="text-xs text-slate-600 mt-1">
+              Active Hub: <span className="font-bold">{activeWarehouse?.name}</span> ({activeWarehouse?.code}) | Report Date: <span className="font-bold">{new Date().toISOString().split("T")[0]}</span>
+            </p>
+          </div>
+          <div className="text-right text-xs text-slate-600">
+            <p>Manifest Type: <span className="font-bold uppercase">{tab === "arrivals" ? "Arrivals / Containers" : "Consignment Waybills"}</span></p>
+            <p>Printed On: {new Date().toLocaleString()}</p>
+          </div>
+        </div>
+      </div>
+
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
         <div>
           <h1 className="text-xl font-black text-slate-900 tracking-tight">Shipments & Transfers Hub</h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            {activeWarehouse.name} • Manage Sea Shipments, Local Freight & Inter-Warehouse Transfers
+            {activeWarehouse?.name} • Manage Sea Shipments, Local Freight & Inter-Warehouse Transfers
           </p>
         </div>
 
         <div className="flex items-center gap-3">
+          {/* Export & Print */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={tab === "arrivals" ? handleExportArrivalsCsv : handleExportTransfersCsv}
+              title="Export Current Manifest to CSV (Excel Compatible)"
+              className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+            >
+              <Download className="w-3.5 h-3.5 text-purple-600" />
+              <span>Export CSV</span>
+            </button>
+            <button
+              onClick={() => window.print()}
+              title="Print Manifest / Waybill"
+              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
+            >
+              <Printer className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
           <button
             onClick={() => setAddArrivalModal(true)}
-            className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-2 shadow-xs transition-colors"
+            className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-2 shadow-xs transition-colors cursor-pointer"
           >
             <Ship className="w-3.5 h-3.5" />
             <span>+ Add Shipment Arrival</span>
           </button>
           <button
             onClick={() => setCreateTransferModal(true)}
-            className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold flex items-center gap-2 shadow-xs transition-colors"
+            className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold flex items-center gap-2 shadow-xs transition-colors cursor-pointer"
           >
             <ArrowLeftRight className="w-3.5 h-3.5" />
             <span>+ Create Transfer</span>
@@ -549,6 +643,24 @@ export default function ShipmentsTransfersPage() {
           </form>
         </div>
       )}
+
+      {/* Print-Only Waybill Sign-off Section */}
+      <div className="print-only-block mt-8 pt-4 border-t border-slate-400">
+        <div className="grid grid-cols-3 gap-8 text-xs text-slate-700">
+          <div>
+            <p className="font-bold mb-10">Dispatching Officer (Warehouse):</p>
+            <div className="border-t border-slate-600 pt-1">Signature / Date</div>
+          </div>
+          <div>
+            <p className="font-bold mb-10">Transport Driver / Carrier:</p>
+            <div className="border-t border-slate-600 pt-1">Signature / Date</div>
+          </div>
+          <div>
+            <p className="font-bold mb-10">Receiving Branch Verification:</p>
+            <div className="border-t border-slate-600 pt-1">Stamp & Seal / Date</div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
