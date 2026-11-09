@@ -4,13 +4,13 @@ import { translations } from "../locales/translations";
 const LanguageContext = createContext();
 
 export function LanguageProvider({ children }) {
-  // Default to Portuguese (Angola) with localStorage persistence
+  // Default to English with localStorage persistence
   const [language, setLanguageState] = useState(() => {
-    return localStorage.getItem("allisons_lang") || "pt";
+    return localStorage.getItem("allisons_lang") || "en";
   });
 
   const setLanguage = (lang) => {
-    const validLang = lang === "en" ? "en" : "pt";
+    const validLang = lang === "pt" ? "pt" : "en";
     localStorage.setItem("allisons_lang", validLang);
     setLanguageState(validLang);
   };
@@ -79,3 +79,4 @@ export function useLanguage() {
   }
   return context;
 }
+

@@ -46,18 +46,6 @@ export default function Navbar() {
         {/* Language Selector Pill */}
         <div className="flex items-center p-0.5 rounded-xl bg-slate-100 border border-slate-200 text-[11px] font-bold">
           <button
-            onClick={() => setLanguage("pt")}
-            title="Português (Angola)"
-            className={`px-2 py-1 rounded-lg transition-all flex items-center gap-1 cursor-pointer ${
-              language === "pt"
-                ? "bg-white text-purple-700 shadow-xs"
-                : "text-slate-500 hover:text-slate-900"
-            }`}
-          >
-            <span>🇦🇴</span>
-            <span>PT</span>
-          </button>
-          <button
             onClick={() => setLanguage("en")}
             title="English"
             className={`px-2 py-1 rounded-lg transition-all flex items-center gap-1 cursor-pointer ${
@@ -68,6 +56,18 @@ export default function Navbar() {
           >
             <span>🇬🇧</span>
             <span>EN</span>
+          </button>
+          <button
+            onClick={() => setLanguage("pt")}
+            title="Português (Angola)"
+            className={`px-2 py-1 rounded-lg transition-all flex items-center gap-1 cursor-pointer ${
+              language === "pt"
+                ? "bg-white text-purple-700 shadow-xs"
+                : "text-slate-500 hover:text-slate-900"
+            }`}
+          >
+            <span>🇦🇴</span>
+            <span>PT</span>
           </button>
         </div>
 
