@@ -104,11 +104,10 @@ export default function LookupsManagerPage() {
                 <button
                   key={lt.type_code}
                   onClick={() => setSelectedType(lt)}
-                  className={`w-full text-left p-3 rounded-xl text-xs flex items-center justify-between transition-colors cursor-pointer ${
-                    isSelected
+                  className={`w-full text-left p-3 rounded-xl text-xs flex items-center justify-between transition-colors cursor-pointer ${isSelected
                       ? "bg-indigo-50/80 text-indigo-900 font-bold border border-indigo-200 shadow-2xs"
                       : "hover:bg-slate-50 text-slate-700"
-                  }`}
+                    }`}
                 >
                   <div className="space-y-0.5 min-w-0">
                     <div className="truncate">{lt.type_name}</div>

@@ -79,22 +79,20 @@ export default function HQMasterPage() {
         <div className="flex items-center p-1 rounded-xl bg-slate-100 border border-slate-200 text-xs font-bold shadow-2xs">
           <button
             onClick={() => setTab("monitor")}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${
-              tab === "monitor"
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${tab === "monitor"
                 ? "bg-white text-indigo-700 shadow-2xs font-bold"
                 : "text-slate-600 hover:text-slate-900"
-            }`}
+              }`}
           >
             <Activity className="w-3.5 h-3.5" />
             <span>Branch Audit Monitor</span>
           </button>
           <button
             onClick={() => setTab("master")}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${
-              tab === "master"
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${tab === "master"
                 ? "bg-white text-indigo-700 shadow-2xs font-bold"
                 : "text-slate-600 hover:text-slate-900"
-            }`}
+              }`}
           >
             <Globe className="w-3.5 h-3.5" />
             <span>Master Angola Inventory</span>
@@ -139,9 +137,8 @@ export default function HQMasterPage() {
             Countrywide Net Variance
           </div>
           <div
-            className={`text-2xl font-black mt-1 ${
-              nationalDiff < 0 ? "text-rose-600" : nationalDiff > 0 ? "text-emerald-600" : "text-slate-900"
-            }`}
+            className={`text-2xl font-black mt-1 ${nationalDiff < 0 ? "text-rose-600" : nationalDiff > 0 ? "text-emerald-600" : "text-slate-900"
+              }`}
           >
             {nationalDiff > 0 ? `+${nationalDiff}` : nationalDiff} <span className="text-xs font-semibold text-slate-400">units</span>
           </div>
@@ -160,9 +157,8 @@ export default function HQMasterPage() {
               return (
                 <div
                   key={wh.warehouse_id}
-                  className={`bento-card p-6 space-y-4 flex flex-col justify-between ${
-                    isDone ? "border-emerald-200" : isProcess ? "border-indigo-200" : "border-slate-200"
-                  }`}
+                  className={`bento-card p-6 space-y-4 flex flex-col justify-between ${isDone ? "border-emerald-200" : isProcess ? "border-indigo-200" : "border-slate-200"
+                    }`}
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
@@ -171,13 +167,12 @@ export default function HQMasterPage() {
                         <h3 className="text-sm font-bold text-slate-900">{wh.warehouse_name}</h3>
                       </div>
                       <span
-                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase border ${
-                          isDone
+                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase border ${isDone
                             ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                             : isProcess
-                            ? "bg-indigo-50 text-indigo-700 border-indigo-200"
-                            : "bg-slate-100 text-slate-600 border-slate-200"
-                        }`}
+                              ? "bg-indigo-50 text-indigo-700 border-indigo-200"
+                              : "bg-slate-100 text-slate-600 border-slate-200"
+                          }`}
                       >
                         {wh.status}
                       </span>
@@ -292,13 +287,12 @@ export default function HQMasterPage() {
                       </td>
                       <td className="py-3 px-4 text-center">
                         <span
-                          className={`px-2 py-0.5 rounded-full font-mono text-[11px] font-bold border ${
-                            item.net_difference < 0
+                          className={`px-2 py-0.5 rounded-full font-mono text-[11px] font-bold border ${item.net_difference < 0
                               ? "bg-rose-50 text-rose-700 border-rose-200"
                               : item.net_difference > 0
-                              ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                              : "bg-slate-100 text-slate-600 border-slate-200"
-                          }`}
+                                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                : "bg-slate-100 text-slate-600 border-slate-200"
+                            }`}
                         >
                           {item.net_difference > 0 ? `+${item.net_difference}` : item.net_difference}
                         </span>

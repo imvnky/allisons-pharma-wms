@@ -190,10 +190,14 @@ class ShipmentArrival(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     warehouse_id = Column(Integer, ForeignKey("warehouses.id"), nullable=False)
-    arrival_type = Column(String(50), nullable=False) # 'SEA_SHIPMENT', 'LOCAL_SUPPLIER'
+    shipment_number = Column(String(50), nullable=True) # e.g. "01/26", "02/26"
+    invoice_number = Column(String(100), nullable=True)
+    lot_size = Column(String(100), nullable=True)
+    freight_type = Column(String(50), default="CONTAINER") # 'CONTAINER' or 'AIRLOT'
+    arrival_type = Column(String(50), nullable=False) # 'SEA_SHIPMENT', 'AIR_FREIGHT', 'LOCAL_SUPPLIER'
     vessel_name = Column(String(100), nullable=True)
-    tracking_bl_number = Column(String(100), nullable=True)
-    container_number = Column(String(100), nullable=True)
+    tracking_bl_number = Column(String(100), nullable=True) # BL Number / Air Waybill
+    container_number = Column(String(100), nullable=True) # Container or Airlot Number
     supplier_name = Column(String(150), nullable=True)
     received_by = Column(Integer, ForeignKey("users.id"), nullable=False)
     received_date = Column(Date, nullable=False)
@@ -211,8 +215,12 @@ class ShipmentArrivalItem(Base):
     product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
     batch_number = Column(String(50), nullable=False)
     expiry_date = Column(Date, nullable=False)
+    total_cartons = Column(Integer, default=0, nullable=False) # Expected / Manifest Cartons
+    total_units = Column(Integer, default=0, nullable=False) # Expected Units
     cartons_received = Column(Integer, default=0, nullable=False)
     units_received = Column(Integer, default=0, nullable=False)
+    shortage_units = Column(Integer, default=0, nullable=False) # Shortage Units (Total - Received)
+    remarks = Column(String(255), nullable=True)
 
     arrival = relationship("ShipmentArrival", back_populates="items")
     product = relationship("Product")
@@ -225,6 +233,7 @@ class Transfer(Base):
     from_warehouse_id = Column(Integer, ForeignKey("warehouses.id"), nullable=False)
     to_warehouse_id = Column(Integer, ForeignKey("warehouses.id"), nullable=False)
     dispatched_by = Column(Integer, ForeignKey("users.id"), nullable=False)
+    transfer_date = Column(Date, nullable=True) # Selected Transfer Initiation Date
     dispatched_at = Column(DateTime(timezone=True), server_default=func.now())
     driver_name = Column(String(100), nullable=True)
     vehicle_plate = Column(String(50), nullable=True)
@@ -244,7 +253,9 @@ class TransferItem(Base):
     transfer_id = Column(Integer, ForeignKey("transfers.id", ondelete="CASCADE"), nullable=False)
     product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
     batch_number = Column(String(50), nullable=True)
-    dispatched_qty = Column(Integer, nullable=False)
+    carton_packing = Column(Integer, default=1, nullable=False) # Carton Packing (How much Qty in a Carton)
+    cartons_dispatched = Column(Integer, default=0, nullable=False) # Quantity of Cartons
+    dispatched_qty = Column(Integer, nullable=False) # Total Units (cartons * packing)
     received_qty = Column(Integer, nullable=True)
 
     transfer = relationship("Transfer", back_populates="items")

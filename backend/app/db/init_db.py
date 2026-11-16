@@ -1,5 +1,6 @@
 from datetime import date
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 from app.core.database import Base, engine, SessionLocal
 from app.core.security import hash_password
 from app.models.entities import (
@@ -7,8 +8,35 @@ from app.models.entities import (
     TileSubPermission, RoleSubPermission, LookupType, LookupValue, Product
 )
 
+def run_migrations():
+    """Idempotently adds any newly introduced columns to existing PostgreSQL production tables."""
+    try:
+        with engine.connect() as conn:
+            if engine.dialect.name == "postgresql":
+                conn.execute(text("""
+                    ALTER TABLE shipment_arrivals ADD COLUMN IF NOT EXISTS shipment_number VARCHAR(50);
+                    ALTER TABLE shipment_arrivals ADD COLUMN IF NOT EXISTS invoice_number VARCHAR(100);
+                    ALTER TABLE shipment_arrivals ADD COLUMN IF NOT EXISTS lot_size VARCHAR(100);
+                    ALTER TABLE shipment_arrivals ADD COLUMN IF NOT EXISTS freight_type VARCHAR(50) DEFAULT 'CONTAINER';
+
+                    ALTER TABLE shipment_arrival_items ADD COLUMN IF NOT EXISTS total_cartons INTEGER DEFAULT 0;
+                    ALTER TABLE shipment_arrival_items ADD COLUMN IF NOT EXISTS total_units INTEGER DEFAULT 0;
+                    ALTER TABLE shipment_arrival_items ADD COLUMN IF NOT EXISTS shortage_units INTEGER DEFAULT 0;
+                    ALTER TABLE shipment_arrival_items ADD COLUMN IF NOT EXISTS remarks VARCHAR(255);
+
+                    ALTER TABLE transfers ADD COLUMN IF NOT EXISTS transfer_date DATE;
+
+                    ALTER TABLE transfer_items ADD COLUMN IF NOT EXISTS carton_packing INTEGER DEFAULT 1;
+                    ALTER TABLE transfer_items ADD COLUMN IF NOT EXISTS cartons_dispatched INTEGER DEFAULT 0;
+                """))
+                conn.commit()
+                print("Database columns verified and migrated successfully.")
+    except Exception as e:
+        print(f"[Migration Notice] {e}")
+
 def init_db():
     print("Creating all database tables...")
+    run_migrations()
     Base.metadata.create_all(bind=engine)
     print("Tables created successfully.")
 
