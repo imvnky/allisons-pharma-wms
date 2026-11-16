@@ -26,27 +26,43 @@ def list_arrivals(
     for a in arrivals:
         items_count = len(a.items)
         total_units = sum(i.units_received for i in a.items)
+        total_cartons = sum(i.cartons_received for i in a.items)
+        total_shortage = sum(getattr(i, 'shortage_units', 0) or 0 for i in a.items)
+        display_num = getattr(a, 'shipment_number', None) or f"{a.id:02d}/26"
+
         result.append({
             "id": a.id,
             "arrival_number": f"ARR-2026-{a.id:03d}",
+            "shipment_number": display_num, # e.g. "01/26", "02/26"
+            "invoice_number": getattr(a, 'invoice_number', None) or "INV-N/A",
+            "lot_size": getattr(a, 'lot_size', None) or "N/A",
+            "freight_type": getattr(a, 'freight_type', None) or "CONTAINER",
             "warehouse_name": a.warehouse.name,
             "arrival_type": a.arrival_type,
-            "vessel_name": a.vessel_name or "Local Supplier",
+            "vessel_name": a.vessel_name or "Cargo Freight",
             "tracking_bl_number": a.tracking_bl_number or "N/A",
             "container_number": a.container_number or "N/A",
             "supplier_name": a.supplier_name or "N/A",
             "received_date": str(a.received_date),
             "status": a.status,
             "items_count": items_count,
+            "total_cartons": total_cartons,
             "total_units": total_units,
+            "total_shortage_units": total_shortage,
             "items": [
                 {
+                    "product_id": i.product_id,
                     "product_name": i.product.name,
                     "sku": i.product.sku,
+                    "packaging": i.product.units_per_carton,
                     "batch_number": i.batch_number,
                     "expiry_date": str(i.expiry_date),
-                    "cartons": i.cartons_received,
-                    "units": i.units_received
+                    "total_cartons": getattr(i, 'total_cartons', i.cartons_received) or i.cartons_received,
+                    "total_units": getattr(i, 'total_units', i.units_received) or i.units_received,
+                    "cartons_received": i.cartons_received,
+                    "units_received": i.units_received,
+                    "shortage_units": getattr(i, 'shortage_units', 0) or 0,
+                    "remarks": getattr(i, 'remarks', '') or ''
                 }
                 for i in a.items
             ]
@@ -63,10 +79,17 @@ def create_arrival(
     if not wh_id:
         raise HTTPException(status_code=400, detail="User must belong to a warehouse to record arrivals")
 
+    count = db.query(ShipmentArrival).count()
+    shipment_num = payload.shipment_number or f"{count + 1:02d}/26"
+
     arrival = ShipmentArrival(
         warehouse_id=wh_id,
-        arrival_type=payload.arrival_type,
-        vessel_name=payload.vessel_name,
+        shipment_number=shipment_num,
+        invoice_number=payload.invoice_number,
+        lot_size=payload.lot_size,
+        freight_type=payload.freight_type or "CONTAINER",
+        arrival_type=payload.arrival_type or ("SEA_SHIPMENT" if payload.freight_type == "CONTAINER" else "AIR_FREIGHT"),
+        vessel_name=payload.vessel_name or payload.supplier_name or "Cargo Freight",
         tracking_bl_number=payload.tracking_bl_number,
         container_number=payload.container_number,
         supplier_name=payload.supplier_name,
@@ -80,20 +103,29 @@ def create_arrival(
     for it in payload.items:
         prod = db.query(Product).filter(Product.id == it["product_id"]).first()
         if prod:
-            cartons = it.get("cartons_received", 0)
-            units = it.get("units_received", 0) or (cartons * prod.units_per_carton)
+            units_per_carton = int(it.get("packaging") or prod.units_per_carton or 1)
+            total_cartons = int(it.get("total_cartons", 0) or 0)
+            cartons_received = int(it.get("cartons_received", 0) or 0)
+            total_units = int(it.get("total_units", 0) or (total_cartons * units_per_carton))
+            units_received = int(it.get("units_received", 0) or (cartons_received * units_per_carton))
+            shortage_units = int(it.get("shortage_units", max(0, total_units - units_received)) or 0)
+
             item = ShipmentArrivalItem(
                 arrival_id=arrival.id,
                 product_id=prod.id,
                 batch_number=it.get("batch_number", "BAT-GEN-01"),
                 expiry_date=it.get("expiry_date", date(2028, 12, 31)),
-                cartons_received=cartons,
-                units_received=units
+                total_cartons=total_cartons,
+                total_units=total_units,
+                cartons_received=cartons_received,
+                units_received=units_received,
+                shortage_units=shortage_units,
+                remarks=it.get("remarks", "")
             )
             db.add(item)
 
     db.commit()
-    return {"status": "success", "arrival_id": arrival.id, "message": "Shipment arrival logged into stock!"}
+    return {"status": "success", "arrival_id": arrival.id, "shipment_number": shipment_num, "message": "Shipment arrival logged into stock!"}
 
 # ----------------- TRANSFERS -----------------
 @router.get("/transfers")
@@ -112,25 +144,35 @@ def list_transfers(
     result = []
     for t in transfers:
         total_qty = sum(i.dispatched_qty for i in t.items)
+        total_cartons = sum(getattr(i, 'cartons_dispatched', 0) or 0 for i in t.items)
+        trf_date = str(t.transfer_date) if getattr(t, 'transfer_date', None) else str(t.dispatched_at.date()) if t.dispatched_at else str(date.today())
+
         result.append({
             "id": t.id,
             "transfer_number": t.transfer_number,
             "from_warehouse_id": t.from_warehouse_id,
             "from_warehouse_name": t.from_warehouse.name,
+            "from_warehouse_city": t.from_warehouse.city,
             "to_warehouse_id": t.to_warehouse_id,
             "to_warehouse_name": t.to_warehouse.name,
-            "driver_name": t.driver_name,
-            "vehicle_plate": t.vehicle_plate,
+            "to_warehouse_city": t.to_warehouse.city,
+            "transfer_date": trf_date,
+            "driver_name": t.driver_name or "Assigned Carrier",
+            "vehicle_plate": t.vehicle_plate or "LD-AO",
             "status": t.status,
+            "notes": t.notes or "",
             "dispatched_at": str(t.dispatched_at),
             "approved_at": str(t.approved_at) if t.approved_at else None,
+            "total_cartons": total_cartons,
             "total_units": total_qty,
             "is_incoming": t.to_warehouse_id == current_user.warehouse_id,
             "items": [
                 {
                     "sku": i.product.sku,
                     "product_name": i.product.name,
-                    "batch_number": i.batch_number,
+                    "batch_number": i.batch_number or "BAT-GEN",
+                    "carton_packing": getattr(i, 'carton_packing', i.product.units_per_carton) or i.product.units_per_carton,
+                    "cartons_dispatched": getattr(i, 'cartons_dispatched', 0) or 0,
                     "dispatched_qty": i.dispatched_qty,
                     "received_qty": i.received_qty
                 }
@@ -153,12 +195,14 @@ def create_transfer(
 
     count = db.query(Transfer).count()
     trf_num = f"TR-2026-{count + 101:03d}"
+    trf_date = payload.transfer_date or date.today()
 
     transfer = Transfer(
         transfer_number=trf_num,
         from_warehouse_id=wh_id,
         to_warehouse_id=payload.to_warehouse_id,
         dispatched_by=current_user.id,
+        transfer_date=trf_date,
         driver_name=payload.driver_name,
         vehicle_plate=payload.vehicle_plate,
         notes=payload.notes,
@@ -170,16 +214,21 @@ def create_transfer(
     for it in payload.items:
         prod = db.query(Product).filter(Product.id == it["product_id"]).first()
         if prod:
+            packing = int(it.get("carton_packing") or prod.units_per_carton or 1)
+            cartons = int(it.get("cartons_dispatched", 0) or 0)
+            dispatched_units = int(it.get("dispatched_qty", 0) or (cartons * packing))
             db.add(TransferItem(
                 transfer_id=transfer.id,
                 product_id=prod.id,
                 batch_number=it.get("batch_number", "BAT-DEFAULT"),
-                dispatched_qty=it["dispatched_qty"],
+                carton_packing=packing,
+                cartons_dispatched=cartons,
+                dispatched_qty=dispatched_units,
                 received_qty=None
             ))
 
     db.commit()
-    return {"status": "success", "transfer_number": trf_num, "message": "Transfer dispatched successfully!"}
+    return {"status": "success", "transfer_number": trf_num, "transfer_id": transfer.id, "message": "Transfer dispatched successfully!"}
 
 @router.post("/transfers/{transfer_id}/approve")
 def approve_transfer(

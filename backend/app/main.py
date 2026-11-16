@@ -27,7 +27,13 @@ app.add_middleware(
 )
 
 # Observability Logging Middleware
+from app.db.init_db import run_migrations
+
 app.add_middleware(ApiLoggingMiddleware)
+
+@app.on_event("startup")
+def on_startup():
+    run_migrations()
 
 # Include Routers
 app.include_router(auth_router, prefix=settings.API_V1_STR)

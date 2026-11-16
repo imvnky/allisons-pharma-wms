@@ -58,3 +58,70 @@
   border-color: rgba(203, 213, 225, 1);
   box-shadow: 0 4px 12px 0 rgba(15, 23, 42, 0.05);
 }
+
+/* Print Styles for Official Pharmaceutical Documents */
+@media screen {
+  .print-only {
+    display: none !important;
+  }
+}
+
+@media print {
+  @page {
+    size: portrait;
+    margin: 12mm 10mm;
+  }
+
+  nav,
+  aside,
+  header,
+  .no-print,
+  button,
+  .btn,
+  input,
+  select {
+    display: none !important;
+  }
+
+  body,
+  main,
+  #root {
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .print-portrait-card {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    font-size: 10pt !important;
+  }
+
+  th,
+  td {
+    border: 1px solid #475569 !important;
+    padding: 6px 8px !important;
+    color: #000000 !important;
+  }
+
+  th {
+    background-color: #f8fafc !important;
+    font-weight: 700 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

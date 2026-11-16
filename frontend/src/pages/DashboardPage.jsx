@@ -462,12 +462,12 @@ export default function DashboardPage({ setCurrentView }) {
                   <Ship className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="text-xs font-bold text-slate-900">Vessel MSC Luisa</div>
-                  <div className="text-[10px] text-slate-500">Container MSCU-9921 • Port Luanda</div>
+                  <div className="text-xs font-bold text-slate-900">Shipment 01/26 (Sea Container)</div>
+                  <div className="text-[10px] text-slate-500">MSKU-908124-7 • BL MEDU-782194</div>
                 </div>
               </div>
               <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
-                Cleared
+                Verified In Stock
               </span>
             </div>
 
@@ -477,12 +477,12 @@ export default function DashboardPage({ setCurrentView }) {
                   <Truck className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="text-xs font-bold text-slate-900">Palanca Transfer In</div>
-                  <div className="text-[10px] text-slate-500">Dispatch #TRF-8821 • In Transit</div>
+                  <div className="text-xs font-bold text-slate-900">Transfer Note to Lobito</div>
+                  <div className="text-[10px] text-slate-500">TR-2026-102 • Pedro Manuel (LD-44-91-AM)</div>
                 </div>
               </div>
               <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold">
-                En Route
+                In Transit
               </span>
             </div>
 
