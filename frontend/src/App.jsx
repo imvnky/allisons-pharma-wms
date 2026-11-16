@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { LanguageProvider } from "./context/LanguageContext";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import LoginPage from "./pages/LoginPage";
@@ -78,7 +79,9 @@ function MainApp() {
 export default function App() {
   return (
     <AuthProvider>
-      <MainApp />
+      <LanguageProvider>
+        <MainApp />
+      </LanguageProvider>
     </AuthProvider>
   );
 }

@@ -72,26 +72,19 @@ def recalculate_record(record: DailyReconciliationRecord, product: Product):
     record.physical_stock = (record.carton_count * product.units_per_carton) + record.loose_count + record.display_count
     record.difference = record.physical_stock - record.required_stock
 
-@router.get("/sheet")
-def get_daily_sheet(
-    target_date: date = date.today(),
-    warehouse_id: int = None,
-    current_user: User = Depends(require_permission("RECONCILIATION", "VIEW")),
-    db: Session = Depends(get_db)
-):
-    # Determine warehouse
-    wh_id = warehouse_id if (current_user.role.code in ["SUPER_ADMIN", "HQ_ADMIN"] and warehouse_id) else current_user.warehouse_id
-    if not wh_id:
-        # Default to Mulemba if HQ user didn't specify
-        first_wh = db.query(Warehouse).first()
-        wh_id = first_wh.id
+def sync_session_calculations(db: Session, session: InventorySession):
+    """Safely updates record columns from active counts, arrivals, and transfers."""
+    if session.status == "INVENTORY_DONE":
+        # Finalized records are immutable and must not be overwritten
+        return
 
-    session = get_or_create_session(db, wh_id, target_date)
     records = db.query(DailyReconciliationRecord).filter(
         DailyReconciliationRecord.session_id == session.id
     ).all()
 
-    # Dynamic auto-sync of counts, arrivals, and transfers
+    wh_id = session.warehouse_id
+    target_date = session.audit_date
+
     for r in records:
         # 1. Carton counts
         carton_sum = db.query(func.sum(PhysicalCount.quantity)).filter(
@@ -109,7 +102,7 @@ def get_daily_sheet(
         ).scalar() or 0
         r.loose_count = loose_sum
 
-        # 3. Display count (latest verified)
+        # 3. Display count (latest verified count for today)
         display_entry = db.query(PhysicalCount).filter(
             PhysicalCount.session_id == session.id,
             PhysicalCount.product_id == r.product_id,
@@ -118,7 +111,7 @@ def get_daily_sheet(
         if display_entry:
             r.display_count = display_entry.quantity
 
-        # 4. Arrivals today (Sea + Local)
+        # 4. Inward Arrivals (Verified Sea + Local Deliveries)
         arr_sum = db.query(func.sum(ShipmentArrivalItem.units_received)).join(ShipmentArrival).filter(
             ShipmentArrival.warehouse_id == wh_id,
             ShipmentArrival.received_date == target_date,
@@ -126,7 +119,7 @@ def get_daily_sheet(
             ShipmentArrival.status == "VERIFIED"
         ).scalar() or 0
 
-        # Transfers-in approved
+        # Inward inter-warehouse transfers approved
         inward_trf = db.query(func.sum(TransferItem.received_qty)).join(Transfer).filter(
             Transfer.to_warehouse_id == wh_id,
             func.date(Transfer.approved_at) == target_date,
@@ -143,10 +136,34 @@ def get_daily_sheet(
         ).scalar() or 0
         r.transfers_qty = outward_trf
 
-        # Recalculate
+        # Recalculate financial and physical difference
         recalculate_record(r, r.product)
 
     db.commit()
+
+@router.get("/sheet")
+def get_daily_sheet(
+    target_date: date = date.today(),
+    warehouse_id: int = None,
+    current_user: User = Depends(require_permission("RECONCILIATION", "VIEW")),
+    db: Session = Depends(get_db)
+):
+    # Determine warehouse
+    wh_id = warehouse_id if (current_user.role.code in ["SUPER_ADMIN", "HQ_ADMIN"] and warehouse_id) else current_user.warehouse_id
+    if not wh_id:
+        # Default to Mulemba if HQ user didn't specify
+        first_wh = db.query(Warehouse).first()
+        wh_id = first_wh.id
+
+    session = get_or_create_session(db, wh_id, target_date)
+    
+    # Sync calculations if session is still open
+    if session.status != "INVENTORY_DONE":
+        sync_session_calculations(db, session)
+
+    records = db.query(DailyReconciliationRecord).filter(
+        DailyReconciliationRecord.session_id == session.id
+    ).all()
 
     # Format result for the 13 columns
     result = []
@@ -194,6 +211,13 @@ def update_sales(
     if not record:
         raise HTTPException(status_code=404, detail="Reconciliation record not found")
     
+    # Audit Session Immutability Guard
+    if record.session.status == "INVENTORY_DONE":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot update sales: Today's inventory session has already been finalized and locked."
+        )
+
     # Check warehouse scoping
     if current_user.role.code not in ["SUPER_ADMIN", "HQ_ADMIN"]:
         if record.session.warehouse_id != current_user.warehouse_id:
@@ -221,6 +245,13 @@ def update_remarks(
     if not record:
         raise HTTPException(status_code=404, detail="Reconciliation record not found")
 
+    # Audit Session Immutability Guard
+    if record.session.status == "INVENTORY_DONE":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot update remarks: Today's inventory session has already been finalized and locked."
+        )
+
     record.remarks = payload.remarks
     db.commit()
     return {"status": "success", "record_id": record.id, "remarks": record.remarks}
@@ -234,6 +265,15 @@ def finalize_daily_inventory(
     session = db.query(InventorySession).filter(InventorySession.id == session_id).first()
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
+
+    if session.status == "INVENTORY_DONE":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="This daily inventory session is already finalized and submitted to HQ."
+        )
+
+    # Sync all calculations one final time before locking
+    sync_session_calculations(db, session)
 
     session.status = "INVENTORY_DONE"
     session.finalized_by = current_user.id

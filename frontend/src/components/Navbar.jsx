@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import {
   MapPin,
   Shield,
@@ -17,6 +18,7 @@ import {
 
 export default function Navbar({ currentView, setCurrentView }) {
   const { user, activeWarehouse, setActiveWarehouse, logout } = useAuth();
+  const { language, setLanguage } = useLanguage();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showWhMenu, setShowWhMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -144,11 +146,15 @@ export default function Navbar({ currentView, setCurrentView }) {
           <span>Online</span>
         </div>
 
-        {/* Country Chip */}
-        <div className="hidden md:flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200/60 text-[11px] font-bold text-slate-600">
+        {/* Country & Language Switcher */}
+        <button
+          onClick={() => setLanguage(language === "pt" ? "en" : "pt")}
+          className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 border border-slate-200/60 text-[11px] font-bold text-slate-700 transition-colors cursor-pointer"
+          title={`Active Language: ${language === "pt" ? "Português (AO)" : "English"}. Click to switch.`}
+        >
           <span>🇦🇴</span>
-          <span>AO</span>
-        </div>
+          <span>{language === "pt" ? "PT" : "EN"}</span>
+        </button>
 
         {/* Notifications Popover Toggle */}
         <div className="relative">

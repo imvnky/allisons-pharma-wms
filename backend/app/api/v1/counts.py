@@ -31,6 +31,11 @@ def submit_physical_count(
         raise HTTPException(status_code=404, detail="Product not found")
 
     session = get_or_create_session(db, current_user.warehouse_id, date.today())
+    if session.status == "INVENTORY_DONE":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot submit counts: Today's inventory session has already been finalized by the supervisor."
+        )
 
     # Create count record
     count_entry = PhysicalCount(
@@ -88,6 +93,65 @@ def get_my_submissions(
         }
         for s in submissions
     ]
+
+@router.put("/{count_id}")
+def update_physical_count(
+    count_id: int,
+    payload: CountSubmission,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    count_entry = db.query(PhysicalCount).filter(PhysicalCount.id == count_id).first()
+    if not count_entry:
+        raise HTTPException(status_code=404, detail="Count submission not found")
+
+    if count_entry.session.status == "INVENTORY_DONE":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot modify count: Today's inventory session is finalized."
+        )
+
+    # Staff can only edit their own submissions unless Super Admin / Supervisor
+    if current_user.role.code not in ["SUPER_ADMIN", "SUPERVISOR"] and count_entry.submitted_by != current_user.id:
+        raise HTTPException(status_code=403, detail="Cannot edit another staff member's count submission")
+
+    count_entry.quantity = max(0, payload.quantity)
+    if payload.change_reason_key:
+        count_entry.change_reason_key = payload.change_reason_key
+
+    db.commit()
+    db.refresh(count_entry)
+
+    return {
+        "status": "success",
+        "count_id": count_entry.id,
+        "quantity": count_entry.quantity,
+        "change_reason": count_entry.change_reason_key
+    }
+
+@router.delete("/{count_id}")
+def delete_physical_count(
+    count_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    count_entry = db.query(PhysicalCount).filter(PhysicalCount.id == count_id).first()
+    if not count_entry:
+        raise HTTPException(status_code=404, detail="Count submission not found")
+
+    if count_entry.session.status == "INVENTORY_DONE":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot delete count: Today's inventory session is finalized."
+        )
+
+    if current_user.role.code not in ["SUPER_ADMIN", "SUPERVISOR"] and count_entry.submitted_by != current_user.id:
+        raise HTTPException(status_code=403, detail="Cannot delete another staff member's count submission")
+
+    db.delete(count_entry)
+    db.commit()
+
+    return {"status": "success", "message": "Count entry deleted successfully"}
 
 @router.get("/products")
 def get_counting_products(

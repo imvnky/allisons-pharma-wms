@@ -21,6 +21,20 @@ def check_super_admin(current_user: User):
             detail="Forbidden: Only Super Admin can access administrative controls"
         )
 
+# ----------------- WAREHOUSES -----------------
+@router.get("/warehouses")
+def list_warehouses(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    warehouses = db.query(Warehouse).filter(Warehouse.is_active == True).order_by(Warehouse.id.asc()).all()
+    return [
+        {
+            "id": w.id,
+            "code": w.code,
+            "name": w.name,
+            "city": w.city
+        }
+        for w in warehouses
+    ]
+
 # ----------------- ROLES & TILES (Screen 7) -----------------
 @router.get("/roles")
 def list_roles(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
