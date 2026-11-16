@@ -7,18 +7,19 @@ import {
   Ship,
   AlertTriangle,
   Globe,
-  Settings,
   ShieldCheck,
   ListFilter,
   Terminal,
   Activity,
-  ChevronRight,
   Clock,
-  ArrowLeftRight
+  ArrowLeftRight,
+  LogOut,
+  ChevronRight,
+  ShieldAlert
 } from "lucide-react";
 
 export default function Sidebar({ currentView, setCurrentView }) {
-  const { user, canAccessTile } = useAuth();
+  const { user, logout } = useAuth();
 
   const isSuperAdmin = user?.role?.code === "SUPER_ADMIN";
   const isHQ = user?.role?.code === "HQ_ADMIN" || isSuperAdmin;
@@ -29,68 +30,64 @@ export default function Sidebar({ currentView, setCurrentView }) {
 
   const menuSections = [
     {
-      title: "Core",
+      title: "DASHBOARDS",
       items: [
-        { id: "dashboard", label: "Home / Dashboard", icon: LayoutDashboard, visible: true },
+        { id: "dashboard", label: "Overview", icon: LayoutDashboard, visible: true },
+        { id: "counting", label: "Floor Counting", icon: Boxes, visible: isCarton || isLoose || isDisplay },
+        { id: "reconciliation", label: "Daily Reconciliation", icon: FileSpreadsheet, visible: isSupervisor || isHQ },
       ],
     },
     {
-      title: "Stock Counting",
-      visible: isCarton || isLoose || isDisplay,
-      items: [
-        { id: "counting", label: "Floor Counting Terminal", icon: Boxes, visible: isCarton || isLoose || isDisplay },
-      ],
-    },
-    {
-      title: "Reconciliation",
+      title: "OPERATIONS & LOGISTICS",
       visible: isSupervisor || isHQ,
       items: [
-        { id: "reconciliation", label: "Daily Reconciliation Sheet", icon: FileSpreadsheet, visible: isSupervisor || isHQ },
+        { id: "shipments", label: "Arrivals & Transfers", icon: Ship, visible: isSupervisor || isHQ },
       ],
     },
     {
-      title: "Shipments & Transfers",
+      title: "ALERTS & QUALITY",
       visible: isSupervisor || isHQ,
       items: [
-        { id: "shipments", label: "Arrivals & Transfers Hub", icon: Ship, visible: isSupervisor || isHQ },
+        {
+          id: "alerts",
+          label: "Differences & Expiry",
+          icon: ShieldAlert,
+          visible: isSupervisor || isHQ,
+          badge: "4",
+          badgeColor: "bg-rose-100 text-rose-700",
+        },
       ],
     },
     {
-      title: "Alerts & Quality",
-      visible: isSupervisor || isHQ,
-      items: [
-        { id: "alerts", label: "Differences & Expiry", icon: AlertTriangle, visible: isSupervisor || isHQ },
-      ],
-    },
-    {
-      title: "HQ Executive",
+      title: "HQ EXECUTIVE",
       visible: isHQ,
       items: [
         { id: "hq", label: "HQ Master Angola Stock", icon: Globe, visible: isHQ },
       ],
     },
     {
-      title: "Administration",
+      title: "SYSTEM & AUDIT",
       visible: isSuperAdmin,
       items: [
         { id: "roles", label: "Roles & Authorization", icon: ShieldCheck, visible: isSuperAdmin },
         { id: "lookups", label: "Master Dropdowns", icon: ListFilter, visible: isSuperAdmin },
-        { id: "logs", label: "API & System Logs", icon: Terminal, visible: isSuperAdmin },
+        { id: "logs", label: "API Observability Logs", icon: Terminal, visible: isSuperAdmin },
       ],
     },
   ];
 
   return (
-    <aside className="w-64 bg-white border-r border-slate-200 flex flex-col justify-between shrink-0 min-h-[calc(100vh-4rem)]">
-      <div className="py-4 px-3 space-y-6">
+    <aside className="w-64 bg-white border-r border-slate-200/90 flex flex-col justify-between shrink-0 min-h-[calc(100vh-4rem)]">
+      {/* Menu Sections */}
+      <div className="py-5 px-3 space-y-6 overflow-y-auto">
         {menuSections
           .filter((section) => section.visible !== false)
           .map((section, idx) => (
             <div key={idx} className="space-y-1">
-              <div className="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+              <div className="px-3 text-[10px] font-black text-slate-400 tracking-wider uppercase">
                 {section.title}
               </div>
-              <div className="space-y-0.5">
+              <div className="space-y-0.5 pt-0.5">
                 {section.items
                   .filter((item) => item.visible)
                   .map((item) => {
@@ -100,17 +97,24 @@ export default function Sidebar({ currentView, setCurrentView }) {
                       <button
                         key={item.id}
                         onClick={() => setCurrentView(item.id)}
-                        className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                        className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                           isActive
-                            ? "bg-purple-50 text-purple-700 font-bold shadow-xs border border-purple-100"
+                            ? "bg-indigo-50/80 text-indigo-700 font-bold border-l-2 border-indigo-600 shadow-2xs"
                             : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                         }`}
                       >
                         <div className="flex items-center gap-2.5">
-                          <Icon className={`w-4 h-4 ${isActive ? "text-purple-600" : "text-slate-400"}`} />
-                          <span>{item.label}</span>
+                          <Icon className={`w-4 h-4 ${isActive ? "text-indigo-600" : "text-slate-400"}`} />
+                          <span className="truncate">{item.label}</span>
                         </div>
-                        {isActive && <div className="w-1.5 h-1.5 rounded-full bg-purple-600"></div>}
+                        {item.badge && (
+                          <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded-full ${item.badgeColor || "bg-slate-100 text-slate-600"}`}>
+                            {item.badge}
+                          </span>
+                        )}
+                        {isActive && !item.badge && (
+                          <div className="w-1.5 h-1.5 rounded-full bg-indigo-600"></div>
+                        )}
                       </button>
                     );
                   })}
@@ -119,18 +123,32 @@ export default function Sidebar({ currentView, setCurrentView }) {
           ))}
       </div>
 
-      {/* Warehouse Status Pill at Bottom */}
-      <div className="p-4 border-t border-slate-100">
-        <div className="p-3 rounded-xl bg-purple-50/60 border border-purple-100/80">
-          <div className="flex items-center justify-between text-[11px] font-bold text-purple-900">
-            <span>Audit Cycle</span>
-            <span className="px-1.5 py-0.5 rounded-sm bg-purple-200 text-purple-800 text-[9px]">LIVE</span>
+      {/* Bottom User Profile Card (PaceUI style) */}
+      <div className="p-3 border-t border-slate-200/80 bg-slate-50/50">
+        <div className="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200/80 shadow-2xs">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-600 to-blue-600 text-white font-bold flex items-center justify-center text-xs shrink-0 shadow-2xs">
+              {user?.full_name ? user.full_name.split(" ").map((n) => n[0]).join("") : "U"}
+            </div>
+            <div className="truncate text-left">
+              <div className="text-xs font-bold text-slate-900 truncate">
+                {user?.full_name || "Alisons Staff"}
+              </div>
+              <div className="text-[10px] text-slate-400 truncate">
+                {user?.role?.name || "Staff"}
+              </div>
+            </div>
           </div>
-          <div className="text-[11px] text-slate-600 mt-1">Status: <span className="font-semibold text-emerald-600">Open</span></div>
-          <div className="text-[10px] text-slate-400 mt-0.5">PostgreSQL • Async API</div>
+
+          <button
+            onClick={logout}
+            title="Sign Out"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+          </button>
         </div>
       </div>
     </aside>
   );
 }
-

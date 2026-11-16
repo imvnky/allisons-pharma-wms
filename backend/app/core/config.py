@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings
 from typing import Optional
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "Allisons African Pharma - Warehouse Management System"
+    PROJECT_NAME: str = "Alisons African Pharma - Warehouse Management System"
     API_V1_STR: str = "/api/v1"
     SECRET_KEY: str = "allisons_pharma_secret_key_angola_2026_super_secure_jwt"
     ALGORITHM: str = "HS256"

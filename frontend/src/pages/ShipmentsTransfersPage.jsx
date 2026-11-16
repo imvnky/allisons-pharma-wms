@@ -1,7 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { apiRequest } from "../services/api";
-import { Ship, ArrowLeftRight, Plus, CheckCircle2, Truck, Calendar, Check, AlertCircle } from "lucide-react";
+import {
+  Ship,
+  ArrowLeftRight,
+  Plus,
+  CheckCircle2,
+  Truck,
+  Calendar,
+  Check,
+  AlertCircle,
+  X,
+  Package,
+  Clock,
+  ArrowRight
+} from "lucide-react";
 
 export default function ShipmentsTransfersPage() {
   const { user, activeWarehouse } = useAuth();
@@ -32,12 +45,12 @@ export default function ShipmentsTransfersPage() {
 
   useEffect(() => {
     loadData();
-    apiRequest("/counts/products").then(setProducts).catch(console.log);
+    apiRequest("/counts/products").then((p) => setProducts(p || [])).catch(console.log);
   }, [activeWarehouse, tab]);
 
   function loadData() {
-    apiRequest("/shipments/arrivals").then(setArrivals).catch(console.log);
-    apiRequest("/shipments/transfers").then(setTransfers).catch(console.log);
+    apiRequest("/shipments/arrivals").then((a) => setArrivals(a || [])).catch(console.log);
+    apiRequest("/shipments/transfers").then((t) => setTransfers(t || [])).catch(console.log);
   }
 
   async function handleAddArrival(e) {
@@ -102,391 +115,293 @@ export default function ShipmentsTransfersPage() {
   }
 
   return (
-    <div className="p-8 space-y-6 max-w-7xl mx-auto">
+    <div className="p-6 lg:p-8 space-y-6 max-w-[1600px] mx-auto">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/90 pb-4">
         <div>
-          <h1 className="text-xl font-black text-slate-900 tracking-tight">Shipments & Transfers Hub</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+              <Ship className="w-5 h-5 text-indigo-600" />
+              <span>Shipments & Transfers Hub</span>
+            </h1>
+            <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold border border-slate-200">
+              {activeWarehouse?.name || "Mulemba"}
+            </span>
+          </div>
           <p className="text-xs text-slate-500 mt-0.5">
-            {activeWarehouse.name} • Manage Sea Shipments, Local Freight & Inter-Warehouse Transfers
+            Port container intake, Bill of Lading (BL) customs clearance, and inter-branch logistics.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <button
             onClick={() => setAddArrivalModal(true)}
-            className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-2 shadow-xs transition-colors"
+            className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
           >
-            <Ship className="w-3.5 h-3.5" />
-            <span>+ Add Shipment Arrival</span>
+            <Plus className="w-3.5 h-3.5" />
+            <span>Receive Container</span>
           </button>
           <button
             onClick={() => setCreateTransferModal(true)}
-            className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold flex items-center gap-2 shadow-xs transition-colors"
+            className="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
           >
             <ArrowLeftRight className="w-3.5 h-3.5" />
-            <span>+ Create Transfer</span>
+            <span>Dispatch Transfer</span>
           </button>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-200">
-        <button
-          onClick={() => setTab("arrivals")}
-          className={`pb-3 px-4 text-xs font-bold border-b-2 transition-all flex items-center gap-2 ${
-            tab === "arrivals"
-              ? "border-purple-600 text-purple-700"
-              : "border-transparent text-slate-500 hover:text-slate-800"
-          }`}
-        >
-          <Ship className="w-4 h-4" />
-          <span>Inward Arrivals (Sea & Local Shipments)</span>
-        </button>
-        <button
-          onClick={() => setTab("transfers")}
-          className={`pb-3 px-4 text-xs font-bold border-b-2 transition-all flex items-center gap-2 ${
-            tab === "transfers"
-              ? "border-purple-600 text-purple-700"
-              : "border-transparent text-slate-500 hover:text-slate-800"
-          }`}
-        >
-          <ArrowLeftRight className="w-4 h-4" />
-          <span>Inter-Warehouse Transfers</span>
-        </button>
+      {/* Tabs as PaceUI Pills */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center p-1 rounded-xl bg-slate-100 border border-slate-200 text-xs font-bold shadow-2xs">
+          <button
+            onClick={() => setTab("arrivals")}
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${
+              tab === "arrivals"
+                ? "bg-white text-indigo-700 shadow-2xs font-bold"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            <Ship className="w-3.5 h-3.5" />
+            <span>Port Container Arrivals ({arrivals.length})</span>
+          </button>
+          <button
+            onClick={() => setTab("transfers")}
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${
+              tab === "transfers"
+                ? "bg-white text-indigo-700 shadow-2xs font-bold"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            <Truck className="w-3.5 h-3.5" />
+            <span>Inter-Warehouse Transfers ({transfers.length})</span>
+          </button>
+        </div>
       </div>
 
-      {/* TAB 1: Inward Arrivals */}
+      {/* TAB 1: Arrivals */}
       {tab === "arrivals" && (
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
-          <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-            <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Inward Deliveries & Containers</h3>
-            <span className="text-xs text-slate-400 font-semibold">{arrivals.length} Shipments Recorded</span>
+        <div className="bento-card overflow-hidden">
+          <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+            <div>
+              <h2 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                Sea Shipments & Inbound Containers
+              </h2>
+              <p className="text-[11px] text-slate-500 mt-0.5">Containers arriving via Port of Luanda</p>
+            </div>
+            <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+              Automated Stock Inflow
+            </span>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase">
-                <tr>
-                  <th className="p-3">Arrival ID</th>
-                  <th className="p-3">Type</th>
-                  <th className="p-3">Vessel / Supplier</th>
-                  <th className="p-3">Container / BL</th>
-                  <th className="p-3 text-right">Items / Total Units</th>
-                  <th className="p-3">Date</th>
-                  <th className="p-3 text-center">Status</th>
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200/80 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                  <th className="py-3 px-4">Tracking / BL #</th>
+                  <th className="py-3 px-4">Vessel & Container</th>
+                  <th className="py-3 px-4">Supplier</th>
+                  <th className="py-3 px-4">Received Date</th>
+                  <th className="py-3 px-4">Items & Batches</th>
+                  <th className="py-3 px-4">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
-                {arrivals.length === 0 ? (
-                  <tr>
-                    <td colSpan="7" className="p-8 text-center text-slate-400">
-                      No shipment arrivals recorded yet. Click "+ Add Shipment Arrival" above.
+              <tbody className="divide-y divide-slate-100 text-slate-700">
+                {arrivals.map((arr) => (
+                  <tr key={arr.id} className="hover:bg-slate-50/70 transition-colors">
+                    <td className="py-3 px-4 font-mono font-bold text-indigo-700">
+                      {arr.tracking_bl_number}
+                    </td>
+                    <td className="py-3 px-4">
+                      <div className="font-bold text-slate-900">{arr.vessel_name || "Sea Vessel"}</div>
+                      <div className="text-[10px] text-slate-400 font-mono mt-0.5">
+                        Container: {arr.container_number || "MSCU-8849"}
+                      </div>
+                    </td>
+                    <td className="py-3 px-4 text-slate-600">{arr.supplier_name}</td>
+                    <td className="py-3 px-4 font-mono text-slate-500">{arr.received_date}</td>
+                    <td className="py-3 px-4">
+                      {arr.items?.map((it, i) => (
+                        <div key={i} className="text-[11px]">
+                          <span className="font-bold text-slate-900">{it.product_name}</span>:{" "}
+                          <span className="font-mono text-indigo-700 font-bold">{it.cartons_received} ctn</span>{" "}
+                          <span className="text-slate-400 text-[10px]">({it.batch_number})</span>
+                        </div>
+                      ))}
+                    </td>
+                    <td className="py-3 px-4">
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        {arr.status || "Received"}
+                      </span>
                     </td>
                   </tr>
-                ) : (
-                  arrivals.map((a) => (
-                    <tr key={a.id} className="hover:bg-slate-50">
-                      <td className="p-3 font-mono font-bold text-slate-900">{a.arrival_number}</td>
-                      <td className="p-3">
-                        <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 text-[10px] font-bold">
-                          {a.arrival_type}
-                        </span>
-                      </td>
-                      <td className="p-3 font-bold text-slate-800">{a.vessel_name}</td>
-                      <td className="p-3 text-slate-600">{a.tracking_bl_number}</td>
-                      <td className="p-3 text-right font-extrabold text-purple-700">
-                        {a.total_units.toLocaleString()} Units
-                      </td>
-                      <td className="p-3 text-slate-500">{a.received_date}</td>
-                      <td className="p-3 text-center">
-                        <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold">
-                          {a.status} 🟢
-                        </span>
-                      </td>
-                    </tr>
-                  ))
-                )}
+                ))}
               </tbody>
             </table>
           </div>
         </div>
       )}
 
-      {/* TAB 2: Inter-Warehouse Transfers */}
+      {/* TAB 2: Transfers */}
       {tab === "transfers" && (
-        <div className="space-y-6">
-          {/* Pending Inward Section (Transfers incoming from other branches) */}
-          <div className="bg-white rounded-2xl border border-amber-200/80 shadow-xs overflow-hidden">
-            <div className="p-4 bg-amber-50/50 border-b border-amber-100 flex items-center justify-between">
-              <div>
-                <h3 className="text-xs font-bold text-amber-950 uppercase tracking-wider">
-                  ⚠️ Inward Transfers Awaiting Confirmation
-                </h3>
-                <p className="text-[11px] text-amber-800">
-                  Stock dispatched from other warehouses to {activeWarehouse.name}. Click approve to add to your stock.
-                </p>
-              </div>
+        <div className="bento-card overflow-hidden">
+          <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+            <div>
+              <h2 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                Inter-Warehouse Route Logistics
+              </h2>
+              <p className="text-[11px] text-slate-500 mt-0.5">Dispatches between Mulemba, Palanca, and Lobito</p>
             </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase">
-                  <tr>
-                    <th className="p-3">Transfer ID</th>
-                    <th className="p-3">From Warehouse</th>
-                    <th className="p-3">Driver / Vehicle</th>
-                    <th className="p-3 text-right">Dispatched Qty</th>
-                    <th className="p-3">Status</th>
-                    <th className="p-3 text-center">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {transfers
-                    .filter((t) => t.is_incoming && t.status !== "APPROVED")
-                    .map((t) => (
-                      <tr key={t.id} className="hover:bg-slate-50">
-                        <td className="p-3 font-mono font-bold text-slate-900">{t.transfer_number}</td>
-                        <td className="p-3 font-bold text-purple-900">{t.from_warehouse_name}</td>
-                        <td className="p-3 text-slate-600">
-                          {t.driver_name || "Internal"} ({t.vehicle_plate || "N/A"})
-                        </td>
-                        <td className="p-3 text-right font-black text-purple-700">
-                          {t.total_units.toLocaleString()} Units
-                        </td>
-                        <td className="p-3">
-                          <span className="px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 text-[10px] font-bold">
-                            {t.status}
-                          </span>
-                        </td>
-                        <td className="p-3 text-center">
-                          <button
-                            onClick={() => handleApproveTransfer(t.id)}
-                            className="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs flex items-center gap-1.5 mx-auto transition-colors"
-                          >
-                            <Check className="w-3.5 h-3.5" />
-                            <span>Confirm & Approve Arrival</span>
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  {transfers.filter((t) => t.is_incoming && t.status !== "APPROVED").length === 0 && (
-                    <tr>
-                      <td colSpan="6" className="p-6 text-center text-slate-400">
-                        No pending inward transfers awaiting approval.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+            <span className="text-[11px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded-full">
+              Dual Supervisor Sign-Off
+            </span>
           </div>
 
-          {/* Outward Dispatches Section */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
-            <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-              <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Outward Dispatches</h3>
-              <span className="text-xs text-slate-400 font-semibold">{transfers.length} Transfers Logged</span>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase">
-                  <tr>
-                    <th className="p-3">Transfer ID</th>
-                    <th className="p-3">From</th>
-                    <th className="p-3">To Destination</th>
-                    <th className="p-3">Driver</th>
-                    <th className="p-3 text-right">Units</th>
-                    <th className="p-3">Dispatched Time</th>
-                    <th className="p-3 text-center">Receiver Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {transfers.map((t) => (
-                    <tr key={t.id} className="hover:bg-slate-50">
-                      <td className="p-3 font-mono font-bold text-slate-900">{t.transfer_number}</td>
-                      <td className="p-3 text-slate-700">{t.from_warehouse_name}</td>
-                      <td className="p-3 font-bold text-purple-900">{t.to_warehouse_name}</td>
-                      <td className="p-3 text-slate-600">{t.driver_name || "Freight Fleet"}</td>
-                      <td className="p-3 text-right font-extrabold text-slate-900">
-                        {t.total_units.toLocaleString()} Units
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200/80 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                  <th className="py-3 px-4">Dispatch #</th>
+                  <th className="py-3 px-4">Origin & Destination</th>
+                  <th className="py-3 px-4">Driver & Vehicle</th>
+                  <th className="py-3 px-4">Products Dispatched</th>
+                  <th className="py-3 px-4">Status</th>
+                  <th className="py-3 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-slate-700">
+                {transfers.map((trf) => {
+                  const isRecipient = trf.to_warehouse_id === activeWarehouse?.id;
+                  const isPending = trf.status === "PENDING" || trf.status === "IN_TRANSIT";
+                  return (
+                    <tr key={trf.id} className="hover:bg-slate-50/70 transition-colors">
+                      <td className="py-3 px-4 font-mono font-bold text-indigo-700">
+                        {trf.dispatch_number}
                       </td>
-                      <td className="p-3 text-slate-500">{t.dispatched_at.slice(0, 16)}</td>
-                      <td className="p-3 text-center">
+                      <td className="py-3 px-4">
+                        <div className="font-bold text-slate-900">
+                          {trf.from_warehouse?.name || "Mulemba"} → {trf.to_warehouse?.name || "Palanca"}
+                        </div>
+                        <div className="text-[10px] text-slate-400 mt-0.5">
+                          {new Date(trf.dispatched_at || Date.now()).toLocaleDateString()}
+                        </div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="font-bold text-slate-900">{trf.driver_name || "Motorist"}</div>
+                        <div className="text-[10px] text-slate-400 font-mono mt-0.5">
+                          Plate: {trf.vehicle_plate || "LD-88-21-AA"}
+                        </div>
+                      </td>
+                      <td className="py-3 px-4">
+                        {trf.items?.map((it, i) => (
+                          <div key={i} className="text-[11px]">
+                            <span className="font-bold text-slate-900">{it.product_name}</span>:{" "}
+                            <span className="font-mono text-indigo-700 font-bold">{it.dispatched_qty} units</span>
+                          </div>
+                        ))}
+                      </td>
+                      <td className="py-3 px-4">
                         <span
-                          className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                            t.status === "APPROVED"
-                              ? "bg-emerald-100 text-emerald-800"
-                              : "bg-amber-100 text-amber-800"
+                          className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                            trf.status === "APPROVED" || trf.status === "RECEIVED"
+                              ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                              : "bg-amber-50 text-amber-700 border-amber-200"
                           }`}
                         >
-                          {t.status}
+                          {trf.status}
                         </span>
                       </td>
+                      <td className="py-3 px-4 text-right">
+                        {isRecipient && isPending ? (
+                          <button
+                            onClick={() => handleApproveTransfer(trf.id)}
+                            className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-colors cursor-pointer"
+                          >
+                            Approve Receipt
+                          </button>
+                        ) : (
+                          <span className="text-slate-400 text-xs">Logged</span>
+                        )}
+                      </td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         </div>
       )}
 
-      {/* Modal 1: Add Shipment Arrival */}
+      {/* Add Arrival Modal */}
       {addArrivalModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <form onSubmit={handleAddArrival} className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+          <div className="bento-card max-w-lg w-full p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-base font-bold text-slate-900">Add Shipment Arrival (Sea / Local)</h3>
-              <button type="button" onClick={() => setAddArrivalModal(false)} className="text-slate-400 hover:text-slate-700">✕</button>
+              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <Ship className="w-4 h-4 text-indigo-600" />
+                <span>Receive Port Container Shipment</span>
+              </h3>
+              <button onClick={() => setAddArrivalModal(false)} className="text-slate-400 hover:text-slate-600">
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 text-xs">
-              <div className="col-span-2 space-y-1">
-                <label className="font-bold text-slate-700">Arrival Type:</label>
-                <select
-                  value={arrivalType}
-                  onChange={(e) => setArrivalType(e.target.value)}
-                  className="w-full p-2 rounded-xl border border-slate-200"
-                >
-                  <option value="SEA_SHIPMENT">Sea Container Shipment (Vessel)</option>
-                  <option value="LOCAL_SUPPLIER">Local Supplier Delivery</option>
-                  <option value="AIR_FREIGHT">Air Cargo (Luanda Airport)</option>
-                </select>
-              </div>
-
-              <div className="space-y-1">
-                <label className="font-bold text-slate-700">Vessel Name / Supplier:</label>
+            <form onSubmit={handleAddArrival} className="space-y-3 text-xs">
+              <div>
+                <label className="block text-slate-700 font-bold mb-1">Vessel Name</label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. MSC Luisa"
+                  placeholder="e.g. MSC Luisa / Maersk Cotonou"
                   value={vesselName}
                   onChange={(e) => setVesselName(e.target.value)}
-                  className="w-full p-2 rounded-xl border border-slate-200"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white text-xs"
                 />
               </div>
 
-              <div className="space-y-1">
-                <label className="font-bold text-slate-700">Tracking / BL Number:</label>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Bill of Lading (BL #)</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="BL-99210-AO"
+                    value={trackingBL}
+                    onChange={(e) => setTrackingBL(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Container Number</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="MSCU-449102"
+                    value={containerNo}
+                    onChange={(e) => setContainerNo(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white text-xs"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-700 font-bold mb-1">Supplier / Manufacturer</label>
                 <input
                   type="text"
-                  placeholder="e.g. BL-MSCU-902181"
-                  value={trackingBL}
-                  onChange={(e) => setTrackingBL(e.target.value)}
-                  className="w-full p-2 rounded-xl border border-slate-200"
+                  required
+                  placeholder="e.g. Sandoz Global / Cipla Pharma"
+                  value={supplierName}
+                  onChange={(e) => setSupplierName(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white text-xs"
                 />
               </div>
 
-              <div className="col-span-2 space-y-1">
-                <label className="font-bold text-slate-700">Select Pharmaceutical Product:</label>
+              <div className="border-t border-slate-100 pt-3">
+                <label className="block text-slate-700 font-bold mb-1">Medicine SKU</label>
                 <select
                   value={arrivalProduct}
                   onChange={(e) => setArrivalProduct(e.target.value)}
-                  className="w-full p-2 rounded-xl border border-slate-200"
-                >
-                  {products.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.name} ({p.sku}) — 1 Ctn = {p.units_per_carton} Pcs
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="space-y-1">
-                <label className="font-bold text-slate-700">Cartons Received:</label>
-                <input
-                  type="number"
-                  required
-                  value={arrivalCartons}
-                  onChange={(e) => setArrivalCartons(e.target.value)}
-                  className="w-full p-2 rounded-xl border border-slate-200 font-bold"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="font-bold text-slate-700">Batch / Lot Number:</label>
-                <input
-                  type="text"
-                  required
-                  value={batchNo}
-                  onChange={(e) => setBatchNo(e.target.value)}
-                  className="w-full p-2 rounded-xl border border-slate-200 font-mono"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
-              <button
-                type="button"
-                onClick={() => setAddArrivalModal(false)}
-                className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-600"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md"
-              >
-                Confirm & Stock In
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
-
-      {/* Modal 2: Create Transfer */}
-      {createTransferModal && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <form onSubmit={handleCreateTransfer} className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-base font-bold text-slate-900">Dispatch Inter-Warehouse Transfer</h3>
-              <button type="button" onClick={() => setCreateTransferModal(false)} className="text-slate-400 hover:text-slate-700">✕</button>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 text-xs">
-              <div className="col-span-2 space-y-1">
-                <label className="font-bold text-slate-700">Destination Warehouse:</label>
-                <select
-                  value={destWarehouseId}
-                  onChange={(e) => setDestWarehouseId(e.target.value)}
-                  className="w-full p-2 rounded-xl border border-slate-200 font-bold text-purple-900"
-                >
-                  <option value="1">Mulemba Warehouse (Luanda North)</option>
-                  <option value="2">Palanca Warehouse (Luanda South)</option>
-                  <option value="3">Lobito Warehouse (Benguela)</option>
-                </select>
-              </div>
-
-              <div className="space-y-1">
-                <label className="font-bold text-slate-700">Driver Name:</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Pedro Manuel"
-                  value={driverName}
-                  onChange={(e) => setDriverName(e.target.value)}
-                  className="w-full p-2 rounded-xl border border-slate-200"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="font-bold text-slate-700">Vehicle Plate:</label>
-                <input
-                  type="text"
-                  placeholder="e.g. LD-44-91-AM"
-                  value={vehiclePlate}
-                  onChange={(e) => setVehiclePlate(e.target.value)}
-                  className="w-full p-2 rounded-xl border border-slate-200"
-                />
-              </div>
-
-              <div className="col-span-2 space-y-1">
-                <label className="font-bold text-slate-700">Product to Transfer:</label>
-                <select
-                  value={transferProduct}
-                  onChange={(e) => setTransferProduct(e.target.value)}
-                  className="w-full p-2 rounded-xl border border-slate-200"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white text-xs font-semibold"
                 >
                   {products.map((p) => (
                     <option key={p.id} value={p.id}>
@@ -496,37 +411,159 @@ export default function ShipmentsTransfersPage() {
                 </select>
               </div>
 
-              <div className="col-span-2 space-y-1">
-                <label className="font-bold text-slate-700">Total Units to Transfer:</label>
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Cartons</label>
+                  <input
+                    type="number"
+                    min="1"
+                    required
+                    value={arrivalCartons}
+                    onChange={(e) => setArrivalCartons(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white text-xs font-bold font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Batch #</label>
+                  <input
+                    type="text"
+                    required
+                    value={batchNo}
+                    onChange={(e) => setBatchNo(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white text-xs font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Expiry Date</label>
+                  <input
+                    type="date"
+                    required
+                    value={expiryDate}
+                    onChange={(e) => setExpiryDate(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white text-xs font-mono"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setAddArrivalModal(false)}
+                  className="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs"
+                >
+                  Record Port Arrival
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Create Transfer Modal */}
+      {createTransferModal && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+          <div className="bento-card max-w-lg w-full p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <ArrowLeftRight className="w-4 h-4 text-indigo-600" />
+                <span>Dispatch Inter-Warehouse Stock Transfer</span>
+              </h3>
+              <button onClick={() => setCreateTransferModal(false)} className="text-slate-400 hover:text-slate-600">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateTransfer} className="space-y-3 text-xs">
+              <div>
+                <label className="block text-slate-700 font-bold mb-1">Destination Branch</label>
+                <select
+                  value={destWarehouseId}
+                  onChange={(e) => setDestWarehouseId(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white text-xs font-semibold"
+                >
+                  <option value="1">Mulemba Warehouse (Luanda North)</option>
+                  <option value="2">Palanca Warehouse (Luanda South)</option>
+                  <option value="3">Lobito Warehouse (Benguela)</option>
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Driver Name</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Manuel Silva"
+                    value={driverName}
+                    onChange={(e) => setDriverName(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Vehicle Plate</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="LD-99-12-AO"
+                    value={vehiclePlate}
+                    onChange={(e) => setVehiclePlate(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white text-xs"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-700 font-bold mb-1">Product</label>
+                <select
+                  value={transferProduct}
+                  onChange={(e) => setTransferProduct(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white text-xs font-semibold"
+                >
+                  {products.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name} ({p.sku})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-slate-700 font-bold mb-1">Units to Transfer</label>
                 <input
                   type="number"
+                  min="1"
                   required
                   value={transferQty}
                   onChange={(e) => setTransferQty(e.target.value)}
-                  className="w-full p-2 rounded-xl border border-slate-200 font-black text-purple-700"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white text-xs font-bold font-mono"
                 />
               </div>
-            </div>
 
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
-              <button
-                type="button"
-                onClick={() => setCreateTransferModal(false)}
-                className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-600"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md"
-              >
-                Dispatch Transfer
-              </button>
-            </div>
-          </form>
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setCreateTransferModal(false)}
+                  className="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs"
+                >
+                  Confirm Dispatch
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>
   );
 }
-

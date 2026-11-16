@@ -42,7 +42,7 @@ app.include_router(admin_router, prefix=settings.API_V1_STR)
 def root():
     return {
         "status": "online",
-        "system": "Allisons African Pharma - Warehouse Management System",
+        "system": "Alisons African Pharma - Warehouse Management System",
         "version": "1.0.0",
         "docs": f"{settings.API_V1_STR}/docs"
     }

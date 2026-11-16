@@ -21,11 +21,11 @@ function MainApp() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-white text-xs font-mono">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center text-slate-800 text-xs">
         <div className="space-y-4 text-center">
-          <div className="w-12 h-12 border-3 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto shadow-lg shadow-purple-500/20"></div>
-          <div className="text-slate-300 font-medium tracking-wide">
-            Connecting to Allisons African Pharma Portal...
+          <div className="w-10 h-10 border-3 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto shadow-sm"></div>
+          <div className="text-slate-600 font-semibold tracking-wide">
+            Connecting to Alisons African Pharma Portal...
           </div>
         </div>
       </div>
@@ -63,8 +63,8 @@ function MainApp() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
-      <Navbar />
+    <div className="min-h-screen flex flex-col bg-[#F8FAFC] text-slate-900 font-sans antialiased">
+      <Navbar currentView={currentView} setCurrentView={setCurrentView} />
       <div className="flex flex-1">
         <Sidebar currentView={currentView} setCurrentView={setCurrentView} />
         <main className="flex-1 min-h-[calc(100vh-4rem)] overflow-y-auto">
@@ -82,4 +82,3 @@ export default function App() {
     </AuthProvider>
   );
 }
-
