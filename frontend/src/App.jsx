@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { LanguageProvider } from "./context/LanguageContext";
 import Navbar from "./components/Navbar";
@@ -17,39 +17,16 @@ import LookupsManagerPage from "./pages/LookupsManagerPage";
 import ApiLogsPage from "./pages/ApiLogsPage";
 
 function MainApp() {
-  const getInitialView = () => {
-    const hash = window.location.hash.replace(/^#\/?/, "");
-    const validViews = ["dashboard", "counting", "reconciliation", "shipments", "alerts", "hq", "roles", "lookups", "logs"];
-    return validViews.includes(hash) ? hash : "dashboard";
-  };
-
-  const [currentView, setCurrentViewState] = useState(getInitialView);
+  const [currentView, setCurrentView] = useState("dashboard");
   const { user, loading } = useAuth();
-
-  const setCurrentView = (view) => {
-    window.location.hash = `#/${view}`;
-    setCurrentViewState(view);
-  };
-
-  useEffect(() => {
-    const onHashChange = () => {
-      const hash = window.location.hash.replace(/^#\/?/, "");
-      const validViews = ["dashboard", "counting", "reconciliation", "shipments", "alerts", "hq", "roles", "lookups", "logs"];
-      if (validViews.includes(hash)) {
-        setCurrentViewState(hash);
-      }
-    };
-    window.addEventListener("hashchange", onHashChange);
-    return () => window.removeEventListener("hashchange", onHashChange);
-  }, []);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-white text-xs font-mono">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center text-slate-800 text-xs">
         <div className="space-y-4 text-center">
-          <div className="w-12 h-12 border-3 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto shadow-lg shadow-purple-500/20"></div>
-          <div className="text-slate-300 font-medium tracking-wide">
-            Connecting to Allisons African Pharma Portal...
+          <div className="w-10 h-10 border-3 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto shadow-sm"></div>
+          <div className="text-slate-600 font-semibold tracking-wide">
+            Connecting to Alisons African Pharma Portal...
           </div>
         </div>
       </div>
@@ -87,8 +64,8 @@ function MainApp() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
-      <Navbar />
+    <div className="min-h-screen flex flex-col bg-[#F8FAFC] text-slate-900 font-sans antialiased">
+      <Navbar currentView={currentView} setCurrentView={setCurrentView} />
       <div className="flex flex-1">
         <Sidebar currentView={currentView} setCurrentView={setCurrentView} />
         <main className="flex-1 min-h-[calc(100vh-4rem)] overflow-y-auto">
@@ -101,11 +78,10 @@ function MainApp() {
 
 export default function App() {
   return (
-    <LanguageProvider>
-      <AuthProvider>
+    <AuthProvider>
+      <LanguageProvider>
         <MainApp />
-      </AuthProvider>
-    </LanguageProvider>
+      </LanguageProvider>
+    </AuthProvider>
   );
 }
-

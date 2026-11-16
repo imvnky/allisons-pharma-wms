@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import { useLanguage } from "../context/LanguageContext";
 import { apiRequest } from "../services/api";
-import { exportToCsv } from "../utils/exportUtils";
 import {
   FileSpreadsheet,
   Download,
@@ -13,12 +11,16 @@ import {
   Send,
   Save,
   Filter,
-  Printer
+  RefreshCw,
+  Info,
+  Check,
+  X,
+  Building2,
+  Clock
 } from "lucide-react";
 
 export default function ReconciliationPage() {
   const { user, activeWarehouse } = useAuth();
-  const { language, t, formatCurrency } = useLanguage();
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
   const [sheetData, setSheetData] = useState(null);
   const [search, setSearch] = useState("");
@@ -35,10 +37,9 @@ export default function ReconciliationPage() {
 
   function loadSheet() {
     setLoading(true);
-    apiRequest(`/reconciliation/sheet?target_date=${selectedDate}&warehouse_id=${activeWarehouse.id}`)
+    apiRequest(`/reconciliation/sheet?target_date=${selectedDate}&warehouse_id=${activeWarehouse?.id || 1}`)
       .then((data) => {
         setSheetData(data);
-        // Pre-fill local edits
         const salesMap = {};
         const remarksMap = {};
         data.records.forEach((r) => {
@@ -96,7 +97,6 @@ export default function ReconciliationPage() {
   }
 
   const records = sheetData?.records || [];
-  const isLocked = sheetData?.session?.status === "INVENTORY_DONE";
   const filteredRecords = records.filter((r) => {
     const matchesSearch =
       r.product_name.toLowerCase().includes(search.toLowerCase()) ||
@@ -107,260 +107,229 @@ export default function ReconciliationPage() {
     return matchesSearch;
   });
 
-  const totalRequired = records.reduce((acc, r) => acc + r.required_stock, 0);
-  const totalPhysical = records.reduce((acc, r) => acc + r.physical_stock, 0);
-  const totalDifference = records.reduce((acc, r) => acc + r.difference, 0);
-  const totalSales = records.reduce((acc, r) => acc + r.sales_qty, 0);
+  const totalRequired = records.reduce((acc, r) => acc + (r.required_stock || 0), 0);
+  const totalPhysical = records.reduce((acc, r) => acc + (r.physical_stock || 0), 0);
+  const totalDifference = records.reduce((acc, r) => acc + (r.difference || 0), 0);
+  const totalSales = records.reduce((acc, r) => acc + (r.sales_qty || 0), 0);
   const diffCount = records.filter((r) => r.difference !== 0).length;
 
-  function handleExportCsv() {
-    if (!filteredRecords || filteredRecords.length === 0) return;
-    const headers = [
-      "1. Product SKU",
-      "2. Product Description",
-      "Category",
-      "Units / Carton Spec",
-      "Unit Price (AOA)",
-      "3. Opening Stock",
-      "4. Arrivals Qty",
-      "5. Transfers Qty",
-      "6. Sales Qty",
-      "7. Cartons Counted",
-      "8. Loose Units Counted",
-      "9. Floor Display Counted",
-      "10. Required Stock",
-      "11. Physical Stock",
-      "12. Difference (Variance)",
-      "Variance Status",
-      "13. Supervisor Remarks",
-    ];
-
-    const rows = filteredRecords.map((r) => [
-      r.sku,
-      r.product_name,
-      r.category,
-      r.units_per_carton,
-      r.unit_price,
-      r.opening_stock,
-      r.arrivals_qty,
-      r.transfers_qty,
-      r.sales_qty,
-      r.carton_count,
-      r.loose_count,
-      r.display_count,
-      r.required_stock,
-      r.physical_stock,
-      r.difference,
-      r.difference === 0 ? "Balanced" : r.difference < 0 ? "Shortage" : "Surplus",
-      r.remarks || "",
-    ]);
-
-    const filename = `Allisons_Reconciliation_${activeWarehouse?.code || "WH"}_${selectedDate}.csv`;
-    exportToCsv(filename, headers, rows);
-  }
-
   return (
-    <div className="p-8 space-y-6 max-w-[1500px] mx-auto">
-      {/* Print-Only Official Audit Header */}
-      <div className="print-only-block mb-6 border-b-2 border-slate-900 pb-3">
-        <div className="flex justify-between items-start">
-          <div>
-            <h1 className="text-xl font-bold uppercase tracking-tight text-slate-900">
-              Allisons African Pharma — {language === "pt" ? "Auditoria Diária de Estoque do Armazém" : "Daily Warehouse Inventory Audit"}
-            </h1>
-            <p className="text-xs text-slate-600 mt-1">
-              {language === "pt" ? "Armazém" : "Branch"}: <span className="font-bold">{activeWarehouse?.name}</span> ({activeWarehouse?.code}) | {language === "pt" ? "Data da Auditoria" : "Audit Date"}: <span className="font-bold">{selectedDate}</span>
-            </p>
-          </div>
-          <div className="text-right text-xs text-slate-600">
-            <p>{language === "pt" ? "Estado da Auditoria" : "Audit Status"}: <span className="font-bold uppercase">{sheetData?.session?.status || (language === "pt" ? "EM PROCESSAMENTO" : "UNDER_PROCESS")}</span></p>
-            <p>{language === "pt" ? "Impresso em" : "Printed On"}: {new Date().toLocaleString()}</p>
-          </div>
-        </div>
-      </div>
+    <div className="p-6 lg:p-8 space-y-6 max-w-[1600px] mx-auto">
       {/* Top Header & Historical Date Picker */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200/90 pb-4">
         <div>
-          <h1 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-            <span>{t("reconciliation.title")}</span>
-            <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800">
-              {isLocked ? (language === "pt" ? "INVENTÁRIO CONCLUÍDO" : "INVENTORY_DONE") : (language === "pt" ? "EM PROCESSAMENTO" : "UNDER_PROCESS")}
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+              <FileSpreadsheet className="w-5 h-5 text-indigo-600" />
+              <span>Daily Reconciliation Master Sheet</span>
+            </h1>
+            <span
+              className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${
+                sheetData?.session?.status === "INVENTORY_DONE"
+                  ? "bg-emerald-50 text-emerald-800 border-emerald-200"
+                  : "bg-indigo-50 text-indigo-800 border-indigo-200"
+              }`}
+            >
+              {sheetData?.session?.status === "INVENTORY_DONE" ? "Inventory Reconciled" : "Audit In Progress"}
             </span>
-          </h1>
+          </div>
           <p className="text-xs text-slate-500 mt-0.5">
-            {activeWarehouse.name} • {t("reconciliation.subtitle")}
+            {activeWarehouse?.name || "Mulemba"} • 13 Core Ledger Columns with Live Stock Calculations
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          {/* Date Picker */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 shadow-xs">
-            <Calendar className="w-4 h-4 text-purple-600" />
+        <div className="flex items-center gap-2.5">
+          {/* Date Picker Pill */}
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 shadow-2xs">
+            <Calendar className="w-3.5 h-3.5 text-indigo-600" />
             <input
               type="date"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className="text-xs font-bold text-slate-700 focus:outline-none"
+              className="text-xs font-bold text-slate-800 focus:outline-none cursor-pointer"
             />
           </div>
 
           <button
-            onClick={handleExportCsv}
-            title={language === "pt" ? "Descarregar Livro de 13 Colunas (Excel CSV)" : "Download 13-Column Reconciliation Sheet (Excel CSV)"}
-            className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
-          >
-            <Download className="w-3.5 h-3.5 text-purple-600" />
-            <span>{t("exportCsv")}</span>
-          </button>
-          <button
             onClick={() => window.print()}
-            title={language === "pt" ? "Imprimir Folha Oficial de Auditoria" : "Print Official Audit Sheet"}
-            className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
+            className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer"
           >
-            <Printer className="w-3.5 h-3.5" />
+            <Download className="w-3.5 h-3.5" />
+            <span>Export CSV</span>
           </button>
 
           {(user?.role?.code === "SUPERVISOR" || user?.role?.code === "SUPER_ADMIN") && (
-            isLocked ? (
-              <div className="px-4 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-1.5 shadow-xs">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                <span>{t("reconciliation.auditLocked")}</span>
-              </div>
-            ) : (
-              <button
-                onClick={() => setFinalizeModal(true)}
-                className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold flex items-center gap-2 shadow-sm transition-colors cursor-pointer"
-              >
-                <Send className="w-3.5 h-3.5" />
-                <span>{t("reconciliation.finalizeBtn")}</span>
-              </button>
-            )
+            <button
+              onClick={() => setFinalizeModal(true)}
+              className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+            >
+              <Send className="w-3.5 h-3.5" />
+              <span>Finalize & Submit to HQ</span>
+            </button>
           )}
         </div>
       </div>
 
-      {/* Summary KPI Strip */}
+      {/* Formula Guide Callout Pill */}
+      <div className="p-3.5 rounded-2xl bg-indigo-50/60 border border-indigo-100 text-xs text-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div className="flex items-center gap-2 text-indigo-900 font-bold">
+          <Info className="w-4 h-4 text-indigo-600 shrink-0" />
+          <span>Core Mathematical Formulas:</span>
+        </div>
+        <div className="flex flex-wrap items-center gap-4 text-[11px] font-mono text-slate-600">
+          <div>Required = Opening + Arrivals - Transfers - Sales</div>
+          <div className="hidden sm:block text-slate-300">•</div>
+          <div>Physical = (Cartons × Pack Size) + Loose + Display</div>
+          <div className="hidden sm:block text-slate-300">•</div>
+          <div className="font-bold text-indigo-900">Difference = Physical - Required</div>
+        </div>
+      </div>
+
+      {/* Summary KPI Cards (PaceUI Bento Stat Row) */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3.5">
-        <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
-          <div className="text-[10px] font-bold text-slate-400 uppercase">{t("reconciliation.progress")}</div>
-          <div className="text-base font-black text-slate-900 mt-1">
+        <div className="bento-card p-4">
+          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Audit Progress</div>
+          <div className="text-lg font-black text-slate-900 mt-1">
             {records.length - diffCount} / {records.length} SKUs
           </div>
-        </div>
-        <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
-          <div className="text-[10px] font-bold text-slate-400 uppercase">{t("reconciliation.totalRequired")}</div>
-          <div className="text-base font-black text-indigo-700 mt-1">{totalRequired.toLocaleString()} {t("units")}</div>
-        </div>
-        <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
-          <div className="text-[10px] font-bold text-slate-400 uppercase">{t("reconciliation.totalPhysical")}</div>
-          <div className="text-base font-black text-purple-700 mt-1">{totalPhysical.toLocaleString()} {t("units")}</div>
-        </div>
-        <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
-          <div className="text-[10px] font-bold text-slate-400 uppercase">{t("reconciliation.netDiscrepancy")}</div>
-          <div
-            className={`text-base font-black mt-1 ${
-              totalDifference < 0 ? "text-red-600" : totalDifference > 0 ? "text-amber-600" : "text-emerald-600"
-            }`}
-          >
-            {totalDifference > 0 ? `+${totalDifference}` : totalDifference} {t("units")}
+          <div className="text-[10px] text-emerald-600 font-semibold mt-0.5">
+            {records.length > 0 ? `${Math.round(((records.length - diffCount) / records.length) * 100)}% Matched` : "0%"}
           </div>
         </div>
-        <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
-          <div className="text-[10px] font-bold text-slate-400 uppercase">{t("reconciliation.salesToday")}</div>
-          <div className="text-base font-black text-slate-800 mt-1">{totalSales.toLocaleString()} {t("units")}</div>
+
+        <div className="bento-card p-4">
+          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Required Book Stock</div>
+          <div className="text-lg font-black text-indigo-700 mt-1">
+            {totalRequired.toLocaleString()} <span className="text-xs font-semibold text-slate-400">units</span>
+          </div>
+          <div className="text-[10px] text-slate-500 mt-0.5">Calculated ledger balance</div>
+        </div>
+
+        <div className="bento-card p-4">
+          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Physical Counted</div>
+          <div className="text-lg font-black text-slate-900 mt-1">
+            {totalPhysical.toLocaleString()} <span className="text-xs font-semibold text-slate-400">units</span>
+          </div>
+          <div className="text-[10px] text-slate-500 mt-0.5">Cartons + Loose + Display</div>
+        </div>
+
+        <div className="bento-card p-4">
+          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Net Variance</div>
+          <div
+            className={`text-lg font-black mt-1 ${
+              totalDifference < 0 ? "text-rose-600" : totalDifference > 0 ? "text-emerald-600" : "text-slate-900"
+            }`}
+          >
+            {totalDifference > 0 ? `+${totalDifference}` : totalDifference} <span className="text-xs font-semibold text-slate-400">units</span>
+          </div>
+          <div className="text-[10px] text-slate-500 mt-0.5">
+            {diffCount > 0 ? `${diffCount} SKUs require check` : "Zero discrepancy"}
+          </div>
+        </div>
+
+        <div className="bento-card p-4">
+          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Sales Today</div>
+          <div className="text-lg font-black text-slate-900 mt-1">
+            {totalSales.toLocaleString()} <span className="text-xs font-semibold text-slate-400">units</span>
+          </div>
+          <div className="text-[10px] text-slate-500 mt-0.5">Entered by Supervisor</div>
         </div>
       </div>
 
       {/* Table Toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3 rounded-xl border border-slate-200">
+      <div className="bento-card p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="relative flex-1 max-w-md">
-          <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
+          <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
-            placeholder={language === "pt" ? "Pesquisar por SKU ou Descrição do Medicamento..." : "Search SKU or Product Description..."}
+            placeholder="Filter SKU or Product Description..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-1.5 rounded-lg border border-slate-200 text-xs focus:outline-none focus:border-purple-600"
+            className="w-full pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-slate-800 placeholder:text-slate-400"
           />
         </div>
 
         <button
           onClick={() => setShowDiffOnly(!showDiffOnly)}
-          className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2 transition-colors ${
+          className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
             showDiffOnly
-              ? "bg-red-50 text-red-700 border border-red-200"
-              : "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200"
+              ? "bg-rose-50 text-rose-700 border border-rose-200"
+              : "bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200"
           }`}
         >
           <Filter className="w-3.5 h-3.5" />
-          <span>{t("reconciliation.filterDiffOnly")} ({diffCount})</span>
+          <span>Show Discrepancies Only ({diffCount})</span>
         </button>
       </div>
 
-      {/* The 13 Core Columns Master Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+      {/* 13 Core Columns Master Table */}
+      <div className="bento-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-600 uppercase tracking-wider">
-                <th className="p-3 sticky left-0 bg-slate-50 z-10 w-28">{t("reconciliation.colSku")}</th>
-                <th className="p-3 min-w-44">{t("reconciliation.colDescription")}</th>
-                <th className="p-3 text-right">{t("reconciliation.colOpening")}</th>
-                <th className="p-3 text-right text-emerald-700 bg-emerald-50/40">{t("reconciliation.colArrivals")}</th>
-                <th className="p-3 text-right text-amber-700 bg-amber-50/40">{t("reconciliation.colTransfers")}</th>
-                <th className="p-3 text-right bg-purple-50/80 text-purple-900 min-w-28 font-black">
-                  {t("reconciliation.colSales")} ✍️
+              <tr className="bg-slate-50 border-b border-slate-200/90 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                <th className="p-3 sticky left-0 bg-slate-50 z-10 w-28">1. SKU</th>
+                <th className="p-3 min-w-48">2. Description & Pack</th>
+                <th className="p-3 text-right">3. Opening</th>
+                <th className="p-3 text-right text-emerald-700 bg-emerald-50/50">4. Arrivals</th>
+                <th className="p-3 text-right text-amber-700 bg-amber-50/50">5. Transfers</th>
+                <th className="p-3 text-right bg-indigo-50/80 text-indigo-900 min-w-28 font-black">
+                  6. Sales ✍️
                 </th>
-                <th className="p-3 text-right">{t("reconciliation.colCartons")}</th>
-                <th className="p-3 text-right">{t("reconciliation.colLoose")}</th>
-                <th className="p-3 text-right">{t("reconciliation.colDisplay")}</th>
-                <th className="p-3 text-right bg-slate-100/80 font-black text-slate-800">
-                  {t("reconciliation.colRequired")}
+                <th className="p-3 text-right">7. Cartons</th>
+                <th className="p-3 text-right">8. Loose</th>
+                <th className="p-3 text-right">9. Display</th>
+                <th className="p-3 text-right bg-slate-100/90 font-black text-slate-900">
+                  10. Required
                 </th>
-                <th className="p-3 text-right bg-slate-100/80 font-black text-slate-800">
-                  {t("reconciliation.colPhysical")}
+                <th className="p-3 text-right bg-slate-100/90 font-black text-slate-900">
+                  11. Physical
                 </th>
-                <th className="p-3 text-center min-w-28 font-black">{t("reconciliation.colDifference")}</th>
-                <th className="p-3 min-w-48 font-black">{t("reconciliation.colRemarks")} ✍️</th>
+                <th className="p-3 text-center min-w-28 font-black">12. Difference</th>
+                <th className="p-3 min-w-48 font-black">13. Remarks ✍️</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 text-slate-700">
               {filteredRecords.map((r) => {
                 const isDiff = r.difference !== 0;
                 return (
-                  <tr key={r.record_id} className={`hover:bg-slate-50/80 transition-colors ${isDiff ? "bg-red-50/20" : ""}`}>
+                  <tr
+                    key={r.record_id}
+                    className={`hover:bg-slate-50/80 transition-colors ${
+                      isDiff ? "bg-rose-50/30" : ""
+                    }`}
+                  >
                     {/* 1. SKU */}
-                    <td className="p-3 font-mono font-bold text-slate-900 sticky left-0 bg-white z-10">
+                    <td className="p-3 font-mono font-bold text-slate-900 sticky left-0 bg-white z-10 border-r border-slate-100">
                       {r.sku}
                     </td>
 
-                    {/* 2. Description */}
+                    {/* 2. Description & Pack */}
                     <td className="p-3">
                       <div className="font-bold text-slate-900">{r.product_name}</div>
-                      <div className="text-[10px] text-slate-400">1 {t("ctns")} = {r.units_per_carton} {t("units")}</div>
+                      <div className="text-[10px] text-slate-400">Pack of {r.pack_size} units</div>
                     </td>
 
                     {/* 3. Opening */}
-                    <td className="p-3 text-right font-semibold text-slate-700">
-                      {r.opening_stock.toLocaleString()}
+                    <td className="p-3 text-right font-mono text-slate-600">
+                      {r.opening_stock?.toLocaleString()}
                     </td>
 
                     {/* 4. Arrivals */}
-                    <td className="p-3 text-right font-bold text-emerald-700 bg-emerald-50/20">
-                      +{r.arrivals_qty}
+                    <td className="p-3 text-right font-mono font-bold text-emerald-700 bg-emerald-50/30">
+                      {r.arrivals_qty > 0 ? `+${r.arrivals_qty}` : "0"}
                     </td>
 
                     {/* 5. Transfers */}
-                    <td className="p-3 text-right font-bold text-amber-700 bg-amber-50/20">
-                      -{r.transfers_qty}
+                    <td className="p-3 text-right font-mono font-bold text-amber-700 bg-amber-50/30">
+                      {r.transfers_out > 0 ? `-${r.transfers_out}` : "0"}
                     </td>
 
                     {/* 6. Sales (Editable) */}
-                    <td className="p-3 text-right bg-purple-50/40">
+                    <td className="p-2 text-right bg-indigo-50/30">
                       <div className="flex items-center justify-end gap-1">
                         <input
                           type="number"
-                          disabled={isLocked}
                           value={editingSales[r.record_id] ?? r.sales_qty}
                           onChange={(e) =>
                             setEditingSales({
@@ -368,70 +337,83 @@ export default function ReconciliationPage() {
                               [r.record_id]: e.target.value,
                             })
                           }
-                          onBlur={() => !isLocked && handleSaveSales(r.record_id)}
-                          className={`w-20 text-right font-bold text-xs p-1.5 rounded-lg border shadow-xs ${
-                            isLocked
-                              ? "bg-slate-100 text-slate-500 border-slate-200 cursor-not-allowed"
-                              : "border-purple-200 focus:outline-none focus:border-purple-600 bg-white"
-                          }`}
+                          className="w-16 px-1.5 py-1 text-right font-mono font-bold text-xs bg-white border border-indigo-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         />
+                        <button
+                          onClick={() => handleSaveSales(r.record_id)}
+                          disabled={savingRecordId === r.record_id}
+                          title="Save Sales"
+                          className="p-1 text-indigo-600 hover:bg-indigo-100 rounded-md transition-colors cursor-pointer"
+                        >
+                          <Save className="w-3.5 h-3.5" />
+                        </button>
                       </div>
                     </td>
 
-                    {/* 7. Cartons */}
-                    <td className="p-3 text-right font-semibold text-slate-700">{r.carton_count}</td>
-
-                    {/* 8. Loose */}
-                    <td className="p-3 text-right font-semibold text-slate-700">{r.loose_count}</td>
-
-                    {/* 9. Display */}
-                    <td className="p-3 text-right font-semibold text-slate-700">{r.display_count}</td>
-
-                    {/* 10. Required Stock */}
-                    <td className="p-3 text-right font-black text-slate-900 bg-slate-50/50">
-                      {r.required_stock.toLocaleString()}
+                    {/* 7. Cartons Count */}
+                    <td className="p-3 text-right font-mono text-slate-600">
+                      {r.carton_count} ctn
                     </td>
 
-                    {/* 11. Physical Stock */}
-                    <td className="p-3 text-right font-black text-purple-900 bg-slate-50/50">
-                      {r.physical_stock.toLocaleString()}
+                    {/* 8. Loose Count */}
+                    <td className="p-3 text-right font-mono text-slate-600">
+                      {r.loose_count} pcs
+                    </td>
+
+                    {/* 9. Display Count */}
+                    <td className="p-3 text-right font-mono text-slate-600">
+                      {r.display_count} pcs
+                    </td>
+
+                    {/* 10. Required Total */}
+                    <td className="p-3 text-right font-mono font-black text-slate-900 bg-slate-50/80">
+                      {r.required_stock?.toLocaleString()}
+                    </td>
+
+                    {/* 11. Physical Total */}
+                    <td className="p-3 text-right font-mono font-black text-slate-900 bg-slate-50/80">
+                      {r.physical_stock?.toLocaleString()}
                     </td>
 
                     {/* 12. Difference */}
                     <td className="p-3 text-center">
                       <span
-                        className={`inline-block px-2.5 py-1 rounded-full text-xs font-black ${
-                          r.difference === 0
-                            ? "bg-emerald-100 text-emerald-800"
-                            : r.difference < 0
-                            ? "bg-red-100 text-red-800"
-                            : "bg-amber-100 text-amber-800"
+                        className={`inline-block px-2.5 py-1 rounded-full font-mono font-black text-xs border ${
+                          r.difference < 0
+                            ? "bg-rose-50 text-rose-700 border-rose-200"
+                            : r.difference > 0
+                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                            : "bg-slate-100 text-slate-600 border-slate-200"
                         }`}
                       >
-                        {r.difference === 0 ? `${t("reconciliation.balanced")} 🟢` : `${r.difference > 0 ? "+" : ""}${r.difference} 🔴`}
+                        {r.difference > 0 ? `+${r.difference}` : r.difference}
                       </span>
                     </td>
 
                     {/* 13. Remarks (Editable) */}
-                    <td className="p-3">
-                      <input
-                        type="text"
-                        disabled={isLocked}
-                        placeholder={isLocked ? t("reconciliation.auditLocked") : (language === "pt" ? "Adicionar motivo / observação..." : "Add reason/remark...")}
-                        value={editingRemarks[r.record_id] ?? r.remarks}
-                        onChange={(e) =>
-                          setEditingRemarks({
-                            ...editingRemarks,
-                            [r.record_id]: e.target.value,
-                          })
-                        }
-                        onBlur={() => !isLocked && handleSaveRemarks(r.record_id)}
-                        className={`w-full text-xs p-1.5 rounded-lg border focus:outline-none focus:border-purple-600 ${
-                          isLocked
-                            ? "bg-slate-100 text-slate-500 border-slate-200 cursor-not-allowed"
-                            : "bg-white border-slate-200"
-                        }`}
-                      />
+                    <td className="p-2">
+                      <div className="flex items-center gap-1">
+                        <input
+                          type="text"
+                          placeholder="Supervisor note..."
+                          value={editingRemarks[r.record_id] ?? r.remarks ?? ""}
+                          onChange={(e) =>
+                            setEditingRemarks({
+                              ...editingRemarks,
+                              [r.record_id]: e.target.value,
+                            })
+                          }
+                          className="flex-1 px-2 py-1 text-xs bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        />
+                        <button
+                          onClick={() => handleSaveRemarks(r.record_id)}
+                          disabled={savingRecordId === r.record_id}
+                          title="Save Remarks"
+                          className="p-1 text-slate-500 hover:text-indigo-600 hover:bg-slate-100 rounded-md transition-colors cursor-pointer"
+                        >
+                          <Save className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -441,60 +423,40 @@ export default function ReconciliationPage() {
         </div>
       </div>
 
-      {/* Print-Only Formal Sign-off Section */}
-      <div className="print-only-block mt-8 pt-4 border-t border-slate-400">
-        <div className="grid grid-cols-3 gap-8 text-xs text-slate-700">
-          <div>
-            <p className="font-bold mb-10">{language === "pt" ? "Responsável pela Contagem (Operador):" : "Stock Counter (Floor Staff):"}</p>
-            <div className="border-t border-slate-600 pt-1">{language === "pt" ? "Assinatura / Data" : "Signature / Date"}</div>
-          </div>
-          <div>
-            <p className="font-bold mb-10">{language === "pt" ? "Supervisor do Armazém:" : "Warehouse Supervisor:"}</p>
-            <div className="border-t border-slate-600 pt-1">{language === "pt" ? "Assinatura / Data" : "Signature / Date"}</div>
-          </div>
-          <div>
-            <p className="font-bold mb-10">{language === "pt" ? "Verificação da Sede / Conformidade (HQ):" : "HQ Verification / Compliance:"}</p>
-            <div className="border-t border-slate-600 pt-1">{language === "pt" ? "Carimbo e Selo" : "Stamp & Seal"}</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Finalize Modal */}
+      {/* Finalize Confirmation Modal */}
       {finalizeModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
-            <div className="w-12 h-12 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center">
-              <FileSpreadsheet className="w-6 h-6" />
+          <div className="bento-card max-w-md w-full p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <span>Confirm Final Daily Sign-Off</span>
+              </h3>
+              <button onClick={() => setFinalizeModal(false)} className="text-slate-400 hover:text-slate-600">
+                <X className="w-4 h-4" />
+              </button>
             </div>
-            <div>
-              <h3 className="text-lg font-bold text-slate-900">{t("reconciliation.finalizeTitle")}</h3>
-              <p className="text-xs text-slate-500 mt-1">
-                {language === "pt"
-                  ? `Está a submeter o inventário diário para ${activeWarehouse.name} na data ${selectedDate}.`
-                  : `You are submitting the finalized stock audit for ${activeWarehouse.name} on ${selectedDate}.`}
-              </p>
-            </div>
-
-            {diffCount > 0 && (
-              <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800">
-                {language === "pt"
-                  ? `⚠️ Atenção: Existem ${diffCount} produtos com variação assinalada. Certifique-se de que as observações foram registadas para a auditoria da Sede.`
-                  : `⚠️ Notice: There are ${diffCount} products with variance flagged. Please ensure remarks are documented for the HQ audit.`}
-              </div>
-            )}
-
-            <div className="flex items-center justify-end gap-3 pt-2">
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Are you sure you want to finalize the reconciliation session for{" "}
+              <span className="font-bold text-slate-900">{activeWarehouse?.name}</span> on{" "}
+              <span className="font-bold text-slate-900">{selectedDate}</span>?
+              <br />
+              <br />
+              This will freeze today's figures, transfer closing balances into tomorrow's opening stock,
+              and transmit the consolidated audit report to Alisons National HQ.
+            </p>
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
               <button
                 onClick={() => setFinalizeModal(false)}
-                className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50"
+                className="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50"
               >
-                {t("cancel")}
+                Cancel
               </button>
               <button
                 onClick={handleFinalize}
-                className="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md"
+                className="px-4 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs"
               >
-                {t("reconciliation.finalizeBtn")}
+                Confirm & Submit
               </button>
             </div>
           </div>
@@ -503,4 +465,3 @@ export default function ReconciliationPage() {
     </div>
   );
 }
-

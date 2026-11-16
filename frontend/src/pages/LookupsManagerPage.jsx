@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { apiRequest } from "../services/api";
-import { ListFilter, Plus, Check, Search, Tag, CheckCircle2 } from "lucide-react";
+import {
+  ListFilter,
+  Plus,
+  Check,
+  Search,
+  Tag,
+  CheckCircle2,
+  X,
+  Sparkles,
+  BookOpen
+} from "lucide-react";
 
 export default function LookupsManagerPage() {
   const [lookups, setLookups] = useState([]);
@@ -18,8 +28,8 @@ export default function LookupsManagerPage() {
   function loadLookups() {
     apiRequest("/admin/lookups")
       .then((data) => {
-        setLookups(data);
-        if (data.length > 0 && !selectedType) {
+        setLookups(data || []);
+        if (data?.length > 0 && !selectedType) {
           setSelectedType(data[0]);
         } else if (selectedType) {
           const updated = data.find((d) => d.type_code === selectedType.type_code);
@@ -50,26 +60,31 @@ export default function LookupsManagerPage() {
   }
 
   return (
-    <div className="p-8 space-y-6 max-w-7xl mx-auto">
+    <div className="p-6 lg:p-8 space-y-6 max-w-[1600px] mx-auto">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/90 pb-4">
         <div>
-          <h1 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-            <ListFilter className="w-6 h-6 text-purple-600" />
-            <span>Master Dropdowns & Lookup Dictionaries</span>
-          </h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+              <ListFilter className="w-5 h-5 text-indigo-600" />
+              <span>Master Dropdowns & System Lookups</span>
+            </h1>
+            <span className="px-2.5 py-0.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-[10px] font-bold">
+              Dynamic Dictionary
+            </span>
+          </div>
           <p className="text-xs text-slate-500 mt-0.5">
-            Super Admin Control Center • Zero Hardcoded Options • Manage All System Selectables
+            Super Admin Control Center • Zero Hardcoded Options • Manage All Selectable Justification Reasons
           </p>
         </div>
 
         {selectedType && (
           <button
             onClick={() => setAddModal(true)}
-            className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold flex items-center gap-2 shadow-xs transition-colors"
+            className="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>Add Option to {selectedType.type_name}</span>
+            <span>Add Option</span>
           </button>
         )}
       </div>
@@ -77,9 +92,9 @@ export default function LookupsManagerPage() {
       {/* Split View */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
         {/* Left Panel: Categories (4 cols) */}
-        <div className="md:col-span-4 bg-white rounded-2xl border border-slate-200 p-4 shadow-xs space-y-3">
-          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider px-2">
-            Dropdown Categories ({lookups.length})
+        <div className="md:col-span-4 bento-card p-4 space-y-3">
+          <div className="text-[10px] font-black text-slate-400 uppercase tracking-wider px-2">
+            Configurable Dictionaries ({lookups.length})
           </div>
 
           <div className="space-y-1">
@@ -89,17 +104,18 @@ export default function LookupsManagerPage() {
                 <button
                   key={lt.type_code}
                   onClick={() => setSelectedType(lt)}
-                  className={`w-full text-left p-3 rounded-xl text-xs flex items-center justify-between transition-colors ${isSelected
-                    ? "bg-purple-50 text-purple-900 font-bold border border-purple-200"
-                    : "hover:bg-slate-50 text-slate-700"
-                    }`}
+                  className={`w-full text-left p-3 rounded-xl text-xs flex items-center justify-between transition-colors cursor-pointer ${
+                    isSelected
+                      ? "bg-indigo-50/80 text-indigo-900 font-bold border border-indigo-200 shadow-2xs"
+                      : "hover:bg-slate-50 text-slate-700"
+                  }`}
                 >
-                  <div className="space-y-0.5">
-                    <div>{lt.type_name}</div>
+                  <div className="space-y-0.5 min-w-0">
+                    <div className="truncate">{lt.type_name}</div>
                     <div className="text-[10px] text-slate-400 font-mono">{lt.type_code}</div>
                   </div>
-                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
-                    {lt.values.length}
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 shrink-0">
+                    {lt.values?.length || 0}
                   </span>
                 </button>
               );
@@ -108,38 +124,47 @@ export default function LookupsManagerPage() {
         </div>
 
         {/* Right Panel: Values Grid (8 cols) */}
-        <div className="md:col-span-8 bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+        <div className="md:col-span-8 bento-card overflow-hidden">
           {selectedType ? (
             <div>
               <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <div>
-                  <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                  <h2 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
                     {selectedType.type_name}
-                  </h3>
-                  <p className="text-[11px] text-slate-400 font-mono">{selectedType.type_code}</p>
+                  </h2>
+                  <p className="text-[10px] text-slate-400 font-mono mt-0.5">{selectedType.type_code}</p>
                 </div>
-                <span className="text-xs text-slate-500 font-semibold">{selectedType.values.length} Options Defined</span>
+                <span className="text-[10px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded-full">
+                  {selectedType.values?.length || 0} Available Options
+                </span>
               </div>
 
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase">
-                    <tr>
-                      <th className="p-3 w-16">Sort</th>
-                      <th className="p-3">Display Label (Shown in Dropdowns)</th>
-                      <th className="p-3">System Key / Code</th>
-                      <th className="p-3 text-center">Status</th>
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200/80 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                      <th className="py-3 px-4 w-16 text-center">Order</th>
+                      <th className="py-3 px-4">Database Key</th>
+                      <th className="py-3 px-4">Display Label (Shown in UI Dropdown)</th>
+                      <th className="py-3 px-4 text-center">Active Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {selectedType.values.map((val) => (
-                      <tr key={val.id} className="hover:bg-slate-50">
-                        <td className="p-3 font-mono font-bold text-slate-400">#{val.sort_order}</td>
-                        <td className="p-3 font-bold text-slate-900">{val.label}</td>
-                        <td className="p-3 font-mono text-purple-700">{val.key}</td>
-                        <td className="p-3 text-center">
-                          <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
-                            Active 🟢
+                  <tbody className="divide-y divide-slate-100 text-slate-700">
+                    {selectedType.values?.map((val) => (
+                      <tr key={val.id} className="hover:bg-slate-50/70 transition-colors">
+                        <td className="py-3 px-4 text-center font-mono font-bold text-slate-400">
+                          {val.sort_order}
+                        </td>
+                        <td className="py-3 px-4 font-mono font-bold text-indigo-700">
+                          {val.key}
+                        </td>
+                        <td className="py-3 px-4 font-semibold text-slate-900">
+                          {val.label}
+                        </td>
+                        <td className="py-3 px-4 text-center">
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                            <Check className="w-3 h-3 text-emerald-600" />
+                            <span>Enabled</span>
                           </span>
                         </td>
                       </tr>
@@ -149,70 +174,83 @@ export default function LookupsManagerPage() {
               </div>
             </div>
           ) : (
-            <div className="p-12 text-center text-slate-400 text-xs">Select a category on the left.</div>
+            <div className="p-12 text-center text-slate-400 text-xs">
+              Select a category on the left to inspect or add options.
+            </div>
           )}
         </div>
       </div>
 
-      {/* Add Modal */}
-      {addModal && selectedType && (
+      {/* Add Option Modal */}
+      {addModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <form onSubmit={handleAddValue} className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
-            <h3 className="text-base font-bold text-slate-900">Add Option to {selectedType.type_name}</h3>
-            <div className="space-y-3 text-xs">
+          <div className="bento-card max-w-md w-full p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
-                <label className="font-bold text-slate-700 block mb-1">Display Label (User Facing):</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Water Damage During Transit"
-                  value={newLabel}
-                  onChange={(e) => {
-                    setNewLabel(e.target.value);
-                    setNewKey(e.target.value.toUpperCase().replace(/\s+/g, "_"));
-                  }}
-                  className="w-full p-2.5 rounded-xl border border-slate-200"
-                />
+                <h3 className="text-sm font-bold text-slate-900">Add Option to {selectedType?.type_name}</h3>
+                <div className="text-[10px] text-slate-400 font-mono mt-0.5">{selectedType?.type_code}</div>
               </div>
+              <button onClick={() => setAddModal(false)} className="text-slate-400 hover:text-slate-600">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddValue} className="space-y-3 text-xs">
               <div>
-                <label className="font-bold text-slate-700 block mb-1">System Key (DB Code):</label>
+                <label className="block text-slate-700 font-bold mb-1">Internal Unique Key</label>
                 <input
                   type="text"
                   required
+                  placeholder="e.g. EXPIRED_SHOWCASE"
                   value={newKey}
-                  onChange={(e) => setNewKey(e.target.value)}
-                  className="w-full p-2.5 rounded-xl border border-slate-200 font-mono text-purple-800"
+                  onChange={(e) => setNewKey(e.target.value.toUpperCase().replace(/\s+/g, "_"))}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white text-xs font-mono font-bold"
                 />
               </div>
+
               <div>
-                <label className="font-bold text-slate-700 block mb-1">Sort Order:</label>
+                <label className="block text-slate-700 font-bold mb-1">Human-Readable Label</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Expired on Showcase Shelf"
+                  value={newLabel}
+                  onChange={(e) => setNewLabel(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white text-xs"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-700 font-bold mb-1">Display Sort Order</label>
                 <input
                   type="number"
+                  min="1"
+                  required
                   value={newOrder}
                   onChange={(e) => setNewOrder(e.target.value)}
-                  className="w-full p-2 rounded-xl border border-slate-200"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white text-xs font-mono"
                 />
               </div>
-            </div>
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-              <button
-                type="button"
-                onClick={() => setAddModal(false)}
-                className="px-4 py-2 rounded-xl border text-xs font-bold text-slate-600"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold"
-              >
-                Save & Deploy Option
-              </button>
-            </div>
-          </form>
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setAddModal(false)}
+                  className="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs"
+                >
+                  Save Option
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>
   );
 }
-
