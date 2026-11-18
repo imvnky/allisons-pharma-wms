@@ -153,7 +153,7 @@ export default function Navbar({ currentView, setCurrentView }) {
           title={`Active Language: ${language === "pt" ? "Português (AO)" : "English"}. Click to switch.`}
         >
           <span>{language === "pt" ? "🇦🇴" : "🇬🇧"}</span>
-          <span>{language === "pt" ? "AO PT" : "EN"}</span>
+          <span>{language === "pt" ? "PT" : "EN"}</span>
         </button>
 
         {/* Notifications Popover Toggle */}
