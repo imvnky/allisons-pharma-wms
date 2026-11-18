@@ -1,5 +1,6 @@
 import React from "react";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import {
   LayoutDashboard,
   Boxes,
@@ -20,6 +21,7 @@ import {
 
 export default function Sidebar({ currentView, setCurrentView }) {
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
 
   const isSuperAdmin = user?.role?.code === "SUPER_ADMIN";
   const isHQ = user?.role?.code === "HQ_ADMIN" || isSuperAdmin;
@@ -30,27 +32,27 @@ export default function Sidebar({ currentView, setCurrentView }) {
 
   const menuSections = [
     {
-      title: "DASHBOARDS",
+      title: t("nav.dashboardsSection", "DASHBOARDS"),
       items: [
-        { id: "dashboard", label: "Overview", icon: LayoutDashboard, visible: true },
-        { id: "counting", label: "Floor Counting", icon: Boxes, visible: isCarton || isLoose || isDisplay },
-        { id: "reconciliation", label: "Daily Reconciliation", icon: FileSpreadsheet, visible: isSupervisor || isHQ },
+        { id: "dashboard", label: t("nav.overview", "Overview"), icon: LayoutDashboard, visible: true },
+        { id: "counting", label: t("nav.floorCounting", "Floor Counting"), icon: Boxes, visible: isCarton || isLoose || isDisplay },
+        { id: "reconciliation", label: t("nav.dailyReconciliation", "Daily Reconciliation"), icon: FileSpreadsheet, visible: isSupervisor || isHQ },
       ],
     },
     {
-      title: "OPERATIONS & LOGISTICS",
+      title: t("nav.operationsSection", "OPERATIONS & LOGISTICS"),
       visible: isSupervisor || isHQ,
       items: [
-        { id: "shipments", label: "Arrivals & Transfers", icon: Ship, visible: isSupervisor || isHQ },
+        { id: "shipments", label: t("nav.arrivalsTransfers", "Arrivals & Transfers"), icon: Ship, visible: isSupervisor || isHQ },
       ],
     },
     {
-      title: "ALERTS & QUALITY",
+      title: t("nav.alertsSection", "ALERTS & QUALITY"),
       visible: isSupervisor || isHQ,
       items: [
         {
           id: "alerts",
-          label: "Differences & Expiry",
+          label: t("nav.differencesExpiry", "Differences & Expiry"),
           icon: ShieldAlert,
           visible: isSupervisor || isHQ,
           badge: "4",
@@ -59,19 +61,19 @@ export default function Sidebar({ currentView, setCurrentView }) {
       ],
     },
     {
-      title: "HQ EXECUTIVE",
+      title: t("nav.hqSection", "HQ EXECUTIVE"),
       visible: isHQ,
       items: [
-        { id: "hq", label: "HQ Master Angola Stock", icon: Globe, visible: isHQ },
+        { id: "hq", label: t("nav.hqMasterAngola", "HQ Master Angola Stock"), icon: Globe, visible: isHQ },
       ],
     },
     {
-      title: "SYSTEM & AUDIT",
+      title: t("nav.systemSection", "SYSTEM & AUDIT"),
       visible: isSuperAdmin,
       items: [
-        { id: "roles", label: "Roles & Authorization", icon: ShieldCheck, visible: isSuperAdmin },
-        { id: "lookups", label: "Master Dropdowns", icon: ListFilter, visible: isSuperAdmin },
-        { id: "logs", label: "API Observability Logs", icon: Terminal, visible: isSuperAdmin },
+        { id: "roles", label: t("nav.rolesAuth", "Roles & Authorization"), icon: ShieldCheck, visible: isSuperAdmin },
+        { id: "lookups", label: t("nav.masterDropdowns", "Master Dropdowns"), icon: ListFilter, visible: isSuperAdmin },
+        { id: "logs", label: t("nav.apiLogs", "API Observability Logs"), icon: Terminal, visible: isSuperAdmin },
       ],
     },
   ];
@@ -142,8 +144,8 @@ export default function Sidebar({ currentView, setCurrentView }) {
 
           <button
             onClick={logout}
-            title="Sign Out"
-            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+            title={t("signOut", "Sign Out")}
+            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
           >
             <LogOut className="w-3.5 h-3.5" />
           </button>

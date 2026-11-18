@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import { apiRequest } from "../services/api";
 import { exportToCsv } from "../utils/exportUtils";
 import {
@@ -25,6 +26,7 @@ import {
 
 export default function ShipmentsTransfersPage() {
   const { user, activeWarehouse } = useAuth();
+  const { t } = useLanguage();
   const [tab, setTab] = useState("arrivals"); // 'arrivals' | 'transfers'
   const [arrivals, setArrivals] = useState([]);
   const [transfers, setTransfers] = useState([]);
@@ -417,14 +419,14 @@ export default function ShipmentsTransfersPage() {
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
               <Ship className="w-5 h-5 text-indigo-600" />
-              <span>Arrival & Transfer Hub</span>
+              <span>{t("shipments.title", "Arrival & Transfer Hub")}</span>
             </h1>
             <span className="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 text-[10px] font-bold border border-indigo-200">
               {activeWarehouse?.name || "Mulemba Distribution HQ"}
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-0.5">
-            Port container & airlot verification, Bill of Lading (BL) customs clearance, and inter-branch logistics.
+            {t("shipments.subtitle", "Port container & airlot verification, Bill of Lading (BL) customs clearance, and inter-branch logistics.")}
           </p>
         </div>
 
@@ -434,14 +436,14 @@ export default function ShipmentsTransfersPage() {
             className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>Add Shipment Arrival</span>
+            <span>{t("shipments.addArrival", "+ Add Shipment Arrival")}</span>
           </button>
           <button
             onClick={() => setCreateTransferModal(true)}
             className="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
           >
             <ArrowLeftRight className="w-3.5 h-3.5" />
-            <span>Create Transfer</span>
+            <span>{t("shipments.createTransfer", "+ Create Transfer")}</span>
           </button>
         </div>
       </div>

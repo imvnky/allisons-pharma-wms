@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import { apiRequest } from "../services/api";
 import {
   Boxes,
@@ -20,6 +21,7 @@ import {
 
 export default function StockCountingPage() {
   const { user, activeWarehouse } = useAuth();
+  const { t } = useLanguage();
 
   // Initial mode based on user role
   const initialMode =
@@ -118,14 +120,14 @@ export default function StockCountingPage() {
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
               <Boxes className="w-5 h-5 text-indigo-600" />
-              <span>Floor Stock Counting Terminal</span>
+              <span>{t("counting.title", "Floor Stock Counting Terminal")}</span>
             </h1>
             <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold border border-slate-200">
               {activeWarehouse?.name || "Mulemba"}
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-0.5">
-            Logged in as <span className="font-bold text-slate-900">{user?.full_name}</span> ({user?.role?.name})
+            {t("common.welcome", "Logged in as")} <span className="font-bold text-slate-900">{user?.full_name}</span> ({user?.role?.name})
           </p>
         </div>
 
@@ -141,7 +143,7 @@ export default function StockCountingPage() {
             }`}
           >
             <Boxes className="w-3.5 h-3.5" />
-            <span>Carton Floor</span>
+            <span>{t("counting.cartonFloor", "Carton Floor")}</span>
           </button>
           <button
             onClick={() => setCountMode("LOOSE")}
@@ -153,7 +155,7 @@ export default function StockCountingPage() {
             }`}
           >
             <Box className="w-3.5 h-3.5" />
-            <span>Loose Units</span>
+            <span>{t("counting.looseUnits", "Loose Units")}</span>
           </button>
           <button
             onClick={() => setCountMode("DISPLAY")}
@@ -165,7 +167,7 @@ export default function StockCountingPage() {
             }`}
           >
             <Store className="w-3.5 h-3.5" />
-            <span>Display Floor</span>
+            <span>{t("counting.displayFloor", "Display Floor")}</span>
           </button>
         </div>
       </div>
@@ -183,13 +185,13 @@ export default function StockCountingPage() {
         <div className="lg:col-span-7 bento-card p-6 space-y-5">
           <div className="space-y-3">
             <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-              1. Select Medicine SKU
+              {t("counting.selectProductLabel", "1. Select Medicine SKU")}
             </label>
             <div className="relative">
               <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
-                placeholder="Scan barcode or type medicine name / SKU..."
+                placeholder={t("counting.scanBarcodeOrType", "Scan barcode or type medicine name / SKU...")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-slate-800 placeholder:text-slate-400"
@@ -252,7 +254,7 @@ export default function StockCountingPage() {
               {/* Quantity Counter */}
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-                  2. Enter Physical Quantity ({countMode.toLowerCase()}s)
+                  {t("counting.enterQuantityLabel", "2. Enter Physical Quantity")} ({countMode.toLowerCase()}s)
                 </label>
                 <div className="flex items-center gap-3">
                   <div className="flex items-center border border-slate-200 rounded-xl bg-white shadow-2xs overflow-hidden">
@@ -296,7 +298,7 @@ export default function StockCountingPage() {
                       onClick={() => setCountInput(0)}
                       className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-semibold text-slate-500 transition-colors cursor-pointer"
                     >
-                      Reset
+                      {t("counting.reset", "Reset")}
                     </button>
                   </div>
                 </div>
@@ -306,14 +308,14 @@ export default function StockCountingPage() {
                   <div className="text-slate-500">
                     {countMode === "CARTON" ? (
                       <span>
-                        {countInput} Cartons × {packSize} pack size =
+                        {countInput} {t("common.cartons", "Cartons")} × {packSize} pack size =
                       </span>
                     ) : (
                       <span>Direct physical units =</span>
                     )}
                   </div>
                   <div className="font-mono text-sm font-black text-indigo-700">
-                    {calculatedPieces.toLocaleString()} Total Pieces
+                    {calculatedPieces.toLocaleString()} {t("counting.totalPieces", "Total Pieces")}
                   </div>
                 </div>
               </div>
@@ -322,7 +324,7 @@ export default function StockCountingPage() {
               {countMode === "DISPLAY" && (
                 <div className="space-y-1.5 pt-2">
                   <label className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
-                    <span>3. Justification Reason</span>
+                    <span>{t("counting.justificationReason", "3. Justification Reason")}</span>
                     <span className="text-rose-500 font-bold">*</span>
                   </label>
                   <select
@@ -330,7 +332,7 @@ export default function StockCountingPage() {
                     onChange={(e) => setDisplayReason(e.target.value)}
                     className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500 cursor-pointer"
                   >
-                    <option value="">-- Select reason for showcase quantity variance --</option>
+                    <option value="">-- {t("counting.selectApprovedReason", "Select an approved reason...")} --</option>
                     {displayReasons.map((dr) => (
                       <option key={dr.key} value={dr.key}>
                         {dr.label}
@@ -347,11 +349,11 @@ export default function StockCountingPage() {
                 className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
               >
                 {loading ? (
-                  <span>Recording Count...</span>
+                  <span>{t("counting.recordingCount", "Recording Count...")}</span>
                 ) : (
                   <>
                     <Save className="w-4 h-4" />
-                    <span>Submit Verified Physical Count</span>
+                    <span>{t("counting.submitVerifiedCount", "Submit Verified Physical Count")}</span>
                   </>
                 )}
               </button>
@@ -365,14 +367,14 @@ export default function StockCountingPage() {
             <div>
               <h2 className="text-sm font-black text-slate-900 tracking-tight flex items-center gap-1.5">
                 <History className="w-4 h-4 text-indigo-600" />
-                <span>My Audit Submissions</span>
+                <span>{t("counting.myAuditSubmissions", "My Audit Submissions")}</span>
               </h2>
               <p className="text-[11px] text-slate-500 mt-0.5">
                 Strict isolated audit log for {user?.full_name}
               </p>
             </div>
             <span className="text-[10px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded-full">
-              {mySubmissions.length} Today
+              {mySubmissions.length} {t("dashboard.today", "Today")}
             </span>
           </div>
 
@@ -399,7 +401,7 @@ export default function StockCountingPage() {
                     <div className="font-mono font-bold text-slate-900">
                       {sub.quantity} {sub.count_type?.toLowerCase()}s
                     </div>
-                    <span className="text-[10px] font-bold text-emerald-600">Recorded</span>
+                    <span className="text-[10px] font-bold text-emerald-600">{t("counting.recorded", "Recorded")}</span>
                   </div>
                 </div>
               ))
@@ -407,7 +409,7 @@ export default function StockCountingPage() {
           </div>
 
           <div className="pt-2 border-t border-slate-100 text-[11px] text-slate-500 text-center">
-            Isolated Role Scope: You can only record and review counts within your assigned permission stream.
+            {t("counting.roleScope", "Isolated Role Scope: You can only record and review counts within your assigned permission stream.")}
           </div>
         </div>
       </div>

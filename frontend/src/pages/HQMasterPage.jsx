@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import { apiRequest } from "../services/api";
 import {
   Globe,
@@ -18,6 +19,7 @@ import {
 } from "lucide-react";
 
 export default function HQMasterPage() {
+  const { t } = useLanguage();
   const [tab, setTab] = useState("monitor"); // 'monitor' | 'master'
   const [warehouseStatuses, setWarehouseStatuses] = useState([]);
   const [masterInventory, setMasterInventory] = useState([]);
@@ -64,14 +66,14 @@ export default function HQMasterPage() {
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
               <Globe className="w-5 h-5 text-indigo-600" />
-              <span>Headquarters (HQ) National Master Control</span>
+              <span>{t("hq.title", "Headquarters (HQ) National Master Control")}</span>
             </h1>
             <span className="px-2.5 py-0.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-[10px] font-bold">
-              All Angola Branches
+              {t("common.allWarehouses", "All Angola Branches")}
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-0.5">
-            Consolidated pharmaceutical inventory surveillance across Luanda North, Luanda South, and Benguela.
+            {t("hq.subtitle", "Consolidated pharmaceutical inventory surveillance across Luanda North, Luanda South, and Benguela.")}
           </p>
         </div>
 
@@ -85,7 +87,7 @@ export default function HQMasterPage() {
               }`}
           >
             <Activity className="w-3.5 h-3.5" />
-            <span>Branch Audit Monitor</span>
+            <span>{t("hq.tabMonitor", "Live Audit Monitor")}</span>
           </button>
           <button
             onClick={() => setTab("master")}
@@ -95,7 +97,7 @@ export default function HQMasterPage() {
               }`}
           >
             <Globe className="w-3.5 h-3.5" />
-            <span>Master Angola Inventory</span>
+            <span>{t("hq.tabMaster", "Master Angola Inventory")}</span>
           </button>
         </div>
       </div>

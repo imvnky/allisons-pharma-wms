@@ -18,7 +18,7 @@ import {
 
 export default function Navbar({ currentView, setCurrentView }) {
   const { user, activeWarehouse, setActiveWarehouse, logout } = useAuth();
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showWhMenu, setShowWhMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -74,7 +74,7 @@ export default function Navbar({ currentView, setCurrentView }) {
           <span className="text-slate-400">Alisons</span>
           <span className="text-slate-300">/</span>
           <span className="text-slate-900 font-bold bg-slate-100 px-2 py-0.5 rounded-md text-[11px]">
-            {viewTitles[currentView] || "Overview"}
+            {t(`nav.viewTitles.${currentView}`, viewTitles[currentView] || "Overview")}
           </span>
         </div>
       </div>
@@ -87,7 +87,7 @@ export default function Navbar({ currentView, setCurrentView }) {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search medicines, batches, SKUs, or aisles..."
+            placeholder={t("searchPlaceholder", "Search medicines, batches, SKUs, or aisles...")}
             className="w-full pl-9 pr-16 py-1.5 bg-slate-50 hover:bg-slate-100/80 focus:bg-white text-xs border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-slate-800 placeholder:text-slate-400 transition-all"
           />
           <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5 px-1.5 py-0.5 bg-white border border-slate-200 rounded-md text-[10px] font-semibold text-slate-400 shadow-2xs">
@@ -118,7 +118,7 @@ export default function Navbar({ currentView, setCurrentView }) {
           {showWhMenu && (
             <div className="absolute top-full mt-1.5 right-0 w-64 bg-white rounded-2xl shadow-xl border border-slate-200 py-1.5 z-40 animate-slideDown">
               <div className="px-3.5 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                Select Warehouse Scope
+                {t("warehouseScope", "Select Warehouse Scope")}
               </div>
               {warehouses.map((wh) => (
                 <button
@@ -143,7 +143,7 @@ export default function Navbar({ currentView, setCurrentView }) {
         {/* Live System Indicator */}
         <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200/70 text-emerald-700 text-[11px] font-bold">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span>Online</span>
+          <span>{t("online", "Online")}</span>
         </div>
 
         {/* Country & Language Switcher */}
@@ -152,8 +152,8 @@ export default function Navbar({ currentView, setCurrentView }) {
           className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 border border-slate-200/60 text-[11px] font-bold text-slate-700 transition-colors cursor-pointer"
           title={`Active Language: ${language === "pt" ? "Português (AO)" : "English"}. Click to switch.`}
         >
-          <span>🇦🇴</span>
-          <span>{language === "pt" ? "PT" : "EN"}</span>
+          <span>{language === "pt" ? "🇦🇴" : "🇬🇧"}</span>
+          <span>{language === "pt" ? "AO PT" : "EN"}</span>
         </button>
 
         {/* Notifications Popover Toggle */}
@@ -169,7 +169,7 @@ export default function Navbar({ currentView, setCurrentView }) {
           {showNotifications && (
             <div className="absolute top-full mt-1.5 right-0 w-80 bg-white rounded-2xl shadow-xl border border-slate-200 p-3 z-40 animate-slideDown">
               <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
-                <span className="text-xs font-bold text-slate-900">Notifications</span>
+                <span className="text-xs font-bold text-slate-900">{t("notifications", "Notifications")}</span>
                 <span className="text-[10px] bg-rose-100 text-rose-700 font-bold px-1.5 py-0.5 rounded-full">
                   3 New
                 </span>
@@ -223,7 +223,7 @@ export default function Navbar({ currentView, setCurrentView }) {
                   <span>{user?.role?.name}</span>
                 </div>
                 <div className="text-[10px] text-slate-500 mt-1.5">
-                  Scope: <span className="font-semibold text-slate-700">{user?.warehouse?.name || "All Angola (HQ)"}</span>
+                  {t("scope", "Scope")}: <span className="font-semibold text-slate-700">{user?.warehouse?.name || t("nationalScope", "All Angola (HQ)")}</span>
                 </div>
               </div>
 
@@ -236,7 +236,7 @@ export default function Navbar({ currentView, setCurrentView }) {
                   className="w-full text-left px-3 py-2 text-xs text-rose-600 hover:bg-rose-50 rounded-xl font-bold flex items-center gap-2 transition-colors cursor-pointer"
                 >
                   <LogOut className="w-3.5 h-3.5 text-rose-600" />
-                  <span>Sign Out</span>
+                  <span>{t("signOut", "Sign Out")}</span>
                 </button>
               </div>
             </div>

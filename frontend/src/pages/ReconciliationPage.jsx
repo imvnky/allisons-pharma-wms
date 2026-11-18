@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import { apiRequest } from "../services/api";
 import {
   FileSpreadsheet,
@@ -21,6 +22,7 @@ import {
 
 export default function ReconciliationPage() {
   const { user, activeWarehouse } = useAuth();
+  const { t } = useLanguage();
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
   const [sheetData, setSheetData] = useState(null);
   const [search, setSearch] = useState("");
@@ -121,7 +123,7 @@ export default function ReconciliationPage() {
           <div className="flex items-center gap-2.5">
             <h1 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
               <FileSpreadsheet className="w-5 h-5 text-indigo-600" />
-              <span>Daily Reconciliation Master Sheet</span>
+              <span>{t("reconciliation.masterTitle", "Daily Reconciliation Master Sheet")}</span>
             </h1>
             <span
               className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${
@@ -130,11 +132,13 @@ export default function ReconciliationPage() {
                   : "bg-indigo-50 text-indigo-800 border-indigo-200"
               }`}
             >
-              {sheetData?.session?.status === "INVENTORY_DONE" ? "Inventory Reconciled" : "Audit In Progress"}
+              {sheetData?.session?.status === "INVENTORY_DONE"
+                ? t("dashboard.inventoryReconciled", "Inventory Reconciled")
+                : t("dashboard.auditInProgress", "Audit In Progress")}
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-0.5">
-            {activeWarehouse?.name || "Mulemba"} • 13 Core Ledger Columns with Live Stock Calculations
+            {activeWarehouse?.name || "Mulemba"} • {t("reconciliation.subtitle", "13 Core Ledger Columns with Live Automatic Calculations")}
           </p>
         </div>
 
@@ -155,7 +159,7 @@ export default function ReconciliationPage() {
             className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>Export CSV</span>
+            <span>{t("common.exportCsv", "Export CSV")}</span>
           </button>
 
           {(user?.role?.code === "SUPERVISOR" || user?.role?.code === "SUPER_ADMIN") && (
@@ -164,7 +168,7 @@ export default function ReconciliationPage() {
               className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
             >
               <Send className="w-3.5 h-3.5" />
-              <span>Finalize & Submit to HQ</span>
+              <span>{t("reconciliation.finalizeBtn", "Finalize & Submit to HQ")}</span>
             </button>
           )}
         </div>
@@ -174,21 +178,21 @@ export default function ReconciliationPage() {
       <div className="p-3.5 rounded-2xl bg-indigo-50/60 border border-indigo-100 text-xs text-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div className="flex items-center gap-2 text-indigo-900 font-bold">
           <Info className="w-4 h-4 text-indigo-600 shrink-0" />
-          <span>Core Mathematical Formulas:</span>
+          <span>{t("reconciliation.formulaTitle", "Core Mathematical Formulas:")}</span>
         </div>
         <div className="flex flex-wrap items-center gap-4 text-[11px] font-mono text-slate-600">
-          <div>Required = Opening + Arrivals - Transfers - Sales</div>
+          <div>{t("reconciliation.formulaRequired", "Required = Opening + Arrivals - Transfers - Sales")}</div>
           <div className="hidden sm:block text-slate-300">•</div>
-          <div>Physical = (Cartons × Pack Size) + Loose + Display</div>
+          <div>{t("reconciliation.formulaPhysical", "Physical = (Cartons × Pack Size) + Loose + Display")}</div>
           <div className="hidden sm:block text-slate-300">•</div>
-          <div className="font-bold text-indigo-900">Difference = Physical - Required</div>
+          <div className="font-bold text-indigo-900">{t("reconciliation.formulaDiff", "Difference = Physical - Required")}</div>
         </div>
       </div>
 
       {/* Summary KPI Cards (PaceUI Bento Stat Row) */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3.5">
         <div className="bento-card p-4">
-          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Audit Progress</div>
+          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{t("reconciliation.auditProgress", "Audit Progress")}</div>
           <div className="text-lg font-black text-slate-900 mt-1">
             {records.length - diffCount} / {records.length} SKUs
           </div>
@@ -198,29 +202,29 @@ export default function ReconciliationPage() {
         </div>
 
         <div className="bento-card p-4">
-          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Required Book Stock</div>
+          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{t("reconciliation.requiredBookStock", "Required Book Stock")}</div>
           <div className="text-lg font-black text-indigo-700 mt-1">
-            {totalRequired.toLocaleString()} <span className="text-xs font-semibold text-slate-400">units</span>
+            {totalRequired.toLocaleString()} <span className="text-xs font-semibold text-slate-400">{t("common.units", "units")}</span>
           </div>
-          <div className="text-[10px] text-slate-500 mt-0.5">Calculated ledger balance</div>
+          <div className="text-[10px] text-slate-500 mt-0.5">{t("reconciliation.calculatedLedgerBalance", "Calculated ledger balance")}</div>
         </div>
 
         <div className="bento-card p-4">
-          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Physical Counted</div>
+          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{t("reconciliation.physicalCounted", "Physical Counted")}</div>
           <div className="text-lg font-black text-slate-900 mt-1">
-            {totalPhysical.toLocaleString()} <span className="text-xs font-semibold text-slate-400">units</span>
+            {totalPhysical.toLocaleString()} <span className="text-xs font-semibold text-slate-400">{t("common.units", "units")}</span>
           </div>
-          <div className="text-[10px] text-slate-500 mt-0.5">Cartons + Loose + Display</div>
+          <div className="text-[10px] text-slate-500 mt-0.5">{t("dashboard.acrossBreakdown", "Cartons + Loose + Display")}</div>
         </div>
 
         <div className="bento-card p-4">
-          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Net Variance</div>
+          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{t("reconciliation.netVariance", "Net Variance")}</div>
           <div
             className={`text-lg font-black mt-1 ${
               totalDifference < 0 ? "text-rose-600" : totalDifference > 0 ? "text-emerald-600" : "text-slate-900"
             }`}
           >
-            {totalDifference > 0 ? `+${totalDifference}` : totalDifference} <span className="text-xs font-semibold text-slate-400">units</span>
+            {totalDifference > 0 ? `+${totalDifference}` : totalDifference} <span className="text-xs font-semibold text-slate-400">{t("common.units", "units")}</span>
           </div>
           <div className="text-[10px] text-slate-500 mt-0.5">
             {diffCount > 0 ? `${diffCount} SKUs require check` : "Zero discrepancy"}
@@ -228,11 +232,11 @@ export default function ReconciliationPage() {
         </div>
 
         <div className="bento-card p-4">
-          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Sales Today</div>
+          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{t("reconciliation.salesToday", "Sales Today")}</div>
           <div className="text-lg font-black text-slate-900 mt-1">
-            {totalSales.toLocaleString()} <span className="text-xs font-semibold text-slate-400">units</span>
+            {totalSales.toLocaleString()} <span className="text-xs font-semibold text-slate-400">{t("common.units", "units")}</span>
           </div>
-          <div className="text-[10px] text-slate-500 mt-0.5">Entered by Supervisor</div>
+          <div className="text-[10px] text-slate-500 mt-0.5">{t("reconciliation.enteredBySupervisor", "Entered by Supervisor")}</div>
         </div>
       </div>
 
@@ -242,7 +246,7 @@ export default function ReconciliationPage() {
           <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
-            placeholder="Filter SKU or Product Description..."
+            placeholder={t("reconciliation.filterPlaceholder", "Filter SKU or Product Description...")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-slate-800 placeholder:text-slate-400"
@@ -258,7 +262,7 @@ export default function ReconciliationPage() {
           }`}
         >
           <Filter className="w-3.5 h-3.5" />
-          <span>Show Discrepancies Only ({diffCount})</span>
+          <span>{t("reconciliation.filterDiffOnly", "Show Discrepancies Only")} ({diffCount})</span>
         </button>
       </div>
 
@@ -268,25 +272,25 @@ export default function ReconciliationPage() {
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200/90 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                <th className="p-3 sticky left-0 bg-slate-50 z-10 w-28">1. SKU</th>
-                <th className="p-3 min-w-48">2. Description & Pack</th>
-                <th className="p-3 text-right">3. Opening</th>
-                <th className="p-3 text-right text-emerald-700 bg-emerald-50/50">4. Arrivals</th>
-                <th className="p-3 text-right text-amber-700 bg-amber-50/50">5. Transfers</th>
+                <th className="p-3 sticky left-0 bg-slate-50 z-10 w-28">{t("reconciliation.colSku", "1. SKU")}</th>
+                <th className="p-3 min-w-48">{t("reconciliation.colDescription", "2. Description & Pack")}</th>
+                <th className="p-3 text-right">{t("reconciliation.colOpening", "3. Opening")}</th>
+                <th className="p-3 text-right text-emerald-700 bg-emerald-50/50">{t("reconciliation.colArrivals", "4. Arrivals")}</th>
+                <th className="p-3 text-right text-amber-700 bg-amber-50/50">{t("reconciliation.colTransfers", "5. Transfers")}</th>
                 <th className="p-3 text-right bg-indigo-50/80 text-indigo-900 min-w-28 font-black">
-                  6. Sales ✍️
+                  {t("reconciliation.colSales", "6. Sales ✍️")}
                 </th>
-                <th className="p-3 text-right">7. Cartons</th>
-                <th className="p-3 text-right">8. Loose</th>
-                <th className="p-3 text-right">9. Display</th>
+                <th className="p-3 text-right">{t("reconciliation.colCartons", "7. Cartons")}</th>
+                <th className="p-3 text-right">{t("reconciliation.colLoose", "8. Loose")}</th>
+                <th className="p-3 text-right">{t("reconciliation.colDisplay", "9. Display")}</th>
                 <th className="p-3 text-right bg-slate-100/90 font-black text-slate-900">
-                  10. Required
+                  {t("reconciliation.colRequired", "10. Required")}
                 </th>
                 <th className="p-3 text-right bg-slate-100/90 font-black text-slate-900">
-                  11. Physical
+                  {t("reconciliation.colPhysical", "11. Physical")}
                 </th>
-                <th className="p-3 text-center min-w-28 font-black">12. Difference</th>
-                <th className="p-3 min-w-48 font-black">13. Remarks ✍️</th>
+                <th className="p-3 text-center min-w-28 font-black">{t("reconciliation.colDifference", "12. Difference")}</th>
+                <th className="p-3 min-w-48 font-black">{t("reconciliation.colRemarks", "13. Remarks ✍️")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-700">
