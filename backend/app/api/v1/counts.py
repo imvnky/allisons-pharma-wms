@@ -1,5 +1,6 @@
 from datetime import date
 from fastapi import APIRouter, Depends, HTTPException, status
+from starlette.requests import Request
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.deps import get_current_user
@@ -12,6 +13,7 @@ router = APIRouter(prefix="/counts", tags=["Stock Counting"])
 @router.post("/submit")
 def submit_physical_count(
     payload: CountSubmission,
+    request: Request,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
@@ -37,6 +39,9 @@ def submit_physical_count(
             detail="Cannot submit counts: Today's inventory session has already been finalized by the supervisor."
         )
 
+    # Extract correlation trace ID
+    req_id = getattr(request.state, "request_id", None) if hasattr(request, "state") else None
+
     # Create count record
     count_entry = PhysicalCount(
         session_id=session.id,
@@ -44,15 +49,20 @@ def submit_physical_count(
         submitted_by=current_user.id,
         count_type=payload.count_type,
         quantity=max(0, payload.quantity),
-        change_reason_key=payload.change_reason_key
+        change_reason_key=payload.change_reason_key,
+        request_id=req_id
     )
     db.add(count_entry)
+    db.flush()
+    count_entry.ticket_number = f"CNT-2026-{count_entry.id:04d}"
     db.commit()
     db.refresh(count_entry)
 
     return {
         "status": "success",
         "count_id": count_entry.id,
+        "ticket_number": count_entry.ticket_number,
+        "request_id": req_id,
         "product_name": product.name,
         "count_type": count_entry.count_type,
         "quantity": count_entry.quantity,
@@ -89,6 +99,8 @@ def get_my_submissions(
             "count_type": s.count_type,
             "quantity": s.quantity,
             "change_reason": s.change_reason_key,
+            "ticket_number": getattr(s, "ticket_number", None) or f"CNT-2026-{s.id:04d}",
+            "request_id": getattr(s, "request_id", None) or "",
             "created_at": s.created_at.strftime("%H:%M:%S") if s.created_at else ""
         }
         for s in submissions

@@ -1,6 +1,8 @@
 import time
 import json
+import uuid
 import traceback
+from datetime import datetime
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
@@ -11,7 +13,16 @@ from app.core.security import decode_access_token
 class ApiLoggingMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         start_time = time.time()
-        
+
+        # Correlation / Request Identification Number
+        req_id = request.headers.get("X-Request-ID")
+        if not req_id:
+            date_str = datetime.now().strftime("%Y%m%d")
+            short_hash = uuid.uuid4().hex[:6].upper()
+            req_id = f"REQ-{date_str}-{short_hash}"
+
+        request.state.request_id = req_id
+
         # Extract user if token present
         auth_header = request.headers.get("Authorization")
         user_id = None
@@ -33,6 +44,8 @@ class ApiLoggingMiddleware(BaseHTTPMiddleware):
         try:
             response = await call_next(request)
             status_code = response.status_code
+            response.headers["X-Request-ID"] = req_id
+            response.headers["Access-Control-Expose-Headers"] = "X-Request-ID"
             return response
         except Exception as exc:
             error_stack = traceback.format_exc()
@@ -52,6 +65,7 @@ class ApiLoggingMiddleware(BaseHTTPMiddleware):
                 db = SessionLocal()
                 try:
                     log_entry = ApiLog(
+                        request_id=req_id,
                         message=f"{request.method} {path} - Status {status_code}",
                         user_id=user_id,
                         username=username,

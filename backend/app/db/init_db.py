@@ -28,6 +28,12 @@ def run_migrations():
 
                     ALTER TABLE transfer_items ADD COLUMN IF NOT EXISTS carton_packing INTEGER DEFAULT 1;
                     ALTER TABLE transfer_items ADD COLUMN IF NOT EXISTS cartons_dispatched INTEGER DEFAULT 0;
+
+                    ALTER TABLE inventory_sessions ADD COLUMN IF NOT EXISTS audit_cycle_number VARCHAR(50);
+                    ALTER TABLE physical_counts ADD COLUMN IF NOT EXISTS ticket_number VARCHAR(50);
+                    ALTER TABLE physical_counts ADD COLUMN IF NOT EXISTS request_id VARCHAR(50);
+                    ALTER TABLE daily_reconciliation_records ADD COLUMN IF NOT EXISTS docket_number VARCHAR(50);
+                    ALTER TABLE api_logs ADD COLUMN IF NOT EXISTS request_id VARCHAR(50);
                 """))
                 conn.commit()
                 print("Database columns verified and migrated successfully.")

@@ -11,6 +11,7 @@ from app.api.v1.hq import router as hq_router
 from app.api.v1.admin import router as admin_router
 from app.api.v1.products import router as products_router
 from app.api.v1.dashboard import router as dashboard_router
+from app.api.v1.tracking import router as tracking_router
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -47,6 +48,7 @@ app.include_router(hq_router, prefix=settings.API_V1_STR)
 app.include_router(admin_router, prefix=settings.API_V1_STR)
 app.include_router(products_router, prefix=settings.API_V1_STR)
 app.include_router(dashboard_router, prefix=settings.API_V1_STR)
+app.include_router(tracking_router, prefix=settings.API_V1_STR)
 
 @app.get("/")
 def root():

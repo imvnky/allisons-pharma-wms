@@ -16,7 +16,9 @@ import {
   Sparkles,
   Info,
   Clock,
-  History
+  History,
+  Copy,
+  Check
 } from "lucide-react";
 
 export default function StockCountingPage() {
@@ -41,7 +43,8 @@ export default function StockCountingPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [mySubmissions, setMySubmissions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [successMsg, setSuccessMsg] = useState("");
+  const [successData, setSuccessData] = useState(null);
+  const [copiedKey, setCopiedKey] = useState(null);
 
   const [displayReasons, setDisplayReasons] = useState([
     { key: "BROKEN_DISPLAY", label: "Broken / Damaged on Display Floor" },
@@ -91,15 +94,25 @@ export default function StockCountingPage() {
 
     setLoading(true);
     try {
-      await apiRequest("/counts/submit", "POST", {
+      const res = await apiRequest("/counts/submit", "POST", {
         product_id: selectedProduct.id,
         count_type: countMode,
         quantity: parseInt(countInput, 10),
         change_reason_key: countMode === "DISPLAY" ? (displayReason || "AUDIT_CORRECTION") : null,
       });
 
-      setSuccessMsg(`Submitted ${countInput} ${countMode.toLowerCase()}s for ${selectedProduct.name}!`);
-      setTimeout(() => setSuccessMsg(""), 3500);
+      const ticket = res.ticket_number || `CNT-2026-${res.count_id || 1}`;
+      const reqId = res.request_id || res._request_id || "";
+
+      setSuccessData({
+        ticket,
+        reqId,
+        product: selectedProduct.name,
+        quantity: parseInt(countInput, 10),
+        mode: countMode.toLowerCase()
+      });
+
+      setTimeout(() => setSuccessData(null), 6000);
       setCountInput(0);
       setDisplayReason("");
       loadSubmissions();
@@ -182,10 +195,57 @@ export default function StockCountingPage() {
         </div>
       </div>
 
-      {successMsg && (
-        <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2 animate-fadeIn">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-          <span>{successMsg}</span>
+      {successData && (
+        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-semibold flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fadeIn">
+          <div className="flex items-center gap-2.5">
+            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+            <div>
+              <div className="font-bold text-slate-900">
+                Logged {successData.quantity} {successData.mode}s for {successData.product}!
+              </div>
+              <div className="text-[11px] text-slate-600 mt-0.5">
+                Transaction verified & sealed in PostgreSQL audit ledger.
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-emerald-200 shadow-2xs">
+              <span className="text-[10px] text-slate-400 font-bold uppercase">Ticket:</span>
+              <span className="font-mono font-black text-indigo-700 text-xs">{successData.ticket}</span>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(successData.ticket);
+                  setCopiedKey("ticket");
+                  setTimeout(() => setCopiedKey(null), 1800);
+                }}
+                className="p-1 hover:bg-slate-100 rounded text-slate-400 hover:text-slate-700 cursor-pointer"
+                title="Copy Ticket Number"
+              >
+                {copiedKey === "ticket" ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+              </button>
+            </div>
+
+            {successData.reqId && (
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-emerald-200 shadow-2xs">
+                <span className="text-[10px] text-slate-400 font-bold uppercase">Trace ID:</span>
+                <span className="font-mono text-slate-700 text-[11px]">{successData.reqId}</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(successData.reqId);
+                    setCopiedKey("req");
+                    setTimeout(() => setCopiedKey(null), 1800);
+                  }}
+                  className="p-1 hover:bg-slate-100 rounded text-slate-400 hover:text-slate-700 cursor-pointer"
+                  title="Copy Request ID"
+                >
+                  {copiedKey === "req" ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
@@ -402,9 +462,17 @@ export default function StockCountingPage() {
                   className="p-3 rounded-xl bg-slate-50 border border-slate-100 hover:bg-slate-100/60 transition-colors flex items-center justify-between gap-3 text-xs"
                 >
                   <div>
-                    <div className="font-bold text-slate-900">{sub.product_name || "Medicine SKU"}</div>
+                    <div className="flex items-center gap-2">
+                      <div className="font-bold text-slate-900">{sub.product_name || "Medicine SKU"}</div>
+                      <span className="px-1.5 py-0.5 rounded bg-indigo-50 border border-indigo-200 text-indigo-700 font-mono text-[9px] font-bold">
+                        {sub.ticket_number || `CNT-2026-${sub.id}`}
+                      </span>
+                    </div>
                     <div className="text-[10px] text-slate-400 mt-0.5">
-                      {new Date(sub.created_at).toLocaleTimeString()} • {sub.count_type}
+                      {sub.created_at} • {sub.count_type}
+                      {sub.request_id && (
+                        <span className="ml-1 text-slate-500 font-mono text-[9px]">({sub.request_id})</span>
+                      )}
                     </div>
                   </div>
                   <div className="text-right">

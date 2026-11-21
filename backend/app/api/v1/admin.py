@@ -239,6 +239,7 @@ def get_api_logs(
         query = query.filter(ApiLog.level == level)
     if search:
         query = query.filter(
+            (ApiLog.request_id.ilike(f"%{search}%")) |
             (ApiLog.message.ilike(f"%{search}%")) |
             (ApiLog.username.ilike(f"%{search}%")) |
             (ApiLog.method_name.ilike(f"%{search}%"))
@@ -252,6 +253,7 @@ def get_api_logs(
         "logs": [
             {
                 "id": l.id,
+                "request_id": getattr(l, "request_id", None) or f"REQ-{l.id:06d}",
                 "created_at": l.created_at.strftime("%Y-%m-%d %H:%M:%S") if l.created_at else "",
                 "message": l.message,
                 "username": l.username or "Anonymous / System",

@@ -134,6 +134,7 @@ class InventorySession(Base):
     id = Column(Integer, primary_key=True, index=True)
     warehouse_id = Column(Integer, ForeignKey("warehouses.id"), nullable=False)
     audit_date = Column(Date, nullable=False)
+    audit_cycle_number = Column(String(50), nullable=True) # e.g. "AUD-MUL-20261122"
     status = Column(String(30), default="UNDER_PROCESS") # 'NOT_STARTED', 'UNDER_PROCESS', 'INVENTORY_DONE'
     finalized_by = Column(Integer, ForeignKey("users.id"), nullable=True)
     finalized_at = Column(DateTime(timezone=True), nullable=True)
@@ -147,6 +148,7 @@ class DailyReconciliationRecord(Base):
     __tablename__ = "daily_reconciliation_records"
 
     id = Column(Integer, primary_key=True, index=True)
+    docket_number = Column(String(50), nullable=True) # e.g. "VAR-2026-0001"
     session_id = Column(Integer, ForeignKey("inventory_sessions.id", ondelete="CASCADE"), nullable=False)
     product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
     
@@ -173,6 +175,8 @@ class PhysicalCount(Base):
     __tablename__ = "physical_counts"
 
     id = Column(Integer, primary_key=True, index=True)
+    ticket_number = Column(String(50), index=True, nullable=True) # e.g. "CNT-2026-0001"
+    request_id = Column(String(50), nullable=True) # e.g. "REQ-20261122-A8C3F"
     session_id = Column(Integer, ForeignKey("inventory_sessions.id", ondelete="CASCADE"), nullable=False)
     product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
     submitted_by = Column(Integer, ForeignKey("users.id"), nullable=False)
@@ -265,6 +269,7 @@ class ApiLog(Base):
     __tablename__ = "api_logs"
 
     id = Column(Integer, primary_key=True, index=True)
+    request_id = Column(String(50), index=True, nullable=True) # e.g. "REQ-20261122-A8C3F"
     created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)
     message = Column(String(255), nullable=False)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=True)

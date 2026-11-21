@@ -25,5 +25,10 @@ export async function apiRequest(endpoint, method = "GET", body = null) {
     throw new Error(data.detail || "API request failed");
   }
 
+  const reqId = response.headers.get("X-Request-ID");
+  if (reqId && data && typeof data === "object" && !Array.isArray(data)) {
+    data._request_id = reqId;
+  }
+
   return data;
 }
