@@ -18,7 +18,9 @@ import {
   Zap,
   CheckCircle2,
   Clock,
-  X
+  X,
+  Copy,
+  Check
 } from "lucide-react";
 
 export default function ApiLogsPage() {
@@ -30,6 +32,7 @@ export default function ApiLogsPage() {
   const [activeStack, setActiveStack] = useState(null);
   const [activePayload, setActivePayload] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [copiedId, setCopiedId] = useState(null);
 
   useEffect(() => {
     loadLogs();
@@ -347,6 +350,7 @@ export default function ApiLogsPage() {
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200/80 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                 <th className="py-3 px-4">Timestamp</th>
+                <th className="py-3 px-4">Request Trace ID</th>
                 <th className="py-3 px-4">Level</th>
                 <th className="py-3 px-4">Method & Route</th>
                 <th className="py-3 px-4">User</th>
@@ -358,10 +362,27 @@ export default function ApiLogsPage() {
             <tbody className="divide-y divide-slate-100 text-slate-700">
               {logs.map((log) => {
                 const isErr = log.level === "ERROR" || (log.status_code && log.status_code >= 400);
+                const reqId = log.request_id || `REQ-${log.id}`;
                 return (
                   <tr key={log.id} className="hover:bg-slate-50/70 transition-colors">
                     <td className="py-3 px-4 text-slate-500 font-mono text-[11px] whitespace-nowrap">
                       {new Date(log.created_at).toLocaleString()}
+                    </td>
+                    <td className="py-3 px-4 whitespace-nowrap">
+                      <div className="flex items-center gap-1.5 font-mono text-[10px] bg-slate-100 border border-slate-200/80 px-2 py-0.5 rounded-md text-slate-700 w-fit">
+                        <span>{reqId}</span>
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(reqId);
+                            setCopiedId(log.id);
+                            setTimeout(() => setCopiedId(null), 1500);
+                          }}
+                          className="text-slate-400 hover:text-slate-700 cursor-pointer"
+                          title="Copy Request ID"
+                        >
+                          {copiedId === log.id ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                        </button>
+                      </div>
                     </td>
                     <td className="py-3 px-4 whitespace-nowrap">
                       <span
