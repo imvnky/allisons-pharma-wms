@@ -224,11 +224,10 @@ export default function DashboardPage({ setCurrentView }) {
               {t("dashboard.stockVariances", "Stock Variances")}
             </span>
             <span
-              className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full border ${
-                summary.discrepancy_count > 0
+              className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full border ${summary.discrepancy_count > 0
                   ? "text-rose-700 bg-rose-50 border-rose-200/80"
                   : "text-emerald-700 bg-emerald-50 border-emerald-200/80"
-              }`}
+                }`}
             >
               {summary.discrepancy_count > 0 ? (
                 <>
@@ -245,9 +244,8 @@ export default function DashboardPage({ setCurrentView }) {
           </div>
           <div className="my-2">
             <div
-              className={`text-2xl font-black tracking-tight ${
-                summary.discrepancy_count > 0 ? "text-rose-600" : "text-slate-900"
-              }`}
+              className={`text-2xl font-black tracking-tight ${summary.discrepancy_count > 0 ? "text-rose-600" : "text-slate-900"
+                }`}
             >
               {summary.discrepancy_count} {t("dashboard.skus", "SKUs")}
             </div>
