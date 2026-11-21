@@ -100,11 +100,10 @@ export default function Sidebar({ currentView, setCurrentView }) {
                       <button
                         key={item.id}
                         onClick={() => setCurrentView(item.id)}
-                        className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                          isActive
+                        className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${isActive
                             ? "bg-indigo-50/80 text-indigo-700 font-bold border-l-2 border-indigo-600 shadow-2xs"
                             : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                        }`}
+                          }`}
                       >
                         <div className="flex items-center gap-2.5">
                           <Icon className={`w-4 h-4 ${isActive ? "text-indigo-600" : "text-slate-400"}`} />

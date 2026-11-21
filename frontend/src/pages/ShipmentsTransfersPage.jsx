@@ -572,8 +572,8 @@ export default function ShipmentsTransfersPage() {
           <button
             onClick={() => setTab("arrivals")}
             className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${tab === "arrivals"
-                ? "bg-white text-indigo-700 shadow-2xs font-bold"
-                : "text-slate-600 hover:text-slate-900"
+              ? "bg-white text-indigo-700 shadow-2xs font-bold"
+              : "text-slate-600 hover:text-slate-900"
               }`}
           >
             <Ship className="w-3.5 h-3.5" />
@@ -582,8 +582,8 @@ export default function ShipmentsTransfersPage() {
           <button
             onClick={() => setTab("transfers")}
             className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${tab === "transfers"
-                ? "bg-white text-indigo-700 shadow-2xs font-bold"
-                : "text-slate-600 hover:text-slate-900"
+              ? "bg-white text-indigo-700 shadow-2xs font-bold"
+              : "text-slate-600 hover:text-slate-900"
               }`}
           >
             <Truck className="w-3.5 h-3.5" />
@@ -771,8 +771,8 @@ export default function ShipmentsTransfersPage() {
                       <td className="py-3 px-4 text-center">
                         <span
                           className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${t.status === "APPROVED"
-                              ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                              : "bg-amber-50 text-amber-700 border-amber-200"
+                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                            : "bg-amber-50 text-amber-700 border-amber-200"
                             }`}
                         >
                           {t.status === "APPROVED" ? "Delivered & Approved" : "In Transit"}
@@ -889,8 +889,8 @@ export default function ShipmentsTransfersPage() {
                       type="button"
                       onClick={() => setFreightType("CONTAINER")}
                       className={`flex-1 py-1.5 px-2 rounded-lg font-bold text-xs flex items-center justify-center gap-1 border transition-colors cursor-pointer ${freightType === "CONTAINER"
-                          ? "bg-white text-emerald-700 border-emerald-300 shadow-2xs"
-                          : "bg-slate-100 text-slate-600 border-transparent hover:bg-slate-200"
+                        ? "bg-white text-emerald-700 border-emerald-300 shadow-2xs"
+                        : "bg-slate-100 text-slate-600 border-transparent hover:bg-slate-200"
                         }`}
                     >
                       <Ship className="w-3.5 h-3.5" />
@@ -900,8 +900,8 @@ export default function ShipmentsTransfersPage() {
                       type="button"
                       onClick={() => setFreightType("AIRLOT")}
                       className={`flex-1 py-1.5 px-2 rounded-lg font-bold text-xs flex items-center justify-center gap-1 border transition-colors cursor-pointer ${freightType === "AIRLOT"
-                          ? "bg-white text-sky-700 border-sky-300 shadow-2xs"
-                          : "bg-slate-100 text-slate-600 border-transparent hover:bg-slate-200"
+                        ? "bg-white text-sky-700 border-sky-300 shadow-2xs"
+                        : "bg-slate-100 text-slate-600 border-transparent hover:bg-slate-200"
                         }`}
                     >
                       <Plane className="w-3.5 h-3.5" />
@@ -1097,8 +1097,8 @@ export default function ShipmentsTransfersPage() {
                     <span className="text-slate-600">Net Shortage:</span>
                     <span
                       className={`px-2.5 py-1 rounded-full font-mono text-xs ${totalShortageUnits > 0
-                          ? "bg-rose-100 text-rose-800 border border-rose-300 font-black"
-                          : "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                        ? "bg-rose-100 text-rose-800 border border-rose-300 font-black"
+                        : "bg-emerald-100 text-emerald-800 border border-emerald-300"
                         }`}
                     >
                       {totalShortageUnits > 0 ? `-${totalShortageUnits.toLocaleString()} Units Short` : "0 Shortage (Full Cargo)"}
