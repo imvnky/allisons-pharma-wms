@@ -1374,20 +1374,25 @@ export default function ShipmentsTransfersPage() {
             <div className="space-y-6 text-slate-900 font-sans print:p-0">
               {/* HEADER SECTION (Screenshot 1.d) */}
               <div className="border-b-2 border-slate-800 pb-4">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h1 className="text-xl font-black text-slate-900 tracking-tight uppercase">
-                      Amaldina Comércio Geral, Lda
-                    </h1>
-                    <div className="text-xs font-bold text-indigo-700 tracking-wide mt-0.5">
-                      Alisons African Pharma Division
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-14 h-14 rounded-xl bg-white border border-slate-300 p-1 shrink-0 flex items-center justify-center">
+                      <img src="/Logo.PNG" alt="Amaldina Logo" className="w-full h-full object-contain" />
                     </div>
-                    <div className="text-[11px] text-slate-600 mt-1 space-y-0.5">
-                      <div>Rua Direita de Cacuaco, Km 9, Bairro Mulemba, Luanda, Angola</div>
-                      <div>NIF: 5417088921 | Tel: +244 923 112 233 | Email: logistics@alisons.co.ao</div>
+                    <div>
+                      <h1 className="text-xl font-black text-slate-900 tracking-tight uppercase">
+                        Amaldina Comércio Geral, Lda
+                      </h1>
+                      <div className="text-xs font-bold text-indigo-700 tracking-wide mt-0.5">
+                        Alisons African Pharma Division
+                      </div>
+                      <div className="text-[11px] text-slate-600 mt-1 space-y-0.5">
+                        <div>Rua Direita de Cacuaco, Km 9, Bairro Mulemba, Luanda, Angola</div>
+                        <div>NIF: 5417088921 | Tel: +244 923 112 233 | Email: logistics@alisons.co.ao</div>
+                      </div>
                     </div>
                   </div>
-                  <div className="text-right">
+                  <div className="text-right shrink-0">
                     <div className="text-xs font-bold text-slate-500 uppercase">Transfer Paper Number</div>
                     <div className="text-base font-black font-mono text-indigo-700 mt-0.5">
                       {viewTransferModal.transfer_number}

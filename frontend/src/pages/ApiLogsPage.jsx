@@ -260,13 +260,12 @@ export default function ApiLogsPage() {
                 >
                   <div className="flex items-center gap-2 min-w-0">
                     <span
-                      className={`px-1.5 py-0.5 rounded-md text-[10px] font-bold ${
-                        is2xx
+                      className={`px-1.5 py-0.5 rounded-md text-[10px] font-bold ${is2xx
                           ? "bg-emerald-100 text-emerald-800"
                           : is4xx
-                          ? "bg-amber-100 text-amber-800"
-                          : "bg-rose-100 text-rose-800"
-                      }`}
+                            ? "bg-amber-100 text-amber-800"
+                            : "bg-rose-100 text-rose-800"
+                        }`}
                     >
                       {log.status_code || 200}
                     </span>
@@ -386,13 +385,12 @@ export default function ApiLogsPage() {
                     </td>
                     <td className="py-3 px-4 whitespace-nowrap">
                       <span
-                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
-                          log.level === "ERROR"
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${log.level === "ERROR"
                             ? "bg-rose-50 text-rose-700 border-rose-200"
                             : log.level === "WARNING"
-                            ? "bg-amber-50 text-amber-700 border-amber-200"
-                            : "bg-blue-50 text-blue-700 border-blue-200"
-                        }`}
+                              ? "bg-amber-50 text-amber-700 border-amber-200"
+                              : "bg-blue-50 text-blue-700 border-blue-200"
+                          }`}
                       >
                         {log.level}
                       </span>
@@ -407,13 +405,12 @@ export default function ApiLogsPage() {
                     <td className="py-3 px-4 whitespace-nowrap">
                       {log.status_code ? (
                         <span
-                          className={`font-mono font-bold ${
-                            log.status_code < 300
+                          className={`font-mono font-bold ${log.status_code < 300
                               ? "text-emerald-600"
                               : log.status_code < 500
-                              ? "text-amber-600"
-                              : "text-rose-600"
-                          }`}
+                                ? "text-amber-600"
+                                : "text-rose-600"
+                            }`}
                         >
                           {log.status_code}
                         </span>
