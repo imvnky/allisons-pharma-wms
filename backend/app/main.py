@@ -9,6 +9,7 @@ from app.api.v1.shipments import router as shipments_router
 from app.api.v1.alerts import router as alerts_router
 from app.api.v1.hq import router as hq_router
 from app.api.v1.admin import router as admin_router
+from app.api.v1.products import router as products_router
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -43,6 +44,7 @@ app.include_router(shipments_router, prefix=settings.API_V1_STR)
 app.include_router(alerts_router, prefix=settings.API_V1_STR)
 app.include_router(hq_router, prefix=settings.API_V1_STR)
 app.include_router(admin_router, prefix=settings.API_V1_STR)
+app.include_router(products_router, prefix=settings.API_V1_STR)
 
 @app.get("/")
 def root():

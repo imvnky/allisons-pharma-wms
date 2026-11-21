@@ -64,3 +64,23 @@ class LookupValueCreate(BaseModel):
     label: str
     sort_order: Optional[int] = 0
 
+class ProductCreate(BaseModel):
+    sku: str
+    name: str
+    category: str
+    units_per_carton: int = 1
+    unit_of_measure: Optional[str] = "Box"
+    unit_price: Optional[float] = 0.0
+
+class ProductUpdate(BaseModel):
+    sku: Optional[str] = None
+    name: Optional[str] = None
+    category: Optional[str] = None
+    units_per_carton: Optional[int] = None
+    unit_of_measure: Optional[str] = None
+    unit_price: Optional[float] = None
+    is_active: Optional[bool] = None
+
+class ProductBulkCreate(BaseModel):
+    products: List[ProductCreate]
+

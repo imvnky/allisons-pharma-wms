@@ -15,6 +15,7 @@ import HQMasterPage from "./pages/HQMasterPage";
 import RolesManagerPage from "./pages/RolesManagerPage";
 import LookupsManagerPage from "./pages/LookupsManagerPage";
 import ApiLogsPage from "./pages/ApiLogsPage";
+import ProductsPage from "./pages/ProductsPage";
 
 function MainApp() {
   const [currentView, setCurrentView] = useState("dashboard");
@@ -48,6 +49,8 @@ function MainApp() {
         return <ReconciliationPage />;
       case "shipments":
         return <ShipmentsTransfersPage />;
+      case "products":
+        return <ProductsPage />;
       case "alerts":
         return <AlertsPage />;
       case "hq":

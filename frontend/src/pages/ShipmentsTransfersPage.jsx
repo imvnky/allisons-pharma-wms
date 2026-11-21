@@ -38,6 +38,13 @@ export default function ShipmentsTransfersPage() {
   const [createTransferModal, setCreateTransferModal] = useState(false);
   const [viewTransferModal, setViewTransferModal] = useState(null);
   const [viewArrivalModal, setViewArrivalModal] = useState(null);
+  const [showQuickAddModal, setShowQuickAddModal] = useState(false);
+
+  // Quick Add Product Form State
+  const [quickSku, setQuickSku] = useState("");
+  const [quickName, setQuickName] = useState("");
+  const [quickCategory, setQuickCategory] = useState("Antibiotics");
+  const [quickPackaging, setQuickPackaging] = useState(50);
 
   // --- SCREENSHOT 2: New Arrival Form State ---
   const [shipmentNumber, setShipmentNumber] = useState("01/26");
@@ -362,6 +369,46 @@ export default function ShipmentsTransfersPage() {
     ]);
 
     exportToCsv(filename, headers, rows);
+  }
+
+  async function handleQuickAddProduct(e) {
+    e.preventDefault();
+    try {
+      const res = await apiRequest("/products", "POST", {
+        sku: quickSku.trim().toUpperCase(),
+        name: quickName.trim(),
+        category: quickCategory.trim(),
+        units_per_carton: parseInt(quickPackaging, 10) || 50,
+        unit_of_measure: "Box",
+        unit_price: 1000
+      });
+      alert(`Medicine '${quickName}' added to master catalog!`);
+      // Reload products list
+      const updatedProducts = await apiRequest("/counts/products");
+      setProducts(updatedProducts || []);
+      // Auto-append to arrival lines if in arrival mode
+      const newPkg = parseInt(quickPackaging, 10) || 50;
+      setArrivalLines((prev) => [
+        ...prev,
+        {
+          product_id: res.id,
+          packaging: newPkg,
+          total_cartons: 10,
+          total_units: 10 * newPkg,
+          cartons_received: 10,
+          units_received: 10 * newPkg,
+          shortage_units: 0,
+          batch_number: "BAT-NEW-01",
+          expiry_date: "2028-12-31",
+          remarks: "New SKU registered on intake"
+        }
+      ]);
+      setShowQuickAddModal(false);
+      setQuickSku("");
+      setQuickName("");
+    } catch (err) {
+      alert("Error adding product: " + err.message);
+    }
   }
 
   function exportTransferManifestToExcel(trf) {
@@ -884,14 +931,25 @@ export default function ShipmentsTransfersPage() {
                   <span className="font-bold text-slate-900 text-xs">
                     Cargo Manifest Products ({arrivalLines.length} line items)
                   </span>
-                  <button
-                    type="button"
-                    onClick={addArrivalLine}
-                    className="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 font-bold flex items-center gap-1 cursor-pointer"
-                  >
-                    <Plus className="w-3 h-3" />
-                    <span>Add Product Row</span>
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowQuickAddModal(true)}
+                      className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 font-bold flex items-center gap-1 cursor-pointer"
+                      title="Register an uncataloged medicine on the spot"
+                    >
+                      <Plus className="w-3 h-3" />
+                      <span>+ Register New SKU</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={addArrivalLine}
+                      className="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 font-bold flex items-center gap-1 cursor-pointer"
+                    >
+                      <Plus className="w-3 h-3" />
+                      <span>Add Product Row</span>
+                    </button>
+                  </div>
                 </div>
 
                 <div className="border border-slate-200 rounded-xl overflow-x-auto max-h-72">
@@ -1552,6 +1610,97 @@ export default function ShipmentsTransfersPage() {
                 </span>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= MODAL 5: QUICK REGISTER NEW SKU ================= */}
+      {showQuickAddModal && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto">
+          <div className="bento-card max-w-md w-full p-6 space-y-4 my-8">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div>
+                <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                  <Package className="w-4 h-4 text-emerald-600" />
+                  <span>Register New Medicine SKU</span>
+                </h3>
+                <p className="text-[11px] text-slate-500">
+                  Instantly registers this drug into the master catalog and appends it to your current manifest.
+                </p>
+              </div>
+              <button onClick={() => setShowQuickAddModal(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleQuickAddProduct} className="space-y-3 text-xs">
+              <div>
+                <label className="block text-slate-700 font-bold mb-1">SKU Code</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. SKU-ART-80"
+                  value={quickSku}
+                  onChange={(e) => setQuickSku(e.target.value.toUpperCase())}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white font-mono font-bold text-xs"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-700 font-bold mb-1">Medicine Name</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Artemether 80mg / Lumefantrine 480mg"
+                  value={quickName}
+                  onChange={(e) => setQuickName(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white text-xs font-semibold"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Category</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Antimalarials"
+                    value={quickCategory}
+                    onChange={(e) => setQuickCategory(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Packaging (Units/Ctn)</label>
+                  <input
+                    type="number"
+                    min="1"
+                    required
+                    placeholder="50"
+                    value={quickPackaging}
+                    onChange={(e) => setQuickPackaging(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white font-mono font-bold text-xs"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setShowQuickAddModal(false)}
+                  className="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs cursor-pointer flex items-center gap-1.5"
+                >
+                  <Check className="w-3.5 h-3.5" />
+                  <span>Register & Add to Manifest</span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

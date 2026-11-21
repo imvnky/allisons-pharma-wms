@@ -44,6 +44,7 @@ export default function Sidebar({ currentView, setCurrentView }) {
       visible: isSupervisor || isHQ,
       items: [
         { id: "shipments", label: t("nav.arrivalsTransfers", "Arrivals & Transfers"), icon: Ship, visible: isSupervisor || isHQ },
+        { id: "products", label: t("nav.productCatalog", "Product Catalog"), icon: Boxes, visible: isSupervisor || isHQ },
       ],
     },
     {
