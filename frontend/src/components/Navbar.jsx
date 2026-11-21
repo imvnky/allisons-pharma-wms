@@ -136,17 +136,28 @@ export default function Navbar({ currentView, setCurrentView }) {
   return (
     <header className="h-16 bg-white border-b border-slate-200/90 px-6 flex items-center justify-between sticky top-0 z-30 shadow-xs">
       {/* Left: Brand & Breadcrumb */}
-      <div className="flex items-center gap-5">
-        <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-blue-600 to-indigo-700 flex items-center justify-center text-white font-black text-lg shadow-sm shadow-indigo-500/20">
-            A
+      <div className="flex items-center gap-4">
+        <div
+          onClick={() => setCurrentView && setCurrentView("dashboard")}
+          className="flex items-center gap-3 cursor-pointer group"
+          title="Amaldina Comércio Geral • Alisons African Pharma WMS"
+        >
+          <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 shadow-2xs p-1 flex items-center justify-center shrink-0 group-hover:border-indigo-400 group-hover:shadow-xs transition-all">
+            <img
+              src="/Logo.PNG"
+              alt="Amaldina Logo"
+              className="w-full h-full object-contain"
+            />
           </div>
           <div>
-            <div className="text-sm font-black text-slate-900 tracking-tight leading-none">
-              Alisons
+            <div className="text-sm font-black text-slate-900 tracking-tight leading-none flex items-center gap-1.5">
+              <span>Amaldina</span>
+              <span className="text-[9px] font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 px-1.5 py-0.2 rounded-md">
+                Alisons
+              </span>
             </div>
-            <div className="text-[10px] font-semibold text-indigo-600 tracking-wider uppercase mt-0.5">
-              Pharma WMS
+            <div className="text-[10px] font-semibold text-slate-500 tracking-wider uppercase mt-0.5">
+              African Pharma WMS
             </div>
           </div>
         </div>
@@ -156,7 +167,7 @@ export default function Navbar({ currentView, setCurrentView }) {
 
         {/* Breadcrumb Path (PaceUI style) */}
         <div className="hidden md:flex items-center gap-2 text-xs font-medium text-slate-500">
-          <span className="text-slate-400">Alisons</span>
+          <span className="text-slate-400">Amaldina</span>
           <span className="text-slate-300">/</span>
           <span className="text-slate-900 font-bold bg-slate-100 px-2 py-0.5 rounded-md text-[11px]">
             {t(`nav.viewTitles.${currentView}`, viewTitles[currentView] || "Overview")}
@@ -343,7 +354,9 @@ export default function Navbar({ currentView, setCurrentView }) {
           <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[80vh]">
             {/* Modal Search Input Header */}
             <div className="p-4 border-b border-slate-100 flex items-center gap-3 bg-slate-50/50">
-              <Search className="w-5 h-5 text-indigo-600 shrink-0" />
+              <div className="w-6 h-6 rounded-md bg-white border border-slate-200 p-0.5 shrink-0 flex items-center justify-center">
+                <img src="/Logo.PNG" alt="Amaldina" className="w-full h-full object-contain" />
+              </div>
               <input
                 autoFocus
                 type="text"

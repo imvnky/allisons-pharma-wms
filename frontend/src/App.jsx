@@ -25,9 +25,12 @@ function MainApp() {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center text-slate-800 text-xs">
         <div className="space-y-4 text-center">
-          <div className="w-10 h-10 border-3 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto shadow-sm"></div>
+          <div className="w-16 h-16 rounded-2xl bg-white border border-slate-200 shadow-sm p-2 mx-auto flex items-center justify-center">
+            <img src="/Logo.PNG" alt="Amaldina Logo" className="w-full h-full object-contain animate-pulse" />
+          </div>
+          <div className="w-7 h-7 border-3 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto shadow-xs"></div>
           <div className="text-slate-600 font-semibold tracking-wide">
-            Connecting to Alisons African Pharma Portal...
+            Connecting to Amaldina • Alisons African Pharma Portal...
           </div>
         </div>
       </div>

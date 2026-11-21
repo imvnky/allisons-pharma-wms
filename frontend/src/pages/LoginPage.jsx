@@ -56,15 +56,23 @@ export default function LoginPage() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
         {/* Brand Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 via-blue-600 to-indigo-700 shadow-md shadow-indigo-500/20 mb-3.5">
-            <span className="text-white font-black text-2xl tracking-wider">A</span>
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white border border-slate-200/90 shadow-md shadow-slate-200/50 p-2.5 mb-3.5 hover:scale-105 transition-transform duration-300">
+            <img
+              src="/Logo.PNG"
+              alt="Amaldina Logo"
+              className="w-full h-full object-contain"
+            />
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tight sm:text-3xl">
-            Alisons African Pharma
+            Amaldina • Alisons Pharma
           </h1>
           <p className="mt-1 text-xs text-indigo-700 font-bold tracking-wider uppercase">
-            Warehouse Management & Audit Portal • Angola
+            Multi-Warehouse Inventory & Audit Portal • Angola
           </p>
+          <div className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-[11px] font-semibold border border-slate-200/80">
+            <Building2 className="w-3.5 h-3.5 text-indigo-600" />
+            <span>Amaldina Comércio Geral, Lda</span>
+          </div>
         </div>
 
         {/* Login Card */}
@@ -228,7 +236,7 @@ export default function LoginPage() {
 
         {/* Footer */}
         <p className="mt-6 text-center text-xs text-slate-400">
-          Alisons African Pharma Limitada • Luanda & Benguela, Angola
+          Amaldina Comércio Geral, Lda • Alisons African Pharma • Luanda & Benguela, Angola
         </p>
       </div>
     </div>
