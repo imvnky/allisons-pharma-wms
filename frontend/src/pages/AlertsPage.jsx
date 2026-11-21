@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import { apiRequest } from "../services/api";
 import {
   AlertTriangle,
@@ -17,6 +18,7 @@ import {
 
 export default function AlertsPage() {
   const { user, activeWarehouse } = useAuth();
+  const { t } = useLanguage();
   const [tab, setTab] = useState("diff"); // 'diff' | 'expiry'
   const [differences, setDifferences] = useState([]);
   const [nearExpiry, setNearExpiry] = useState([]);
@@ -40,14 +42,14 @@ export default function AlertsPage() {
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
               <ShieldAlert className="w-5 h-5 text-rose-600" />
-              <span>Quality & Discrepancy Alerts</span>
+              <span>{t("alerts.title", "Quality & Discrepancy Alerts")}</span>
             </h1>
             <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold border border-slate-200">
               {activeWarehouse?.name || "Mulemba"}
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-0.5">
-            Active stock discrepancies, supervisor sign-offs, and pharmaceutical batch shelf life monitoring.
+            {t("alerts.subtitle", "Active stock discrepancies, supervisor sign-offs, and pharmaceutical batch shelf life monitoring.")}
           </p>
         </div>
 
@@ -62,7 +64,7 @@ export default function AlertsPage() {
             }`}
           >
             <AlertTriangle className="w-3.5 h-3.5" />
-            <span>Product Differences ({differences.length})</span>
+            <span>{t("alerts.tabDifferences", "Product Differences")} ({differences.length})</span>
           </button>
           <button
             onClick={() => setTab("expiry")}
@@ -73,7 +75,7 @@ export default function AlertsPage() {
             }`}
           >
             <Clock className="w-3.5 h-3.5" />
-            <span>Near Expiry Goods ({nearExpiry.length})</span>
+            <span>{t("alerts.tabExpiry", "Near Expiry Goods")} ({nearExpiry.length})</span>
           </button>
         </div>
       </div>

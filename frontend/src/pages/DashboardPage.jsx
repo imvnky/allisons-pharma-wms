@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import { apiRequest } from "../services/api";
 import {
   FileSpreadsheet,
@@ -25,6 +26,7 @@ import {
 
 export default function DashboardPage({ setCurrentView }) {
   const { user, activeWarehouse } = useAuth();
+  const { t } = useLanguage();
   const [stats, setStats] = useState({
     cartonPct: 85,
     loosePct: 60,
@@ -134,14 +136,14 @@ export default function DashboardPage({ setCurrentView }) {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-black text-slate-900 tracking-tight">
-              Warehouse Stock Performance
+              {t("dashboard.stockPerformance", "Warehouse Stock Performance")}
             </h1>
             <span className="px-2 py-0.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-[10px] font-bold">
               {activeWarehouse?.name || "Mulemba"}
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-0.5">
-            Real-time physical audit surveillance, container intake, and inter-warehouse balance.
+            {t("dashboard.stockPerformanceSubtitle", "Real-time physical audit surveillance, container intake, and inter-warehouse balance.")}
           </p>
         </div>
 
@@ -151,14 +153,14 @@ export default function DashboardPage({ setCurrentView }) {
             className="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
           >
             <FileSpreadsheet className="w-3.5 h-3.5" />
-            <span>Open Daily Sheet</span>
+            <span>{t("dashboard.openDailySheet", "Open Daily Sheet")}</span>
           </button>
           <button
             onClick={() => setCurrentView("counting")}
             className="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
           >
             <Boxes className="w-3.5 h-3.5 text-indigo-600" />
-            <span>Floor Terminal</span>
+            <span>{t("dashboard.floorTerminal", "Floor Terminal")}</span>
           </button>
         </div>
       </div>
@@ -169,7 +171,7 @@ export default function DashboardPage({ setCurrentView }) {
         <div className="bento-card p-5 flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-              Physical Stock Counted
+              {t("dashboard.physicalStockCounted", "Physical Stock Counted")}
             </span>
             <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2 py-0.5 rounded-full">
               <ArrowUpRight className="w-3 h-3 text-emerald-600" />
@@ -178,10 +180,10 @@ export default function DashboardPage({ setCurrentView }) {
           </div>
           <div className="my-2">
             <div className="text-2xl font-black text-slate-900 tracking-tight">
-              {stats.totalCountedPieces.toLocaleString()} <span className="text-xs font-semibold text-slate-400">units</span>
+              {stats.totalCountedPieces.toLocaleString()} <span className="text-xs font-semibold text-slate-400">{t("common.units", "units")}</span>
             </div>
             <div className="text-xs text-slate-500 mt-0.5">
-              Across cartons, loose, & showcase display
+              {t("dashboard.acrossBreakdown", "Across cartons, loose, & showcase display")}
             </div>
           </div>
           <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
@@ -193,25 +195,27 @@ export default function DashboardPage({ setCurrentView }) {
         <div className="bento-card p-5 flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-              Audit Progress
+              {t("dashboard.auditProgress", "Audit Progress")}
             </span>
             <span className="inline-flex items-center gap-1 text-[11px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-200/80 px-2 py-0.5 rounded-full">
               <Activity className="w-3 h-3 text-indigo-600" />
-              <span>85% Finished</span>
+              <span>85% {t("common.finished", "Finished")}</span>
             </span>
           </div>
           <div className="my-2">
             <div className="text-2xl font-black text-slate-900 tracking-tight">
-              {stats.statusText}
+              {stats.statusText === "Inventory Reconciled"
+                ? t("dashboard.inventoryReconciled", "Inventory Reconciled")
+                : t("dashboard.auditInProgress", "Audit In Progress")}
             </div>
             <div className="text-xs text-slate-500 mt-0.5">
-              Target completion: 18:00 Luanda Time
+              {t("dashboard.targetLuandaTime", "Target completion: 18:00 Luanda Time")}
             </div>
           </div>
           <div className="flex items-center justify-between text-[11px] font-semibold text-slate-600">
-            <span>Carton: 85%</span>
-            <span>Loose: 60%</span>
-            <span>Display: 100%</span>
+            <span>{t("common.cartons", "Carton")}: 85%</span>
+            <span>{t("counting.tabLoose", "Loose")}: 60%</span>
+            <span>{t("counting.tabDisplay", "Display")}: 100%</span>
           </div>
         </div>
 
@@ -219,26 +223,26 @@ export default function DashboardPage({ setCurrentView }) {
         <div className="bento-card p-5 flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-              Inbound Transfers
+              {t("dashboard.inboundTransfers", "Inbound Transfers")}
             </span>
             <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 bg-amber-50 border border-amber-200/80 px-2 py-0.5 rounded-full">
               <Truck className="w-3 h-3 text-amber-600" />
-              <span>{stats.pendingTransfers} Pending</span>
+              <span>{stats.pendingTransfers} {t("dashboard.pending", "Pending")}</span>
             </span>
           </div>
           <div className="my-2">
             <div className="text-2xl font-black text-slate-900 tracking-tight">
-              2 Dispatches
+              2 {t("dashboard.dispatches", "Dispatches")}
             </div>
             <div className="text-xs text-slate-500 mt-0.5">
-              From Lobito & Palanca awaiting sign-off
+              {t("dashboard.awaitingSignOff", "From Lobito & Palanca awaiting sign-off")}
             </div>
           </div>
           <button
             onClick={() => setCurrentView("shipments")}
             className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-colors pt-1 cursor-pointer"
           >
-            <span>Review Arrivals & Transfers</span>
+            <span>{t("dashboard.reviewArrivalsBtn", "Review Arrivals & Transfers")}</span>
             <ArrowRight className="w-3 h-3" />
           </button>
         </div>
@@ -247,26 +251,26 @@ export default function DashboardPage({ setCurrentView }) {
         <div className="bento-card p-5 flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-              Stock Variances
+              {t("dashboard.stockVariances", "Stock Variances")}
             </span>
             <span className="inline-flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-50 border border-rose-200/80 px-2 py-0.5 rounded-full">
               <AlertTriangle className="w-3 h-3 text-rose-600" />
-              <span>Requires Action</span>
+              <span>{t("dashboard.requiresAction", "Requires Action")}</span>
             </span>
           </div>
           <div className="my-2">
             <div className="text-2xl font-black text-rose-600 tracking-tight">
-              {stats.discrepanciesCount} SKUs
+              {stats.discrepanciesCount} {t("dashboard.skus", "SKUs")}
             </div>
             <div className="text-xs text-slate-500 mt-0.5">
-              Physical count mismatch with book stock
+              {t("dashboard.varianceMismatch", "Physical count mismatch with book stock")}
             </div>
           </div>
           <button
             onClick={() => setCurrentView("alerts")}
             className="text-xs font-bold text-rose-600 hover:text-rose-800 flex items-center gap-1 transition-colors pt-1 cursor-pointer"
           >
-            <span>Inspect Discrepancies</span>
+            <span>{t("dashboard.inspectDiscrepanciesBtn", "Inspect Discrepancies")}</span>
             <ArrowRight className="w-3 h-3" />
           </button>
         </div>
@@ -279,10 +283,10 @@ export default function DashboardPage({ setCurrentView }) {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
             <div>
               <h2 className="text-sm font-black text-slate-900 tracking-tight">
-                Therapeutic Class Stock Audit
+                {t("dashboard.therapeuticAudit", "Therapeutic Class Stock Audit")}
               </h2>
               <p className="text-xs text-slate-500 mt-0.5">
-                Physical counts vs Book stock requirements across therapeutic lines
+                {t("dashboard.therapeuticSubtitle", "Physical counts vs Book stock requirements across therapeutic lines")}
               </p>
             </div>
 
@@ -291,19 +295,19 @@ export default function DashboardPage({ setCurrentView }) {
                 onClick={() => setActiveRange("today")}
                 className={`px-2.5 py-1 rounded-md transition-colors ${activeRange === "today" ? "bg-white text-slate-900 shadow-2xs font-bold" : "hover:text-slate-900"}`}
               >
-                Today
+                {t("dashboard.today", "Today")}
               </button>
               <button
                 onClick={() => setActiveRange("week")}
                 className={`px-2.5 py-1 rounded-md transition-colors ${activeRange === "week" ? "bg-white text-slate-900 shadow-2xs font-bold" : "hover:text-slate-900"}`}
               >
-                7 Days
+                {t("dashboard.sevenDays", "7 Days")}
               </button>
               <button
                 onClick={() => setActiveRange("month")}
                 className={`px-2.5 py-1 rounded-md transition-colors ${activeRange === "month" ? "bg-white text-slate-900 shadow-2xs font-bold" : "hover:text-slate-900"}`}
               >
-                Month
+                {t("dashboard.month", "Month")}
               </button>
             </div>
           </div>
@@ -339,14 +343,14 @@ export default function DashboardPage({ setCurrentView }) {
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1.5">
                   <div className="w-2.5 h-2.5 rounded-sm bg-indigo-600"></div>
-                  <span className="font-semibold text-slate-700">Physical Verified</span>
+                  <span className="font-semibold text-slate-700">{t("dashboard.physicalVerified", "Physical Verified")}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <div className="w-2.5 h-2.5 rounded-sm bg-slate-200"></div>
-                  <span className="font-medium text-slate-500">Required Book Stock</span>
+                  <span className="font-medium text-slate-500">{t("dashboard.requiredBookStock", "Required Book Stock")}</span>
                 </div>
               </div>
-              <span className="text-[11px] font-bold text-emerald-600">99.2% Accuracy Overall</span>
+              <span className="text-[11px] font-bold text-emerald-600">99.2% {t("dashboard.accuracyOverall", "Accuracy Overall")}</span>
             </div>
           </div>
         </div>
@@ -356,15 +360,15 @@ export default function DashboardPage({ setCurrentView }) {
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
               <h2 className="text-sm font-black text-slate-900 tracking-tight">
-                Top Monitored Medicines
+                {t("dashboard.topMonitored", "Top Monitored Medicines")}
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5">High-velocity SKUs & physical stock status</p>
+              <p className="text-xs text-slate-500 mt-0.5">{t("dashboard.topMonitoredSubtitle", "High-velocity SKUs & physical stock status")}</p>
             </div>
             <button
               onClick={() => setCurrentView("reconciliation")}
               className="text-xs font-bold text-indigo-600 hover:text-indigo-800"
             >
-              View All
+              {t("dashboard.viewAll", "View All")}
             </button>
           </div>
 
@@ -394,7 +398,7 @@ export default function DashboardPage({ setCurrentView }) {
               onClick={() => setCurrentView("reconciliation")}
               className="w-full py-2 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
             >
-              <span>Export Full Inventory Audit Report</span>
+              <span>{t("dashboard.exportAuditReport", "Export Full Inventory Audit Report")}</span>
               <Download className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -407,9 +411,9 @@ export default function DashboardPage({ setCurrentView }) {
         <div className="lg:col-span-4 bento-card p-6 flex flex-col justify-between space-y-4">
           <div className="border-b border-slate-100 pb-3">
             <h2 className="text-sm font-black text-slate-900 tracking-tight">
-              Physical Stock Breakdown
+              {t("dashboard.stockBreakdown", "Physical Stock Breakdown")}
             </h2>
-            <p className="text-xs text-slate-500 mt-0.5">Distribution across counting streams</p>
+            <p className="text-xs text-slate-500 mt-0.5">{t("dashboard.distributionAcross", "Distribution across counting streams")}</p>
           </div>
 
           {/* Semi-Donut Gauge Graphic (PaceUI Sales by Channel Inspiration) */}
@@ -418,31 +422,31 @@ export default function DashboardPage({ setCurrentView }) {
               <div className="w-36 h-36 rounded-full border-12 border-slate-100 border-t-indigo-600 border-r-blue-500 border-l-purple-500 absolute top-0"></div>
               <div className="text-center z-10 pb-1">
                 <div className="text-xl font-black text-slate-900">45,280</div>
-                <div className="text-[10px] font-semibold text-slate-400 uppercase">Total Units</div>
+                <div className="text-[10px] font-semibold text-slate-400 uppercase">{t("dashboard.totalUnits", "Total Units")}</div>
               </div>
             </div>
 
             <div className="grid grid-cols-3 gap-2 w-full mt-5 text-center text-xs">
               <div className="p-2 rounded-xl bg-slate-50 border border-slate-100">
                 <div className="w-2 h-2 rounded-full bg-indigo-600 mx-auto mb-1"></div>
-                <div className="text-[10px] text-slate-400 font-bold uppercase">Cartons</div>
+                <div className="text-[10px] text-slate-400 font-bold uppercase">{t("common.cartons", "Cartons")}</div>
                 <div className="font-bold text-slate-900">72%</div>
               </div>
               <div className="p-2 rounded-xl bg-slate-50 border border-slate-100">
                 <div className="w-2 h-2 rounded-full bg-blue-500 mx-auto mb-1"></div>
-                <div className="text-[10px] text-slate-400 font-bold uppercase">Loose</div>
+                <div className="text-[10px] text-slate-400 font-bold uppercase">{t("counting.tabLoose", "Loose")}</div>
                 <div className="font-bold text-slate-900">18%</div>
               </div>
               <div className="p-2 rounded-xl bg-slate-50 border border-slate-100">
                 <div className="w-2 h-2 rounded-full bg-purple-500 mx-auto mb-1"></div>
-                <div className="text-[10px] text-slate-400 font-bold uppercase">Display</div>
+                <div className="text-[10px] text-slate-400 font-bold uppercase">{t("counting.tabDisplay", "Display")}</div>
                 <div className="font-bold text-slate-900">10%</div>
               </div>
             </div>
           </div>
 
           <div className="text-[11px] text-slate-500 text-center">
-            Formula: Physical = (Cartons × Pack Size) + Loose + Display
+            {t("dashboard.formulaDesc", "Formula: Physical = (Cartons × Pack Size) + Loose + Display")}
           </div>
         </div>
 
@@ -450,9 +454,9 @@ export default function DashboardPage({ setCurrentView }) {
         <div className="lg:col-span-4 bento-card p-6 flex flex-col justify-between space-y-4">
           <div className="border-b border-slate-100 pb-3">
             <h2 className="text-sm font-black text-slate-900 tracking-tight">
-              Logistics & Transfer Inflow
+              {t("dashboard.logisticsInflow", "Logistics & Transfer Inflow")}
             </h2>
-            <p className="text-xs text-slate-500 mt-0.5">Port shipments and inter-branch movement</p>
+            <p className="text-xs text-slate-500 mt-0.5">{t("dashboard.portShipmentsSubtitle", "Port shipments and inter-branch movement")}</p>
           </div>
 
           <div className="space-y-3">
@@ -462,12 +466,12 @@ export default function DashboardPage({ setCurrentView }) {
                   <Ship className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="text-xs font-bold text-slate-900">Shipment 01/26 (Sea Container)</div>
+                  <div className="text-xs font-bold text-slate-900">{t("dashboard.seaContainerInbound", "Shipment 01/26 (Sea Container)")}</div>
                   <div className="text-[10px] text-slate-500">MSKU-908124-7 • BL MEDU-782194</div>
                 </div>
               </div>
               <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
-                Verified In Stock
+                {t("dashboard.verifiedInStock", "Verified In Stock")}
               </span>
             </div>
 
@@ -477,12 +481,12 @@ export default function DashboardPage({ setCurrentView }) {
                   <Truck className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="text-xs font-bold text-slate-900">Transfer Note to Lobito</div>
+                  <div className="text-xs font-bold text-slate-900">{t("dashboard.transferNoteTo", "Transfer Note to Lobito")}</div>
                   <div className="text-[10px] text-slate-500">TR-2026-102 • Pedro Manuel (LD-44-91-AM)</div>
                 </div>
               </div>
               <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold">
-                In Transit
+                {t("dashboard.inTransit", "In Transit")}
               </span>
             </div>
 
@@ -492,11 +496,11 @@ export default function DashboardPage({ setCurrentView }) {
                   <FileSpreadsheet className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="text-xs font-bold text-slate-900">Local Sales Deducted</div>
-                  <div className="text-[10px] text-slate-500">Supervisor manual ledger entries</div>
+                  <div className="text-xs font-bold text-slate-900">{t("dashboard.localSalesDeducted", "Local Sales Deducted")}</div>
+                  <div className="text-[10px] text-slate-500">{t("dashboard.supervisorLedgerEntries", "Supervisor manual ledger entries")}</div>
                 </div>
               </div>
-              <span className="font-bold text-slate-800 text-xs">142 units</span>
+              <span className="font-bold text-slate-800 text-xs">142 {t("common.units", "units")}</span>
             </div>
           </div>
 
@@ -504,7 +508,7 @@ export default function DashboardPage({ setCurrentView }) {
             onClick={() => setCurrentView("shipments")}
             className="w-full py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
           >
-            <span>Manage Shipments & Transfers</span>
+            <span>{t("dashboard.manageShipmentsBtn", "Manage Shipments & Transfers")}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
@@ -515,10 +519,10 @@ export default function DashboardPage({ setCurrentView }) {
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
               <h2 className="text-sm font-black text-slate-900 tracking-tight">
-                Live Audit Stream
+                {t("dashboard.liveAuditStream", "Live Audit Stream")}
               </h2>
             </div>
-            <span className="text-[10px] font-bold text-slate-400 uppercase">Real-Time</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase">{t("dashboard.realTime", "Real-Time")}</span>
           </div>
 
           <div className="space-y-2.5 max-h-[220px] overflow-y-auto pr-1">
@@ -538,12 +542,12 @@ export default function DashboardPage({ setCurrentView }) {
           </div>
 
           <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-            <span className="text-slate-400">PostgreSQL Audit Trail</span>
+            <span className="text-slate-400">{t("dashboard.postgresAuditTrail", "PostgreSQL Audit Trail")}</span>
             <button
               onClick={() => setCurrentView("counting")}
               className="text-xs font-bold text-indigo-600 hover:text-indigo-800"
             >
-              Floor Terminal →
+              {t("dashboard.floorTerminal", "Floor Terminal")} →
             </button>
           </div>
         </div>
