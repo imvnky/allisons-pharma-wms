@@ -44,8 +44,8 @@ def get_or_create_session(db: Session, warehouse_id: int, target_date: date) -> 
                     DailyReconciliationRecord.product_id == p.id
                 ).first()
 
-            opening = prev_record.physical_stock if prev_record else (100 * p.units_per_carton) # default initial
-            display_open = prev_record.display_count if prev_record else 5
+            opening = prev_record.physical_stock if prev_record else 0
+            display_open = prev_record.display_count if prev_record else 0
 
             record = DailyReconciliationRecord(
                 session_id=session.id,

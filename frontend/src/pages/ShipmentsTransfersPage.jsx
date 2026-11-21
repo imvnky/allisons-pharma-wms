@@ -47,58 +47,70 @@ export default function ShipmentsTransfersPage() {
   const [quickPackaging, setQuickPackaging] = useState(50);
 
   // --- SCREENSHOT 2: New Arrival Form State ---
-  const [shipmentNumber, setShipmentNumber] = useState("01/26");
+  const [shipmentNumber, setShipmentNumber] = useState("");
   const [arrivalDate, setArrivalDate] = useState(new Date().toISOString().split("T")[0]);
-  const [lotSize, setLotSize] = useState("1,500 Cartons");
-  const [invoiceNumber, setInvoiceNumber] = useState("INV-2026-8812");
+  const [lotSize, setLotSize] = useState("");
+  const [invoiceNumber, setInvoiceNumber] = useState("");
   const [freightType, setFreightType] = useState("CONTAINER"); // 'CONTAINER' or 'AIRLOT'
-  const [containerOrAirlotNo, setContainerOrAirlotNo] = useState("MSKU-908124-7");
-  const [trackingBL, setTrackingBL] = useState("MEDU-782194");
-  const [supplierName, setSupplierName] = useState("Cadila Healthcare Ltd");
+  const [containerOrAirlotNo, setContainerOrAirlotNo] = useState("");
+  const [trackingBL, setTrackingBL] = useState("");
+  const [supplierName, setSupplierName] = useState("");
   const [arrivalLines, setArrivalLines] = useState([]);
 
   // --- SCREENSHOT 1: New Transfer Form State ---
   const [destWarehouseId, setDestWarehouseId] = useState(2);
   const [transferDate, setTransferDate] = useState(new Date().toISOString().split("T")[0]);
-  const [driverName, setDriverName] = useState("Pedro Manuel");
-  const [vehiclePlate, setVehiclePlate] = useState("LD-44-91-AM");
-  const [transferNotes, setTransferNotes] = useState("Urgent inter-branch replenishment");
+  const [driverName, setDriverName] = useState("");
+  const [vehiclePlate, setVehiclePlate] = useState("");
+  const [transferNotes, setTransferNotes] = useState("");
   const [transferLines, setTransferLines] = useState([]);
 
-  const warehouseOptions = [
+  const [warehouseOptions, setWarehouseOptions] = useState([
     { id: 1, code: "MULEMBA", name: "Mulemba Warehouse (Luanda North)", city: "Luanda" },
     { id: 2, code: "PALANCA", name: "Palanca Warehouse (Luanda South)", city: "Luanda" },
     { id: 3, code: "LOBITO", name: "Lobito Warehouse (Benguela)", city: "Lobito" },
-  ];
+  ]);
 
   useEffect(() => {
     loadData();
+
+    // Dynamically fetch active warehouses
+    apiRequest("/admin/warehouses")
+      .then((whs) => {
+        if (whs && whs.length > 0) {
+          setWarehouseOptions(whs);
+          const other = whs.find((w) => w.id !== (activeWarehouse?.id || 1));
+          if (other) setDestWarehouseId(other.id);
+        }
+      })
+      .catch(console.warn);
+
     apiRequest("/counts/products")
       .then((p) => {
         setProducts(p || []);
         if (p && p.length > 0) {
-          // Initialize default line item for arrival
+          // Initialize empty line item for arrival
           setArrivalLines([
             {
               product_id: p[0].id,
               packaging: p[0].units_per_carton || 50,
-              total_cartons: 20,
-              total_units: 20 * (p[0].units_per_carton || 50),
-              cartons_received: 20,
-              units_received: 20 * (p[0].units_per_carton || 50),
+              total_cartons: 0,
+              total_units: 0,
+              cartons_received: 0,
+              units_received: 0,
               shortage_units: 0,
-              batch_number: "BAT-2026-X1",
+              batch_number: "",
               expiry_date: "2028-12-31",
-              remarks: "Clean intact cargo"
+              remarks: ""
             }
           ]);
-          // Initialize default line item for transfer
+          // Initialize empty line item for transfer
           setTransferLines([
             {
               product_id: p[0].id,
               carton_packing: p[0].units_per_carton || 50,
-              cartons_dispatched: 10,
-              dispatched_qty: 10 * (p[0].units_per_carton || 50)
+              cartons_dispatched: 0,
+              dispatched_qty: 0
             }
           ]);
         }

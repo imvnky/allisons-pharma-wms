@@ -55,13 +55,17 @@ def get_categories(
 ):
     cats = db.query(Product.category).distinct().filter(Product.is_active == True).all()
     existing_cats = [c[0] for c in cats if c[0]]
+    if existing_cats:
+        return sorted(list(set(existing_cats)))
     defaults = [
-        "Antibiotics", "Analgesics & Antipyretics", "Anti-inflammatory",
-        "Antimalarials", "Cardiovascular", "Gastrointestinal",
-        "Vitamins & Minerals", "Respiratory", "Dermatology", "Medical Supplies"
+        "Antibiotics", "Analgesics & Anti-inflammatory", "Antimalarials",
+        "Anthelmintics (Desparasitantes)", "Antifungals (Dermatologia)",
+        "Vitamins & Nutritional Supplements", "Gastrointestinal & Antiulcer",
+        "Respiratory & Cough", "Medical Devices & Consumables",
+        "Electrolytes & Rehydration", "Appetite Stimulants & Tonics",
+        "ENT / Nasal Decongestants", "General Medicine"
     ]
-    all_cats = sorted(list(set(existing_cats + defaults)))
-    return all_cats
+    return sorted(defaults)
 
 @router.post("", status_code=status.HTTP_201_CREATED)
 def create_product(
