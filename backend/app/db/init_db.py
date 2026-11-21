@@ -186,21 +186,35 @@ def init_db():
             db.add_all(values)
             db.commit()
 
-        # 6. Sample Pharmaceutical Products
+        # 6. Pharmaceutical Catalog from Amaldina Price List
         if db.query(Product).count() == 0:
-            print("Seeding Pharmaceutical Catalog...")
-            products = [
-                Product(sku="SKU-AMX-500", name="Amoxicillin 500mg Capsules", category="Antibiotics", units_per_carton=24, unit_of_measure="Box 10x10", unit_price=1200.00),
-                Product(sku="SKU-PCM-100", name="Paracetamol Syrup 100ml", category="Analgesics & Antipyretics", units_per_carton=48, unit_of_measure="Bottle", unit_price=450.00),
-                Product(sku="SKU-CIP-500", name="Ciprofloxacin 500mg Tablets", category="Antibiotics", units_per_carton=12, unit_of_measure="Box 10x10", unit_price=1600.00),
-                Product(sku="SKU-IBU-400", name="Ibuprofen 400mg Tablets", category="Anti-inflammatory", units_per_carton=50, unit_of_measure="Box 10x10", unit_price=950.00),
-                Product(sku="SKU-AZI-500", name="Azithromycin 500mg Tablets", category="Antibiotics", units_per_carton=12, unit_of_measure="Box 3 Tabs", unit_price=2200.00),
-                Product(sku="SKU-MET-500", name="Metformin 500mg Tablets", category="Antidiabetic", units_per_carton=30, unit_of_measure="Box 10x10", unit_price=800.00),
-                Product(sku="SKU-OMP-20", name="Omeprazole 20mg Capsules", category="Gastrointestinal", units_per_carton=20, unit_of_measure="Box 28 Caps", unit_price=1100.00),
-                Product(sku="SKU-VIT-C", name="Vitamin C 500mg Chewable", category="Vitamins & Minerals", units_per_carton=50, unit_of_measure="Bottle 60 Tabs", unit_price=650.00),
-            ]
+            print("Seeding Official Amaldina Pharmaceutical Catalog...")
+            import os
+            import json
+            json_path = os.path.join(os.path.dirname(__file__), "amaldina_products.json")
+            if os.path.exists(json_path):
+                with open(json_path, "r", encoding="utf-8") as f:
+                    amaldina_data = json.load(f)
+                products = [
+                    Product(
+                        sku=p["sku"],
+                        name=p["name"],
+                        category=p["category"],
+                        units_per_carton=p.get("units_per_carton", 50),
+                        unit_of_measure=p.get("unit_of_measure", "Box"),
+                        unit_price=p.get("unit_price", 0.0),
+                        is_active=True
+                    )
+                    for p in amaldina_data
+                ]
+            else:
+                products = [
+                    Product(sku="ALIS-AMX-500", name="Amoxicillin 500mg Capsules", category="Antibiotics", units_per_carton=50, unit_of_measure="Box 10x10", unit_price=1200.00),
+                    Product(sku="ALIS-PCM-100", name="Paracetamol Syrup 100ml", category="Analgesics & Anti-inflammatory", units_per_carton=50, unit_of_measure="Bottle", unit_price=450.00),
+                ]
             db.add_all(products)
             db.commit()
+            print(f"Seeded {len(products)} products into catalog.")
 
         print("Database initialization and seed complete!")
     finally:

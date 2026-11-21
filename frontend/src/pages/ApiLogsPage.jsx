@@ -60,18 +60,27 @@ export default function ApiLogsPage() {
     a.click();
   }
 
-  // Simulated Weekly Heatmap Matrix (Inspired by PaceUI Image 2)
+  // Dynamically computed Weekly Heatmap Matrix from live system logs
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const timeBlocks = ["08-10", "10-12", "12-14", "14-16", "16-18", "18-20"];
-  const heatmapData = [
-    [2, 5, 8, 4, 3, 1],
-    [3, 7, 9, 6, 4, 1],
-    [4, 8, 9, 7, 5, 2],
-    [3, 6, 8, 5, 3, 1],
-    [5, 9, 10, 8, 6, 2],
-    [1, 2, 4, 2, 1, 0],
-    [0, 1, 2, 1, 0, 0],
-  ];
+  const heatmapData = Array(7).fill(0).map(() => Array(6).fill(0));
+  logs.forEach((log) => {
+    if (!log.created_at) return;
+    const d = new Date(log.created_at);
+    if (isNaN(d.getTime())) return;
+    const dayIdx = (d.getDay() + 6) % 7;
+    const hour = d.getHours();
+    let blockIdx = -1;
+    if (hour >= 8 && hour < 10) blockIdx = 0;
+    else if (hour >= 10 && hour < 12) blockIdx = 1;
+    else if (hour >= 12 && hour < 14) blockIdx = 2;
+    else if (hour >= 14 && hour < 16) blockIdx = 3;
+    else if (hour >= 16 && hour < 18) blockIdx = 4;
+    else if (hour >= 18 && hour < 20) blockIdx = 5;
+    if (dayIdx >= 0 && dayIdx < 7 && blockIdx >= 0 && blockIdx < 6) {
+      heatmapData[dayIdx][blockIdx] += 1;
+    }
+  });
 
   function getHeatmapColor(val) {
     if (val === 0) return "bg-slate-100";

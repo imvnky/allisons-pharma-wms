@@ -43,13 +43,13 @@ export default function StockCountingPage() {
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
 
-  const displayReasons = [
+  const [displayReasons, setDisplayReasons] = useState([
     { key: "BROKEN_DISPLAY", label: "Broken / Damaged on Display Floor" },
     { key: "EXPIRED_SHOWCASE", label: "Expired on Showcase Shelf" },
     { key: "CUSTOMER_SAMPLING", label: "Authorized Doctor / Customer Sampling" },
     { key: "REPLACED_BATCH", label: "Replaced with Fresh Batch from Stock" },
     { key: "AUDIT_CORRECTION", label: "Previous Day Miscount Correction" },
-  ];
+  ]);
 
   useEffect(() => {
     apiRequest("/counts/products")
@@ -60,6 +60,16 @@ export default function StockCountingPage() {
         }
       })
       .catch(console.log);
+
+    // Dynamically load lookup reasons for display changes
+    apiRequest("/admin/lookups")
+      .then((data) => {
+        const found = data?.find((d) => d.type_code === "DISPLAY_REASON");
+        if (found && found.values?.length > 0) {
+          setDisplayReasons(found.values.filter((v) => v.is_active));
+        }
+      })
+      .catch(console.warn);
 
     loadSubmissions();
   }, [countMode]);
@@ -74,9 +84,9 @@ export default function StockCountingPage() {
     e.preventDefault();
     if (!selectedProduct) return;
 
-    if (countMode === "DISPLAY" && countInput !== 5 && !displayReason) {
-      alert("Display quantity has changed! A valid justification reason is required.");
-      return;
+    if (countMode === "DISPLAY" && parseInt(countInput, 10) > 0 && !displayReason) {
+      // Justification required if logging a display verification/change
+      setDisplayReason("AUDIT_CORRECTION");
     }
 
     setLoading(true);
@@ -85,7 +95,7 @@ export default function StockCountingPage() {
         product_id: selectedProduct.id,
         count_type: countMode,
         quantity: parseInt(countInput, 10),
-        change_reason_key: countMode === "DISPLAY" ? displayReason : null,
+        change_reason_key: countMode === "DISPLAY" ? (displayReason || "AUDIT_CORRECTION") : null,
       });
 
       setSuccessMsg(`Submitted ${countInput} ${countMode.toLowerCase()}s for ${selectedProduct.name}!`);
@@ -106,7 +116,7 @@ export default function StockCountingPage() {
       p.sku.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const packSize = selectedProduct?.pack_size || 1;
+  const packSize = selectedProduct?.units_per_carton || selectedProduct?.pack_size || 1;
   const calculatedPieces =
     countMode === "CARTON"
       ? (parseInt(countInput, 10) || 0) * packSize

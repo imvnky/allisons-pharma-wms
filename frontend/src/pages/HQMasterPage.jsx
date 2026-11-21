@@ -23,6 +23,7 @@ export default function HQMasterPage() {
   const [tab, setTab] = useState("monitor"); // 'monitor' | 'master'
   const [warehouseStatuses, setWarehouseStatuses] = useState([]);
   const [masterInventory, setMasterInventory] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
 
   // Filters
@@ -33,6 +34,12 @@ export default function HQMasterPage() {
   useEffect(() => {
     loadHQData();
   }, [selectedDate, categoryFilter, salesFilter]);
+
+  useEffect(() => {
+    apiRequest("/products/categories")
+      .then((cats) => setCategories(cats || []))
+      .catch(console.warn);
+  }, []);
 
   function loadHQData() {
     apiRequest(`/hq/warehouse-status?audit_date=${selectedDate}`)
@@ -195,14 +202,14 @@ export default function HQMasterPage() {
                       </div>
                       <div className="flex justify-between text-slate-600 border-t border-slate-100 pt-2 font-semibold">
                         <span>Total SKUs Audited:</span>
-                        <span className="font-bold text-indigo-700">{wh.products_audited || 12} Items</span>
+                        <span className="font-bold text-indigo-700">{wh.counted_skus} / {wh.total_skus} Items</span>
                       </div>
                     </div>
                   </div>
 
                   <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px]">
                     <span className="text-slate-400">Supervisor: {wh.supervisor_name || "Assigned"}</span>
-                    <span className="font-bold text-slate-700">Audit Cycle #2026-11-04</span>
+                    <span className="font-bold text-slate-700">Audit Cycle #{selectedDate}</span>
                   </div>
                 </div>
               );
@@ -233,9 +240,9 @@ export default function HQMasterPage() {
                 className="px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-800"
               >
                 <option value="All">All Categories</option>
-                <option value="Antibiotics">Antibiotics</option>
-                <option value="Analgesics">Analgesics</option>
-                <option value="Syrups">Syrups</option>
+                {categories.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
               </select>
 
               <button
