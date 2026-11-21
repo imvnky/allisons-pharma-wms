@@ -1,5 +1,9 @@
+import os
 from pydantic_settings import BaseSettings
 from typing import Optional
+
+_BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+_ENV_PATH = os.path.join(_BACKEND_DIR, ".env")
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Alisons African Pharma - Warehouse Management System"
@@ -21,7 +25,7 @@ class Settings(BaseSettings):
 
     class Config:
         case_sensitive = True
-        env_file = ".env"
+        env_file = [_ENV_PATH, ".env"]
         extra = "ignore"
 
 settings = Settings()
