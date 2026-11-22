@@ -150,11 +150,8 @@ export default function Navbar({ currentView, setCurrentView }) {
             />
           </div>
           <div>
-            <div className="text-sm font-black text-slate-900 tracking-tight leading-none flex items-center gap-1.5">
-              <span>Amaldina</span>
-              <span className="text-[9px] font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 px-1.5 py-0.2 rounded-md">
-                Alisons
-              </span>
+            <div className="text-sm font-black text-slate-900 tracking-tight leading-none">
+              Amaldina
             </div>
             <div className="text-[10px] font-semibold text-slate-500 tracking-wider uppercase mt-0.5">
               Alisons WMS
@@ -170,7 +167,7 @@ export default function Navbar({ currentView, setCurrentView }) {
           >
             <Search className="w-3.5 h-3.5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-hover:text-indigo-600 transition-colors" />
             <div className="w-full pl-9 pr-16 py-1.5 bg-slate-50 hover:bg-slate-100/90 text-xs border border-slate-200 rounded-xl text-slate-400 flex items-center transition-all select-none">
-              <span>Track Request ID, TRN, GRN, Ticket, or SKU...</span>
+              <span>{t("nav.searchTrackPlaceholder", "Track Request ID, TRN, GRN, Ticket, or SKU...")}</span>
             </div>
             <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5 px-1.5 py-0.5 bg-white border border-slate-200 rounded-md text-[10px] font-semibold text-slate-400 shadow-2xs">
               <Command className="w-2.5 h-2.5" />
@@ -350,7 +347,7 @@ export default function Navbar({ currentView, setCurrentView }) {
                 type="text"
                 value={trackerQuery}
                 onChange={(e) => setTrackerQuery(e.target.value)}
-                placeholder="Enter Request ID (REQ-), Transfer (TR-), Container/BL, Count (CNT-), or SKU..."
+                placeholder={t("tracking.placeholder", "Enter Request ID (REQ-), Transfer (TR-), Container/BL, Count (CNT-), or SKU...")}
                 className="w-full bg-transparent text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none"
               />
               {trackerQuery && (
@@ -371,7 +368,7 @@ export default function Navbar({ currentView, setCurrentView }) {
 
             {/* Quick Sample Queries Pill Bar */}
             <div className="px-4 py-2 border-b border-slate-100 bg-white flex items-center gap-2 overflow-x-auto text-[11px]">
-              <span className="text-slate-400 font-bold uppercase shrink-0">Try:</span>
+              <span className="text-slate-400 font-bold uppercase shrink-0">{t("tracking.try", "Try:")}</span>
               {["TR-2026-", "01/26", "CNT-2026-", "REQ-", "ALIS-ALAIZE", "ALIS-ALBENTEL"].map((sample) => (
                 <button
                   key={sample}
@@ -388,7 +385,7 @@ export default function Navbar({ currentView, setCurrentView }) {
               {searching ? (
                 <div className="py-12 text-center text-xs text-slate-400 flex flex-col items-center gap-2">
                   <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-                  <span>Searching across all activities, logs, and logistics records...</span>
+                  <span>{t("tracking.searching", "Searching across all activities, logs, and logistics records...")}</span>
                 </div>
               ) : trackerResults.length > 0 ? (
                 trackerResults.map((item, idx) => (
@@ -438,7 +435,7 @@ export default function Navbar({ currentView, setCurrentView }) {
                         onClick={() => handleNavigate(item.target_view)}
                         className="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[10px] flex items-center gap-1 shadow-2xs transition-colors cursor-pointer"
                       >
-                        <span>Open Details</span>
+                        <span>{t("tracking.openDetails", "Open Details")}</span>
                         <ArrowRight className="w-3 h-3" />
                       </button>
                     </div>
@@ -446,15 +443,17 @@ export default function Navbar({ currentView, setCurrentView }) {
                 ))
               ) : trackerQuery.trim().length >= 2 ? (
                 <div className="py-12 text-center text-xs text-slate-400 space-y-1">
-                  <p className="font-bold text-slate-700">No matching activities found for "{trackerQuery}"</p>
-                  <p>Try searching by Transfer Note (`TR-2026-`), Arrival (`01/26`), Request ID (`REQ-`), or Medicine SKU.</p>
+                  <p className="font-bold text-slate-700">
+                    {t("tracking.noResults", `No matching activities found for "${trackerQuery}"`, { query: trackerQuery })}
+                  </p>
+                  <p>{t("tracking.noResultsSub", "Try searching by Transfer Note (TR-2026-), Arrival (01/26), Request ID (REQ-), or Medicine SKU.")}</p>
                 </div>
               ) : (
                 <div className="py-12 text-center text-xs text-slate-400 space-y-2">
                   <Activity className="w-8 h-8 text-slate-300 mx-auto" />
-                  <p className="font-bold text-slate-700">Unified Activity & Audit Identification Tracker</p>
+                  <p className="font-bold text-slate-700">{t("tracking.modalTitle", "Unified Activity & Audit Identification Tracker")}</p>
                   <p className="max-w-md mx-auto text-slate-500">
-                    Type any reference number, request correlation ID, transfer waybill, sea container BL, or pharmaceutical SKU to inspect its full lifecycle trail.
+                    {t("tracking.modalDesc", "Type any reference number, request correlation ID, transfer waybill, sea container BL, or pharmaceutical SKU to inspect its full lifecycle trail.")}
                   </p>
                 </div>
               )}

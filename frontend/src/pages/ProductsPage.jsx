@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import { apiRequest } from "../services/api";
 import { exportToCsv } from "../utils/exportUtils";
 import {
@@ -23,6 +24,7 @@ import {
 
 export default function ProductsPage() {
   const { user } = useAuth();
+  const { t, formatCurrency } = useLanguage();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -252,14 +254,14 @@ export default function ProductsPage() {
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
               <Boxes className="w-5 h-5 text-indigo-600" />
-              <span>Pharmaceutical Product Master</span>
+              <span>{t("products.title", "Pharmaceutical Product Master")}</span>
             </h1>
             <span className="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 text-[10px] font-bold border border-indigo-200">
-              National Catalog
+              {t("products.nationalCatalog", "National Catalog")}
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-0.5">
-            Central repository of pharmaceutical medicines, packaging carton ratios, SKUs, and therapeutic classifications.
+            {t("products.subtitle", "Central repository of pharmaceutical medicines, packaging carton ratios, SKUs, and therapeutic classifications.")}
           </p>
         </div>
 
@@ -270,21 +272,21 @@ export default function ProductsPage() {
             title="Download CSV sample format for Excel"
           >
             <Download className="w-3.5 h-3.5 text-slate-500" />
-            <span>Sample Template</span>
+            <span>{t("products.sampleTemplate", "Sample Template")}</span>
           </button>
           <button
             onClick={() => setShowBulkModal(true)}
             className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
           >
             <Upload className="w-3.5 h-3.5" />
-            <span>Bulk Import (CSV / Excel)</span>
+            <span>{t("products.bulkImportBtn", "Bulk Import (CSV / Excel)")}</span>
           </button>
           <button
             onClick={openAddModal}
             className="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>Add Medicine</span>
+            <span>{t("products.addMedicineBtn", "Add Medicine")}</span>
           </button>
         </div>
       </div>
@@ -293,10 +295,10 @@ export default function ProductsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bento-card p-4 flex items-center justify-between">
           <div>
-            <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Total Medicines</div>
+            <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t("products.kpiTotal", "Total Medicines")}</div>
             <div className="text-2xl font-black text-slate-900 mt-1">{products.length}</div>
             <div className="text-[11px] font-semibold text-emerald-600 mt-0.5">
-              {activeCount} Active in Catalog
+              {activeCount} {t("products.kpiActive", "Active in Catalog")}
             </div>
           </div>
           <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
@@ -306,10 +308,10 @@ export default function ProductsPage() {
 
         <div className="bento-card p-4 flex items-center justify-between">
           <div>
-            <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Therapeutic Classes</div>
+            <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t("products.kpiClasses", "Therapeutic Classes")}</div>
             <div className="text-2xl font-black text-slate-900 mt-1">{distinctCategories}</div>
             <div className="text-[11px] font-semibold text-slate-500 mt-0.5">
-              Antibiotics, Antimalarials, etc.
+              {t("products.kpiClassesDesc", "Antibiotics, Antimalarials, etc.")}
             </div>
           </div>
           <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600">
@@ -319,9 +321,9 @@ export default function ProductsPage() {
 
         <div className="bento-card p-4 flex items-center justify-between">
           <div>
-            <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Avg Master Packaging</div>
+            <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t("products.kpiAvgPackaging", "Avg Master Packaging")}</div>
             <div className="text-2xl font-black text-slate-900 mt-1">{avgPackaging}</div>
-            <div className="text-[11px] font-semibold text-slate-500 mt-0.5">Units per Shipping Carton</div>
+            <div className="text-[11px] font-semibold text-slate-500 mt-0.5">{t("products.kpiPackagingDesc", "Units per Shipping Carton")}</div>
           </div>
           <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600">
             <Boxes className="w-5 h-5" />
@@ -330,9 +332,9 @@ export default function ProductsPage() {
 
         <div className="bento-card p-4 flex items-center justify-between">
           <div>
-            <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Catalog Health</div>
+            <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t("products.kpiHealth", "Catalog Health")}</div>
             <div className="text-2xl font-black text-emerald-600 mt-1">100%</div>
-            <div className="text-[11px] font-semibold text-emerald-600 mt-0.5">Verified SKUs Ready for WMS</div>
+            <div className="text-[11px] font-semibold text-emerald-600 mt-0.5">{t("products.kpiHealthDesc", "Verified SKUs Ready for WMS")}</div>
           </div>
           <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600">
             <CheckCircle2 className="w-5 h-5" />
@@ -346,7 +348,7 @@ export default function ProductsPage() {
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Search medicine name, SKU, or category..."
+            placeholder={t("products.searchPlaceholder", "Search medicine name, SKU, or category...")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-9 pr-3 py-2 border border-slate-200 rounded-xl bg-slate-50/70 focus:bg-white text-xs font-medium"
@@ -356,14 +358,14 @@ export default function ProductsPage() {
         <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
           <span className="text-xs font-bold text-slate-500 flex items-center gap-1 shrink-0">
             <Filter className="w-3.5 h-3.5" />
-            <span>Category:</span>
+            <span>{t("products.categoryLabel", "Category:")}</span>
           </span>
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
             className="px-3 py-2 border border-slate-200 rounded-xl bg-white text-xs font-semibold"
           >
-            <option value="All">All Categories ({products.length})</option>
+            <option value="All">{t("products.allCategories", "All Categories")} ({products.length})</option>
             {categories.map((c) => (
               <option key={c} value={c}>
                 {c}
@@ -379,14 +381,14 @@ export default function ProductsPage() {
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="bg-slate-50/80 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider text-[11px]">
-                <th className="py-3 px-4">SKU Code</th>
-                <th className="py-3 px-4">Medicine / Product Name</th>
-                <th className="py-3 px-4">Therapeutic Category</th>
-                <th className="py-3 px-4 text-center">Packaging (Units/Ctn)</th>
-                <th className="py-3 px-4">Unit of Measure</th>
-                <th className="py-3 px-4 text-right">Standard Price (AOA)</th>
-                <th className="py-3 px-4 text-center">Status</th>
-                <th className="py-3 px-4 text-right">Actions</th>
+                <th className="py-3 px-4">{t("products.cols.sku", "SKU Code")}</th>
+                <th className="py-3 px-4">{t("products.cols.name", "Medicine / Product Name")}</th>
+                <th className="py-3 px-4">{t("products.cols.category", "Therapeutic Category")}</th>
+                <th className="py-3 px-4 text-center">{t("products.cols.packaging", "Packaging (Units/Ctn)")}</th>
+                <th className="py-3 px-4">{t("products.cols.uom", "Unit of Measure")}</th>
+                <th className="py-3 px-4 text-right">{t("products.cols.price", "Standard Price (AOA)")}</th>
+                <th className="py-3 px-4 text-center">{t("products.cols.status", "Status")}</th>
+                <th className="py-3 px-4 text-right">{t("products.cols.actions", "Actions")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium">
@@ -395,14 +397,14 @@ export default function ProductsPage() {
                   <td colSpan="8" className="py-8 text-center text-slate-400">
                     <div className="flex items-center justify-center gap-2">
                       <RefreshCw className="w-4 h-4 animate-spin text-indigo-600" />
-                      <span>Loading pharmaceutical catalog...</span>
+                      <span>{t("common.loading", "Loading pharmaceutical catalog...")}</span>
                     </div>
                   </td>
                 </tr>
               ) : filteredProducts.length === 0 ? (
                 <tr>
                   <td colSpan="8" className="py-8 text-center text-slate-400">
-                    No medicines found matching your criteria.
+                    {t("products.noMedicines", "No medicines found matching your criteria.")}
                   </td>
                 </tr>
               ) : (
@@ -429,7 +431,7 @@ export default function ProductsPage() {
                             : "bg-slate-100 text-slate-500 border-slate-200"
                           }`}
                       >
-                        {p.is_active ? "Active" : "Archived"}
+                        {p.is_active ? t("common.active", "Active") : t("common.inactive", "Archived")}
                       </span>
                     </td>
                     <td className="py-3 px-4 text-right">
@@ -466,10 +468,10 @@ export default function ProductsPage() {
               <div>
                 <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
                   <Package className="w-5 h-5 text-indigo-600" />
-                  <span>{editingProduct ? "Edit Medicine Details" : "Add New Pharmaceutical Medicine"}</span>
+                  <span>{editingProduct ? t("products.modalAdd.editTitle", "Edit Medicine Details") : t("products.modalAdd.addTitle", "Add New Pharmaceutical Medicine")}</span>
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Register a SKU and its shipping carton packaging ratio into the WMS.
+                  {t("products.modalAdd.subtitle", "Register a SKU and its shipping carton packaging ratio into the WMS.")}
                 </p>
               </div>
               <button onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer">
@@ -479,7 +481,7 @@ export default function ProductsPage() {
 
             <form onSubmit={handleSaveProduct} className="space-y-3.5 text-xs">
               <div>
-                <label className="block text-slate-700 font-bold mb-1">SKU Code (Unique ID)</label>
+                <label className="block text-slate-700 font-bold mb-1">{t("products.modalAdd.skuLabel", "SKU Code (Unique ID)")}</label>
                 <input
                   type="text"
                   required
@@ -491,7 +493,7 @@ export default function ProductsPage() {
               </div>
 
               <div>
-                <label className="block text-slate-700 font-bold mb-1">Medicine / Product Name</label>
+                <label className="block text-slate-700 font-bold mb-1">{t("products.modalAdd.nameLabel", "Medicine / Product Name")}</label>
                 <input
                   type="text"
                   required
@@ -504,7 +506,7 @@ export default function ProductsPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Therapeutic Category</label>
+                  <label className="block text-slate-700 font-bold mb-1">{t("products.modalAdd.categoryLabel", "Therapeutic Category")}</label>
                   <input
                     type="text"
                     required
@@ -523,7 +525,7 @@ export default function ProductsPage() {
 
                 <div>
                   <label className="block text-slate-700 font-bold mb-1">
-                    Carton Packaging (Units / Carton)
+                    {t("products.modalAdd.packagingLabel", "Carton Packaging (Units / Carton)")}
                   </label>
                   <input
                     type="number"
@@ -539,7 +541,7 @@ export default function ProductsPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Unit of Measure</label>
+                  <label className="block text-slate-700 font-bold mb-1">{t("products.modalAdd.uomLabel", "Unit of Measure")}</label>
                   <select
                     value={formUom}
                     onChange={(e) => setFormUom(e.target.value)}
@@ -555,7 +557,7 @@ export default function ProductsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Standard Price (AOA)</label>
+                  <label className="block text-slate-700 font-bold mb-1">{t("products.modalAdd.priceLabel", "Standard Price (AOA)")}</label>
                   <input
                     type="number"
                     min="0"
@@ -581,7 +583,7 @@ export default function ProductsPage() {
                   className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs cursor-pointer flex items-center gap-1.5"
                 >
                   <Check className="w-3.5 h-3.5" />
-                  <span>{editingProduct ? "Update Medicine" : "Save Medicine to Catalog"}</span>
+                  <span>{editingProduct ? t("common.save", "Update Medicine") : t("products.modalAdd.saveBtn", "Save Medicine to Catalog")}</span>
                 </button>
               </div>
             </form>
@@ -597,10 +599,10 @@ export default function ProductsPage() {
               <div>
                 <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
                   <Upload className="w-5 h-5 text-indigo-600" />
-                  <span>Bulk Upload Product Catalog (CSV / Excel)</span>
+                  <span>{t("products.modalBulk.title", "Bulk Upload Product Catalog (CSV / Excel)")}</span>
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Import hundreds of pharmaceutical products in seconds with automatic SKU upsert.
+                  {t("products.modalBulk.subtitle", "Import hundreds of pharmaceutical products in seconds with automatic SKU upsert.")}
                 </p>
               </div>
               <button onClick={() => setShowBulkModal(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer">
@@ -682,7 +684,7 @@ export default function ProductsPage() {
                   className="text-xs text-indigo-600 hover:text-indigo-800 font-bold flex items-center gap-1 cursor-pointer"
                 >
                   <Download className="w-3.5 h-3.5" />
-                  <span>Download CSV Template</span>
+                  <span>{t("products.sampleTemplate", "Download CSV Template")}</span>
                 </button>
 
                 <div className="flex items-center gap-2">
@@ -707,7 +709,7 @@ export default function ProductsPage() {
                     ) : (
                       <>
                         <Check className="w-3.5 h-3.5" />
-                        <span>Import {bulkPreview.length} Products</span>
+                        <span>{t("products.modalBulk.uploadBtn", `Import ${bulkPreview.length} Products`, { count: bulkPreview.length })}</span>
                       </>
                     )}
                   </button>

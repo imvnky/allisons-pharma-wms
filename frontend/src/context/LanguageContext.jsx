@@ -17,41 +17,58 @@ export function LanguageProvider({ children }) {
 
   /**
    * Translate a key path, e.g. t("counting.title") or t("warehouse")
-   * Falls back gracefully to English or provided fallback string if missing.
+   * Supports fallback, key aliasing (common.x <-> x), and template variable interpolation {var}
    */
-  const t = (path, fallback) => {
+  const t = (path, fallback, params = {}) => {
     if (!path) return fallback || "";
-    const keys = path.split(".");
 
-    // Try selected language
-    let current = translations[language];
-    for (const key of keys) {
-      if (current && current[key] !== undefined) {
-        current = current[key];
-      } else {
-        current = null;
-        break;
+    const resolve = (dict, keyPath) => {
+      if (!dict) return undefined;
+      const parts = keyPath.split(".");
+      let cur = dict;
+      for (const p of parts) {
+        if (cur && cur[p] !== undefined) {
+          cur = cur[p];
+        } else {
+          return undefined;
+        }
       }
-    }
-    if (current !== null && current !== undefined) {
-      return current;
+      return cur;
+    };
+
+    let result = resolve(translations[language], path);
+
+    // If not found, check common.* alias or root alias
+    if (result === undefined) {
+      if (path.startsWith("common.")) {
+        result = resolve(translations[language], path.replace(/^common\./, ""));
+      } else {
+        result = resolve(translations[language], `common.${path}`);
+      }
     }
 
     // Fallback to English
-    let fallbackObj = translations["en"];
-    for (const key of keys) {
-      if (fallbackObj && fallbackObj[key] !== undefined) {
-        fallbackObj = fallbackObj[key];
-      } else {
-        fallbackObj = null;
-        break;
+    if (result === undefined) {
+      result = resolve(translations["en"], path);
+      if (result === undefined) {
+        if (path.startsWith("common.")) {
+          result = resolve(translations["en"], path.replace(/^common\./, ""));
+        } else {
+          result = resolve(translations["en"], `common.${path}`);
+        }
       }
     }
-    if (fallbackObj !== null && fallbackObj !== undefined) {
-      return fallbackObj;
+
+    let finalStr = result !== undefined ? result : (fallback !== undefined ? fallback : path);
+
+    // Interpolate template parameters like {count}, {warehouse}, etc.
+    if (typeof finalStr === "string" && params && typeof params === "object") {
+      for (const [k, v] of Object.entries(params)) {
+        finalStr = finalStr.replace(new RegExp(`\\{${k}\\}`, "g"), v);
+      }
     }
 
-    return fallback !== undefined ? fallback : path;
+    return finalStr;
   };
 
   /**

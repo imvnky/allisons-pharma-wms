@@ -189,19 +189,19 @@ export default function HQMasterPage() {
 
                     <div className="space-y-2 text-xs">
                       <div className="flex justify-between text-slate-600">
-                        <span>Carton Counting:</span>
+                        <span>{t("hq.cartonCounting", "Carton Counting:")}</span>
                         <span className="font-bold text-slate-900">{wh.carton_completed ? "100% Done" : "In Progress"}</span>
                       </div>
                       <div className="flex justify-between text-slate-600">
-                        <span>Loose Counting:</span>
+                        <span>{t("hq.looseCounting", "Loose Counting:")}</span>
                         <span className="font-bold text-slate-900">{wh.loose_completed ? "100% Done" : "In Progress"}</span>
                       </div>
                       <div className="flex justify-between text-slate-600">
-                        <span>Display Counter:</span>
+                        <span>{t("hq.displayCounter", "Display Counter:")}</span>
                         <span className="font-bold text-slate-900">{wh.display_completed ? "Verified" : "Pending"}</span>
                       </div>
                       <div className="flex justify-between text-slate-600 border-t border-slate-100 pt-2 font-semibold">
-                        <span>Total SKUs Audited:</span>
+                        <span>{t("hq.skusAudited", "Total SKUs Audited:")}</span>
                         <span className="font-bold text-indigo-700">{wh.counted_skus} / {wh.total_skus} Items</span>
                       </div>
                     </div>
@@ -226,7 +226,7 @@ export default function HQMasterPage() {
               <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
-                placeholder="Search master catalog by SKU or Medicine..."
+                placeholder={t("hq.searchPlaceholder", "Search master catalog by SKU or Medicine...")}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-slate-800 placeholder:text-slate-400"
@@ -239,7 +239,7 @@ export default function HQMasterPage() {
                 onChange={(e) => setCategoryFilter(e.target.value)}
                 className="px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-800"
               >
-                <option value="All">All Categories</option>
+                <option value="All">{t("hq.allCategories", "All Categories")}</option>
                 {categories.map((c) => (
                   <option key={c} value={c}>{c}</option>
                 ))}

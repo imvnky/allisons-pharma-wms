@@ -434,7 +434,7 @@ export default function ReconciliationPage() {
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                <span>Confirm Final Daily Sign-Off</span>
+                <span>{t("reconciliation.finalizeModal.title", "Confirm Final Daily Sign-Off")}</span>
               </h3>
               <button onClick={() => setFinalizeModal(false)} className="text-slate-400 hover:text-slate-600">
                 <X className="w-4 h-4" />
@@ -454,13 +454,13 @@ export default function ReconciliationPage() {
                 onClick={() => setFinalizeModal(false)}
                 className="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50"
               >
-                Cancel
+                {t("common.cancel", "Cancel")}
               </button>
               <button
                 onClick={handleFinalize}
                 className="px-4 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs"
               >
-                Confirm & Submit
+                {t("reconciliation.finalizeModal.confirmBtn", "Confirm & Submit")}
               </button>
             </div>
           </div>

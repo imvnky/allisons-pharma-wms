@@ -146,7 +146,7 @@ export default function AlertsPage() {
                 {differences.length === 0 ? (
                   <tr>
                     <td colSpan="8" className="p-8 text-center text-slate-400">
-                      🎉 No discrepancies detected! All physical counts match required stock perfectly.
+                      {t("alerts.noDifferences", "🎉 No discrepancies detected! All physical counts match required stock perfectly.")}
                     </td>
                   </tr>
                 ) : (
@@ -198,7 +198,7 @@ export default function AlertsPage() {
       {tab === "expiry" && (
         <div className="space-y-4">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-slate-500">Urgency Horizon:</span>
+            <span className="text-xs font-bold text-slate-500">{t("alerts.colsExpiry.urgencyHorizon", "Urgency Horizon:")}</span>
             {[30, 60, 90, 180].map((days) => (
               <button
                 key={days}
@@ -209,7 +209,7 @@ export default function AlertsPage() {
                     : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
                 }`}
               >
-                &lt; {days} Days
+                {t("alerts.colsExpiry.ltDays", `< ${days} Days`, { days })}
               </button>
             ))}
           </div>
@@ -225,7 +225,7 @@ export default function AlertsPage() {
                 </p>
               </div>
               <span className="text-[11px] font-bold text-amber-800 bg-amber-100 border border-amber-200 px-3 py-1 rounded-full">
-                {nearExpiry.length} Batches Flagged
+                {nearExpiry.length} {t("alerts.colsExpiry.batchesFlagged", "Batches Flagged")}
               </span>
             </div>
 
@@ -246,7 +246,7 @@ export default function AlertsPage() {
                   {nearExpiry.length === 0 ? (
                     <tr>
                       <td colSpan="7" className="p-8 text-center text-slate-400">
-                        🛡️ Zero batches expiring within {expiryThreshold} days! Warehouse catalog is within safe shelf life.
+                        {t("alerts.colsExpiry.zeroExpiring", `🛡️ Zero batches expiring within ${expiryThreshold} days! Warehouse catalog is within safe shelf life.`, { days: expiryThreshold })}
                       </td>
                     </tr>
                   ) : (
@@ -269,7 +269,7 @@ export default function AlertsPage() {
                                   : "bg-amber-50 text-amber-700 border-amber-200"
                               }`}
                             >
-                              {item.days_remaining} days left
+                              {item.days_remaining} {t("alerts.colsExpiry.daysLeft", "days left")}
                             </span>
                           </td>
                           <td className="py-3 px-4 text-right font-mono font-bold text-slate-900">

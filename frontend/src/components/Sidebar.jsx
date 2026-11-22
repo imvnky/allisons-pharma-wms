@@ -150,12 +150,6 @@ export default function Sidebar({ currentView, setCurrentView }) {
             <LogOut className="w-3.5 h-3.5" />
           </button>
         </div>
-
-        {/* Brand identity footer */}
-        <div className="px-1 flex items-center justify-between text-[10px] text-slate-400">
-          <span className="font-semibold text-slate-500">Amaldina Comércio Geral</span>
-          <span className="font-mono text-[9px] bg-slate-200/70 text-slate-600 px-1.5 py-0.2 rounded font-bold">WMS</span>
-        </div>
       </div>
     </aside>
   );

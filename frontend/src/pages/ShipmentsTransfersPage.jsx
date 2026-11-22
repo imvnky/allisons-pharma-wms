@@ -524,12 +524,12 @@ export default function ShipmentsTransfersPage() {
 
         <div className="bento-card p-4 flex items-center justify-between">
           <div>
-            <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Inbound Cargo Units</div>
+            <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t("shipments.kpiInboundCargo", "Inbound Cargo Units")}</div>
             <div className="text-2xl font-black text-slate-900 mt-1">
               {arrivals.reduce((sum, a) => sum + (a.total_units || 0), 0).toLocaleString()}
             </div>
             <div className="text-[11px] font-semibold text-slate-500 mt-0.5">
-              Across all verified sea & air manifests
+              {t("shipments.kpiInboundCargoDesc", "Across all verified sea & air manifests")}
             </div>
           </div>
           <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
@@ -539,7 +539,7 @@ export default function ShipmentsTransfersPage() {
 
         <div className="bento-card p-4 flex items-center justify-between">
           <div>
-            <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Branch Transfers</div>
+            <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t("shipments.kpiBranchTransfers", "Branch Transfers")}</div>
             <div className="text-2xl font-black text-slate-900 mt-1">{transfers.length}</div>
             <div className="text-[11px] font-semibold text-indigo-600 mt-0.5">
               {transfers.filter((t) => t.status === "IN_TRANSIT").length} In Transit
@@ -552,12 +552,12 @@ export default function ShipmentsTransfersPage() {
 
         <div className="bento-card p-4 flex items-center justify-between">
           <div>
-            <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Unloaded Shortages</div>
+            <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t("shipments.kpiShortages", "Unloaded Shortages")}</div>
             <div className="text-2xl font-black text-rose-600 mt-1">
               {arrivals.reduce((sum, a) => sum + (a.total_shortage_units || 0), 0).toLocaleString()}
             </div>
             <div className="text-[11px] font-semibold text-rose-500 mt-0.5">
-              Units short from manifest
+              {t("shipments.kpiShortagesDesc", "Units short from manifest")}
             </div>
           </div>
           <div className="w-10 h-10 rounded-xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600">
@@ -577,7 +577,7 @@ export default function ShipmentsTransfersPage() {
               }`}
           >
             <Ship className="w-3.5 h-3.5" />
-            <span>Shipment Arrivals Manifests ({arrivals.length})</span>
+            <span>{t("shipments.tabArrivals", "Shipment Arrivals Manifests")} ({arrivals.length})</span>
           </button>
           <button
             onClick={() => setTab("transfers")}
@@ -587,7 +587,7 @@ export default function ShipmentsTransfersPage() {
               }`}
           >
             <Truck className="w-3.5 h-3.5" />
-            <span>Inter-Warehouse Transfers & Notes ({transfers.length})</span>
+            <span>{t("shipments.tabTransfers", "Inter-Warehouse Transfers & Notes")} ({transfers.length})</span>
           </button>
         </div>
       </div>
@@ -816,10 +816,10 @@ export default function ShipmentsTransfersPage() {
               <div>
                 <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
                   <Ship className="w-5 h-5 text-emerald-600" />
-                  <span>Add Shipment Arrival</span>
+                  <span>{t("shipments.modalArrival.title", "Add Shipment Arrival")}</span>
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Log incoming pharmaceutical cargo manifest with expected vs received quantities.
+                  {t("shipments.modalArrival.subtitle", "Log incoming pharmaceutical cargo manifest with expected vs received quantities.")}
                 </p>
               </div>
               <button onClick={() => setAddArrivalModal(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer">
@@ -832,7 +832,7 @@ export default function ShipmentsTransfersPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200/80">
                 <div>
                   <label className="block text-slate-700 font-bold mb-1">
-                    Number / Year Of Shipment
+                    {t("shipments.modalArrival.shipmentNumYear", "Number / Year Of Shipment")}
                   </label>
                   <input
                     type="text"
@@ -845,7 +845,7 @@ export default function ShipmentsTransfersPage() {
                 </div>
 
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Arrival Date</label>
+                  <label className="block text-slate-700 font-bold mb-1">{t("shipments.modalArrival.arrivalDate", "Arrival Date")}</label>
                   <input
                     type="date"
                     required
@@ -856,7 +856,7 @@ export default function ShipmentsTransfersPage() {
                 </div>
 
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Lot Size</label>
+                  <label className="block text-slate-700 font-bold mb-1">{t("shipments.modalArrival.lotSize", "Lot Size")}</label>
                   <input
                     type="text"
                     required
@@ -868,7 +868,7 @@ export default function ShipmentsTransfersPage() {
                 </div>
 
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Invoice Number</label>
+                  <label className="block text-slate-700 font-bold mb-1">{t("shipments.modalArrival.invoiceNumber", "Invoice Number")}</label>
                   <input
                     type="text"
                     required
@@ -1136,10 +1136,10 @@ export default function ShipmentsTransfersPage() {
               <div>
                 <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
                   <ArrowLeftRight className="w-4 h-4 text-indigo-600" />
-                  <span>Dispatch Inter-Warehouse Transfer</span>
+                  <span>{t("shipments.modalTransfer.title", "Dispatch Inter-Warehouse Transfer")}</span>
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Select destination branch, initiation date, and multiple pharmaceutical products with carton quantities.
+                  {t("shipments.modalTransfer.subtitle", "Select destination branch, initiation date, and multiple pharmaceutical products with carton quantities.")}
                 </p>
               </div>
               <button onClick={() => setCreateTransferModal(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer">
@@ -1151,7 +1151,7 @@ export default function ShipmentsTransfersPage() {
               {/* Destination Warehouse & Initiation Date */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Destination Warehouse</label>
+                  <label className="block text-slate-700 font-bold mb-1">{t("shipments.modalTransfer.destWarehouse", "Destination Warehouse")}</label>
                   <select
                     value={destWarehouseId}
                     onChange={(e) => setDestWarehouseId(e.target.value)}
@@ -1169,7 +1169,7 @@ export default function ShipmentsTransfersPage() {
 
                 <div>
                   <label className="block text-slate-700 font-bold mb-1">
-                    Transfer Initiation Date
+                    {t("shipments.modalTransfer.transferDate", "Transfer Initiation Date")}
                   </label>
                   <input
                     type="date"
