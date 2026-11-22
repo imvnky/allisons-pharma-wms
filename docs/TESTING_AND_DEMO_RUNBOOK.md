@@ -1,4 +1,4 @@
-# AMALDINA • ALISONS AFRICAN PHARMA WMS
+# AMALDINA • ALISONS WMS
 ## Comprehensive End-to-End Testing Requirements & Demo Runbook
 
 **Document Version:** 2.4.0-PROD  
@@ -197,7 +197,7 @@ When a supervisor finalizes session $N$, the closing physical cartons and loose 
 6. The system generates Waybill Number `TR-2026-XXXX`. Click the **Print** icon.
 7. Verify the printable transfer modal:
    - Official **Amaldina Logo** rendered on top left.
-   - Company title: *Amaldina Comércio Geral, Lda — Alisons African Pharma Division*.
+   - Company title: *Amaldina Comércio Geral, Lda — Alisons WMS Division*.
    - Destination branch highlighted: *Transfer Note for Amaldina Comercio Geral, Lda – Lobito*.
    - Signature boxes for Dispatched By, Driver Signature, and Received By.
 8. Click **Dispatch Transfer** (Status becomes `IN_TRANSIT`).

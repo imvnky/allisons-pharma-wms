@@ -1384,7 +1384,7 @@ export default function ShipmentsTransfersPage() {
                         Amaldina Comércio Geral, Lda
                       </h1>
                       <div className="text-xs font-bold text-indigo-700 tracking-wide mt-0.5">
-                        Alisons African Pharma Division
+                        Alisons WMS Division
                       </div>
                       <div className="text-[11px] text-slate-600 mt-1 space-y-0.5">
                         <div>Rua Direita de Cacuaco, Km 9, Bairro Mulemba, Luanda, Angola</div>

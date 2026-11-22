@@ -30,7 +30,7 @@ function MainApp() {
           </div>
           <div className="w-7 h-7 border-3 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto shadow-xs"></div>
           <div className="text-slate-600 font-semibold tracking-wide">
-            Connecting to Amaldina • Alisons African Pharma Portal...
+            Connecting to Amaldina • Alisons WMS Portal...
           </div>
         </div>
       </div>
@@ -70,11 +70,11 @@ function MainApp() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F8FAFC] text-slate-900 font-sans antialiased">
+    <div className="h-screen flex flex-col bg-[#F8FAFC] text-slate-900 font-sans antialiased overflow-hidden">
       <Navbar currentView={currentView} setCurrentView={setCurrentView} />
-      <div className="flex flex-1">
+      <div className="flex flex-1 overflow-hidden">
         <Sidebar currentView={currentView} setCurrentView={setCurrentView} />
-        <main className="flex-1 min-h-[calc(100vh-4rem)] overflow-y-auto">
+        <main className="flex-1 overflow-y-auto h-full">
           {renderView()}
         </main>
       </div>

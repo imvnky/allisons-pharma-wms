@@ -236,7 +236,7 @@ export default function LoginPage() {
 
         {/* Footer */}
         <p className="mt-6 text-center text-xs text-slate-400">
-          Amaldina Comércio Geral, Lda • Alisons African Pharma • Luanda & Benguela, Angola
+          Amaldina Comércio Geral, Lda • Alisons WMS • Luanda & Benguela, Angola
         </p>
       </div>
     </div>

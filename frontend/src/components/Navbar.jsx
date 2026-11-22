@@ -134,13 +134,13 @@ export default function Navbar({ currentView, setCurrentView }) {
   }
 
   return (
-    <header className="h-16 bg-white border-b border-slate-200/90 px-6 flex items-center justify-between sticky top-0 z-30 shadow-xs">
-      {/* Left: Brand & Breadcrumb */}
-      <div className="flex items-center gap-4">
+    <header className="h-16 shrink-0 bg-white border-b border-slate-200/90 px-6 flex items-center justify-between z-30 shadow-xs">
+      {/* Left: Brand + Universal Searchbar pulled to left */}
+      <div className="flex items-center gap-6 lg:gap-8 flex-1 max-w-2xl">
         <div
           onClick={() => setCurrentView && setCurrentView("dashboard")}
-          className="flex items-center gap-3 cursor-pointer group"
-          title="Amaldina Comércio Geral • Alisons African Pharma WMS"
+          className="flex items-center gap-3 cursor-pointer group shrink-0"
+          title="Amaldina Comércio Geral • Alisons WMS"
         >
           <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 shadow-2xs p-1 flex items-center justify-center shrink-0 group-hover:border-indigo-400 group-hover:shadow-xs transition-all">
             <img
@@ -157,37 +157,25 @@ export default function Navbar({ currentView, setCurrentView }) {
               </span>
             </div>
             <div className="text-[10px] font-semibold text-slate-500 tracking-wider uppercase mt-0.5">
-              African Pharma WMS
+              Alisons WMS
             </div>
           </div>
         </div>
 
-        {/* Vertical divider */}
-        <div className="hidden md:block w-px h-6 bg-slate-200"></div>
-
-        {/* Breadcrumb Path (PaceUI style) */}
-        <div className="hidden md:flex items-center gap-2 text-xs font-medium text-slate-500">
-          <span className="text-slate-400">Amaldina</span>
-          <span className="text-slate-300">/</span>
-          <span className="text-slate-900 font-bold bg-slate-100 px-2 py-0.5 rounded-md text-[11px]">
-            {t(`nav.viewTitles.${currentView}`, viewTitles[currentView] || "Overview")}
-          </span>
-        </div>
-      </div>
-
-      {/* Center: Universal Activity & Audit Tracking Search Pill */}
-      <div className="hidden lg:flex items-center flex-1 max-w-md mx-8">
-        <div
-          onClick={() => setShowTrackerModal(true)}
-          className="relative w-full cursor-pointer group"
-        >
-          <Search className="w-3.5 h-3.5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-hover:text-indigo-600 transition-colors" />
-          <div className="w-full pl-9 pr-16 py-1.5 bg-slate-50 hover:bg-slate-100/90 text-xs border border-slate-200 rounded-xl text-slate-400 flex items-center transition-all select-none">
-            <span>Track Request ID, TRN, GRN, Ticket, or SKU...</span>
-          </div>
-          <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5 px-1.5 py-0.5 bg-white border border-slate-200 rounded-md text-[10px] font-semibold text-slate-400 shadow-2xs">
-            <Command className="w-2.5 h-2.5" />
-            <span>K</span>
+        {/* Universal Activity & Audit Tracking Search Pill (Pulled to Left) */}
+        <div className="hidden lg:flex items-center flex-1 max-w-md">
+          <div
+            onClick={() => setShowTrackerModal(true)}
+            className="relative w-full cursor-pointer group"
+          >
+            <Search className="w-3.5 h-3.5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-hover:text-indigo-600 transition-colors" />
+            <div className="w-full pl-9 pr-16 py-1.5 bg-slate-50 hover:bg-slate-100/90 text-xs border border-slate-200 rounded-xl text-slate-400 flex items-center transition-all select-none">
+              <span>Track Request ID, TRN, GRN, Ticket, or SKU...</span>
+            </div>
+            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5 px-1.5 py-0.5 bg-white border border-slate-200 rounded-md text-[10px] font-semibold text-slate-400 shadow-2xs">
+              <Command className="w-2.5 h-2.5" />
+              <span>K</span>
+            </div>
           </div>
         </div>
       </div>

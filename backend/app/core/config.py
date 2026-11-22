@@ -6,7 +6,7 @@ _BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(_
 _ENV_PATH = os.path.join(_BACKEND_DIR, ".env")
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "Amaldina • Alisons African Pharma WMS"
+    PROJECT_NAME: str = "Amaldina • Alisons WMS"
     API_V1_STR: str = "/api/v1"
     SECRET_KEY: str = "allisons_pharma_secret_key_angola_2026_super_secure_jwt"
     ALGORITHM: str = "HS256"

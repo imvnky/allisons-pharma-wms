@@ -1,5 +1,5 @@
 """
-Automated Test Runner for Allisons African Pharma WMS.
+Automated Test Runner for Alisons WMS.
 Executes pytest if available, or runs standalone formula verification suite.
 """
 import sys
@@ -14,7 +14,7 @@ def run_with_pytest():
     try:
         import pytest
         print("\n" + "="*70)
-        print("  ALLISONS AFRICAN PHARMA WMS — AUTOMATED TEST SUITE (PYTEST)")
+        print("  ALISONS WMS — AUTOMATED TEST SUITE (PYTEST)")
         print("="*70 + "\n")
         exit_code = pytest.main(["-v", "--tb=short", os.path.join(backend_dir, "tests")])
         return exit_code
@@ -24,7 +24,7 @@ def run_with_pytest():
 
 def run_standalone_verification():
     print("\n" + "="*70)
-    print("  ALLISONS AFRICAN PHARMA WMS — FORMULA & RECONCILIATION ENGINE TESTS")
+    print("  ALISONS WMS — FORMULA & RECONCILIATION ENGINE TESTS")
     print("="*70 + "\n")
 
     passed = 0

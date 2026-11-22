@@ -513,7 +513,7 @@ def generate_excel():
     # Title Block
     ws1.merge_cells("A1:G1")
     title_cell = ws1["A1"]
-    title_cell.value = "AMALDINA • ALISONS AFRICAN PHARMA WMS — TEST ACTORS & CREDENTIALS MATRIX"
+    title_cell.value = "AMALDINA • ALISONS WMS — TEST ACTORS & CREDENTIALS MATRIX"
     title_cell.font = Font(name="Calibri", size=14, bold=True, color=white)
     title_cell.fill = PatternFill(start_color=navy_dark, end_color=navy_dark, fill_type="solid")
     title_cell.alignment = Alignment(horizontal="center", vertical="center")
@@ -562,7 +562,7 @@ def generate_excel():
     # Title Block
     ws2.merge_cells("A1:K1")
     t2 = ws2["A1"]
-    t2.value = "AMALDINA • ALISONS AFRICAN PHARMA WMS — COMPLETE 14-FLOW TEST EXECUTION MATRIX"
+    t2.value = "AMALDINA • ALISONS WMS — COMPLETE 14-FLOW TEST EXECUTION MATRIX"
     t2.font = Font(name="Calibri", size=14, bold=True, color=white)
     t2.fill = PatternFill(start_color=navy_dark, end_color=navy_dark, fill_type="solid")
     t2.alignment = Alignment(horizontal="center", vertical="center")
@@ -799,7 +799,7 @@ def generate_word():
             
     p_title = doc.add_paragraph()
     p_title.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run_title = p_title.add_run("AMALDINA • ALISONS AFRICAN PHARMA WMS")
+    run_title = p_title.add_run("AMALDINA • ALISONS WMS")
     run_title.font.name = "Arial"
     run_title.font.size = Pt(20)
     run_title.font.bold = True
@@ -1044,7 +1044,7 @@ class NumberedCanvas(canvas.Canvas):
         
         # Header (Pages 2+)
         if self._pageNumber > 1:
-            self.drawString(54, 750, "Amaldina • Alisons African Pharma WMS — Testing & Demo Runbook")
+            self.drawString(54, 750, "Amaldina • Alisons WMS — Testing & Demo Runbook")
             self.setStrokeColor(colors.HexColor("#E2E8F0"))
             self.setLineWidth(0.5)
             self.line(54, 742, 558, 742)
@@ -1156,7 +1156,7 @@ def generate_pdf():
         except Exception as e:
             print(f"Notice: Logo skipped in PDF: {e}")
             
-    story.append(Paragraph("AMALDINA • ALISONS AFRICAN PHARMA WMS", style_title))
+    story.append(Paragraph("AMALDINA • ALISONS WMS", style_title))
     story.append(Paragraph("Comprehensive Testing Requirements & Demo Runbook • Version 2.4-PROD<br/>Legal Entity: Amaldina Comércio Geral, Lda • Luanda & Benguela, Angola", style_subtitle))
     story.append(HRFlowable(width="100%", thickness=1, color=colors.HexColor("#CBD5E1"), spaceAfter=12))
 
@@ -1308,7 +1308,7 @@ def generate_pdf():
     story.append(Paragraph("5. QA Acceptance Sign-Off Approval", style_h1))
     sign_html = (
         "This is to certify that all 14 operational flows and mathematical reconciliation formulas of the Amaldina "
-        "Alisons African Pharma WMS have been inspected and meet all specifications.<br/><br/>"
+        "Alisons WMS have been inspected and meet all specifications.<br/><br/>"
         "<b>Lead QA Engineer:</b> __________________________________ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Date:</b> ______________<br/><br/>"
         "<b>Warehouse Operations Lead:</b> _________________________ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Date:</b> ______________<br/><br/>"
         "<b>Executive Director (Amaldina):</b> _____________________ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Date:</b> ______________"

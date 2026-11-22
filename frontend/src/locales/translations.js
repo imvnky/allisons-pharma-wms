@@ -1,5 +1,5 @@
 /**
- * Alisons African Pharma WMS — Bilingual Localization Dictionary
+ * Alisons WMS — Bilingual Localization Dictionary
  * Supported Languages:
  *   - 'pt': Português (Angola) - Official National Language & Warehouse Operations
  *   - 'en': English (UK/US) - Headquarters & Technical Overview
@@ -8,7 +8,7 @@
 export const translations = {
   en: {
     // Brand & General
-    appTitle: "Alisons African Pharma",
+    appTitle: "Alisons WMS",
     appSubtitle: "Warehouse Management System",
     warehouse: "Warehouse",
     warehouses: "Warehouses",
@@ -320,7 +320,7 @@ export const translations = {
 
   pt: {
     // Brand & General
-    appTitle: "Alisons African Pharma",
+    appTitle: "Alisons WMS",
     appSubtitle: "Sistema de Gestão de Armazém",
     warehouse: "Armazém",
     warehouses: "Armazéns",

@@ -1,2 +1,2 @@
-# Automated Test Suite for Allisons African Pharma WMS
+# Automated Test Suite for Alisons WMS
 

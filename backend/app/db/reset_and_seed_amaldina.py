@@ -22,7 +22,7 @@ from app.db.init_db import run_migrations
 
 def reset_and_seed_amaldina():
     print("=" * 60)
-    print("ALISONS AFRICAN PHARMA - DATABASE PURGE & AMALDINA SEED")
+    print("ALISONS WMS - DATABASE PURGE & AMALDINA SEED")
     print("=" * 60)
 
     # 1. Run migrations to ensure all schema columns exist

@@ -1,14 +1,14 @@
-# Allisons African Pharma — Warehouse Management System (Angola)
+# Allisons WMS — Warehouse Management System (Angola)
 ## Complete End-to-End System Blueprint, Architectural Decisions & Implementation Roadmap
 
-> **Document Purpose:** This document serves as the single source of truth for the entire Allisons African Pharma Warehouse Management System. It preserves all architectural discussions, client requirements, formulas, UI/UX screen specifications, database schemas, dynamic RBAC design, and the step-by-step development roadmap.
+> **Document Purpose:** This document serves as the single source of truth for the entire Allisons WMS Warehouse Management System. It preserves all architectural discussions, client requirements, formulas, UI/UX screen specifications, database schemas, dynamic RBAC design, and the step-by-step development roadmap.
 
 ---
 
 ## 1. Project Overview & Tech Stack
 
 ### 1.1 Project Identity
-* **Client / Brand:** Allisons African Pharma
+* **Client / Brand:** Allisons WMS
 * **System:** Multi-Warehouse Inventory & Audit Management System
 * **Geographical Scope:** Angola
   * **3 Active Warehouses:**
@@ -141,7 +141,7 @@
 All reference design mockups are stored in: `D:\AlliSons-Inventory\UI\`
 
 ### Screen 1: Home / Operations Dashboard
-* **Design File:** `Allisons African Pharma Warehouse Dashboard.png`
+* **Design File:** `Allisons WMS Warehouse Dashboard.png`
 * **Layout Structure:**
   * **Header:** Brand Logo, Active Warehouse Selector (`📍 Mulemba Warehouse ▾`), Role Badge (`👑 Super Admin`), Date, Notifications, Profile avatar.
   * **Hero Greeting:** Welcome banner + Active Daily Inventory Cycle ID + Audit Status (`🟢 Audit Open`).

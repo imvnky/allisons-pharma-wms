@@ -80,9 +80,9 @@ export default function Sidebar({ currentView, setCurrentView }) {
   ];
 
   return (
-    <aside className="w-64 bg-white border-r border-slate-200/90 flex flex-col justify-between shrink-0 min-h-[calc(100vh-4rem)]">
+    <aside className="w-64 bg-white border-r border-slate-200/90 flex flex-col justify-between shrink-0 h-full overflow-hidden">
       {/* Menu Sections */}
-      <div className="py-5 px-3 space-y-6 overflow-y-auto">
+      <div className="py-5 px-3 space-y-6 overflow-y-auto flex-1">
         {menuSections
           .filter((section) => section.visible !== false)
           .map((section, idx) => (
@@ -126,7 +126,7 @@ export default function Sidebar({ currentView, setCurrentView }) {
       </div>
 
       {/* Bottom User Profile Card (PaceUI style) */}
-      <div className="p-3 border-t border-slate-200/80 bg-slate-50/50 space-y-2">
+      <div className="p-3 border-t border-slate-200/80 bg-slate-50/50 space-y-2 shrink-0">
         <div className="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200/80 shadow-2xs">
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-600 to-blue-600 text-white font-bold flex items-center justify-center text-xs shrink-0 shadow-2xs">

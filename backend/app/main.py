@@ -54,7 +54,7 @@ app.include_router(tracking_router, prefix=settings.API_V1_STR)
 def root():
     return {
         "status": "online",
-        "system": "Alisons African Pharma - Warehouse Management System",
+        "system": "Alisons WMS - Warehouse Management System",
         "version": "1.0.0",
         "docs": f"{settings.API_V1_STR}/docs"
     }
