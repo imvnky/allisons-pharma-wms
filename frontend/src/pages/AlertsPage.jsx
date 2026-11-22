@@ -83,31 +83,31 @@ export default function AlertsPage() {
       {/* Summary Bento KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bento-card p-4">
-          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Flagged Variances</div>
+          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{t("alerts.kpiVariances", "Flagged Variances")}</div>
           <div className="text-2xl font-black text-rose-600 mt-1">{differences.length} SKUs</div>
-          <div className="text-[10px] text-slate-500 mt-0.5">Physical count mismatch</div>
+          <div className="text-[10px] text-slate-500 mt-0.5">{t("alerts.kpiMismatch", "Physical count mismatch")}</div>
         </div>
 
         <div className="bento-card p-4">
-          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Estimated Value Impact</div>
+          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{t("alerts.kpiImpact", "Estimated Value Impact")}</div>
           <div className="text-2xl font-black text-slate-900 mt-1">
             AOA {Math.abs(totalFinancialImpact).toLocaleString()}
           </div>
-          <div className="text-[10px] text-slate-500 mt-0.5">At current wholesale pricing</div>
+          <div className="text-[10px] text-slate-500 mt-0.5">{t("alerts.kpiWholesale", "At current wholesale pricing")}</div>
         </div>
 
         <div className="bento-card p-4">
-          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Batches Under 30 Days</div>
+          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{t("alerts.kpiUnder30", "Batches Under 30 Days")}</div>
           <div className="text-2xl font-black text-rose-600 mt-1">
             {nearExpiry.filter((e) => e.days_remaining <= 30).length} Batches
           </div>
-          <div className="text-[10px] text-slate-500 mt-0.5">Urgent clearance or return</div>
+          <div className="text-[10px] text-slate-500 mt-0.5">{t("alerts.kpiUrgentClearance", "Urgent clearance or return")}</div>
         </div>
 
         <div className="bento-card p-4">
-          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Batches Under 90 Days</div>
+          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{t("alerts.kpiUnder90", "Batches Under 90 Days")}</div>
           <div className="text-2xl font-black text-amber-600 mt-1">{nearExpiry.length} Batches</div>
-          <div className="text-[10px] text-slate-500 mt-0.5">Eligible for hospital prioritization</div>
+          <div className="text-[10px] text-slate-500 mt-0.5">{t("alerts.kpiHospitalPriority", "Eligible for hospital prioritization")}</div>
         </div>
       </div>
 
@@ -117,14 +117,14 @@ export default function AlertsPage() {
           <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-rose-50/40">
             <div>
               <h2 className="text-xs font-bold text-rose-900 uppercase tracking-wider">
-                Active Product Variances (Physical Count ≠ Required Stock)
+                {t("alerts.variancesTitle", "Active Product Variances (Physical Count ≠ Required Stock)")}
               </h2>
               <p className="text-[11px] text-slate-500 mt-0.5">
-                Discrepancies flagged during today's audit cycle at {activeWarehouse?.name}
+                {t("alerts.variancesSubtitle", `Discrepancies flagged during today's audit cycle at ${activeWarehouse?.name}`, { wh: activeWarehouse?.name })}
               </p>
             </div>
             <span className="text-[11px] font-bold text-rose-700 bg-rose-100 px-3 py-1 rounded-full border border-rose-200">
-              {differences.length} Flags Pending Review
+              {differences.length} {t("alerts.flagsPending", "Flags Pending Review")}
             </span>
           </div>
 
@@ -132,14 +132,14 @@ export default function AlertsPage() {
             <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200/80 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                  <th className="py-3 px-4">SKU</th>
-                  <th className="py-3 px-4">Product Name & Category</th>
-                  <th className="py-3 px-4 text-right">Required Stock</th>
-                  <th className="py-3 px-4 text-right">Physical Count</th>
-                  <th className="py-3 px-4 text-center">Variance Qty</th>
-                  <th className="py-3 px-4 text-right">Estimated Financial Impact</th>
-                  <th className="py-3 px-4 min-w-48">Supervisor Remarks</th>
-                  <th className="py-3 px-4 text-center">Status</th>
+                  <th className="py-3 px-4">{t("alerts.colsDifferences.sku", "SKU")}</th>
+                  <th className="py-3 px-4">{t("alerts.colsDifferences.nameCategory", "Product Name & Category")}</th>
+                  <th className="py-3 px-4 text-right">{t("alerts.colsDifferences.requiredStock", "Required Stock")}</th>
+                  <th className="py-3 px-4 text-right">{t("alerts.colsDifferences.physicalCount", "Physical Count")}</th>
+                  <th className="py-3 px-4 text-center">{t("alerts.colsDifferences.varianceQty", "Variance Qty")}</th>
+                  <th className="py-3 px-4 text-right">{t("alerts.colsDifferences.financialImpact", "Estimated Financial Impact")}</th>
+                  <th className="py-3 px-4 min-w-48">{t("alerts.colsDifferences.supervisorRemarks", "Supervisor Remarks")}</th>
+                  <th className="py-3 px-4 text-center">{t("alerts.colsDifferences.status", "Status")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-slate-700">
@@ -178,7 +178,7 @@ export default function AlertsPage() {
                         {d.financial_impact_aoa < 0 ? "-" : "+"} AOA {Math.abs(d.financial_impact_aoa).toLocaleString()}
                       </td>
                       <td className="py-3 px-4 text-slate-600 italic">
-                        {d.remarks ? `"${d.remarks}"` : <span className="text-slate-400">No remark logged</span>}
+                        {d.remarks ? `"${d.remarks}"` : <span className="text-slate-400">{t("alerts.colsDifferences.noRemarks", "No remark logged")}</span>}
                       </td>
                       <td className="py-3 px-4 text-center">
                         <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10px] font-bold border border-slate-200">
@@ -233,13 +233,13 @@ export default function AlertsPage() {
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200/80 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                    <th className="py-3 px-4">SKU</th>
-                    <th className="py-3 px-4">Medicine & Formulation</th>
-                    <th className="py-3 px-4">Batch #</th>
-                    <th className="py-3 px-4">Expiry Date</th>
-                    <th className="py-3 px-4 text-center">Remaining Days</th>
-                    <th className="py-3 px-4 text-right">Physical Units in Stock</th>
-                    <th className="py-3 px-4 text-center">Recommended Action</th>
+                    <th className="py-3 px-4">{t("alerts.colsDifferences.sku", "SKU")}</th>
+                    <th className="py-3 px-4">{t("alerts.colsExpiry.medicineFormulation", "Medicine & Formulation")}</th>
+                    <th className="py-3 px-4">{t("alerts.colsExpiry.batchNo", "Batch #")}</th>
+                    <th className="py-3 px-4">{t("alerts.colsExpiry.expiryDate", "Expiry Date")}</th>
+                    <th className="py-3 px-4 text-center">{t("alerts.colsExpiry.remainingDays", "Remaining Days")}</th>
+                    <th className="py-3 px-4 text-right">{t("alerts.colsExpiry.physicalUnits", "Physical Units in Stock")}</th>
+                    <th className="py-3 px-4 text-center">{t("alerts.colsExpiry.recommendedAction", "Recommended Action")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-slate-700">

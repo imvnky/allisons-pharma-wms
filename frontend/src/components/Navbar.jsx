@@ -461,9 +461,9 @@ export default function Navbar({ currentView, setCurrentView }) {
 
             {/* Modal Footer */}
             <div className="p-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-              <span>PostgreSQL Audit Trail Grounded</span>
+              <span>{t("tracking.modalFooter", "PostgreSQL Audit Trail Grounded")}</span>
               <div className="flex items-center gap-3">
-                <span>Press <kbd className="font-mono bg-white px-1.5 py-0.5 border border-slate-200 rounded text-[10px]">ESC</kbd> to exit</span>
+                <span>{language === "pt" ? "Pressione" : "Press"} <kbd className="font-mono bg-white px-1.5 py-0.5 border border-slate-200 rounded text-[10px]">ESC</kbd> {language === "pt" ? "para sair" : "to exit"}</span>
               </div>
             </div>
           </div>

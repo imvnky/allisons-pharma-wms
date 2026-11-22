@@ -304,7 +304,7 @@ export default function StockCountingPage() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-[10px] text-slate-400 font-bold uppercase">Pack Multiplier</div>
+                  <div className="text-[10px] text-slate-400 font-bold uppercase">{t("counting.packMultiplier", "Pack Multiplier")}</div>
                   <div className="text-xs font-black text-indigo-700">{packSize} units / ctn</div>
                 </div>
               </div>
@@ -314,7 +314,7 @@ export default function StockCountingPage() {
                 <div className="p-3 rounded-xl bg-purple-50/70 border border-purple-200 text-xs text-purple-900 flex items-start gap-2">
                   <Info className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
                   <div>
-                    <span className="font-bold">Opening Display Rolled:</span> Previous closing display stock (
+                    <span className="font-bold">{t("counting.openingRolled", "Opening Display Rolled:")}</span> Previous closing display stock (
                     <span className="font-black">5 units</span>) is auto-carried forward into today's opening.
                     If count is changed, select an authorized reason code below.
                   </div>

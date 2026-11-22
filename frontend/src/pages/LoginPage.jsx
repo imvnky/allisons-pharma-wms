@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import {
   Lock,
   User,
@@ -16,6 +17,7 @@ import {
 
 export default function LoginPage() {
   const { login } = useAuth();
+  const { t } = useLanguage();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -67,7 +69,7 @@ export default function LoginPage() {
             Amaldina • Alisons Pharma
           </h1>
           <p className="mt-1 text-xs text-indigo-700 font-bold tracking-wider uppercase">
-            Multi-Warehouse Inventory & Audit Portal • Angola
+            {t("login.portalBadge", "Multi-Warehouse Inventory & Audit Portal • Angola")}
           </p>
           <div className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-[11px] font-semibold border border-slate-200/80">
             <Building2 className="w-3.5 h-3.5 text-indigo-600" />
@@ -78,9 +80,9 @@ export default function LoginPage() {
         {/* Login Card */}
         <div className="bg-white py-8 px-6 shadow-xl shadow-slate-200/60 rounded-3xl sm:px-10 border border-slate-200/90">
           <div className="mb-6">
-            <h2 className="text-base font-bold text-slate-900">Sign in to your account</h2>
+            <h2 className="text-base font-bold text-slate-900">{t("login.signInTitle", "Sign in to your account")}</h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              Enter your assigned staff or supervisor credentials
+              {t("login.signInSubtitle", "Enter your assigned staff or supervisor credentials")}
             </p>
           </div>
 
@@ -94,7 +96,7 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-[11px] font-black text-slate-700 uppercase tracking-wider mb-1.5">
-                Username or Email
+                {t("login.usernameLabel", "Username or Email")}
               </label>
               <div className="relative rounded-xl shadow-2xs">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -115,7 +117,7 @@ export default function LoginPage() {
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="block text-[11px] font-black text-slate-700 uppercase tracking-wider">
-                  Password
+                  {t("login.passwordLabel", "Password")}
                 </label>
               </div>
               <div className="relative rounded-xl shadow-2xs">
@@ -214,7 +216,7 @@ export default function LoginPage() {
                 </>
               ) : (
                 <>
-                  <span>Sign In to Portal</span>
+                  <span>{t("login.signInBtn", "Sign In to Portal")}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </>
               )}

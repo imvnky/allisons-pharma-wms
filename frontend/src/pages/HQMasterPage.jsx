@@ -113,45 +113,45 @@ export default function HQMasterPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bento-card p-4">
           <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-            Total Angola Physical Stock
+            {t("hq.nationalStock", "Total Angola Physical Stock")}
           </div>
           <div className="text-2xl font-black text-indigo-700 mt-1">
-            {nationalStock.toLocaleString()} <span className="text-xs font-semibold text-slate-400">units</span>
+            {nationalStock.toLocaleString()} <span className="text-xs font-semibold text-slate-400">{t("common.units", "units")}</span>
           </div>
-          <div className="text-[10px] text-slate-400 mt-0.5">Mulemba + Palanca + Lobito</div>
+          <div className="text-[10px] text-slate-400 mt-0.5">{t("hq.branchSubtitle", "Mulemba + Palanca + Lobito")}</div>
         </div>
 
         <div className="bento-card p-4">
           <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-            National Daily Sales
+            {t("hq.nationalSales", "National Daily Sales")}
           </div>
           <div className="text-2xl font-black text-slate-900 mt-1">
-            {nationalSales.toLocaleString()} <span className="text-xs font-semibold text-slate-400">units</span>
+            {nationalSales.toLocaleString()} <span className="text-xs font-semibold text-slate-400">{t("common.units", "units")}</span>
           </div>
-          <div className="text-[10px] text-slate-400 mt-0.5">Booked across 3 branches</div>
+          <div className="text-[10px] text-slate-400 mt-0.5">{t("hq.bookedBranches", "Booked across 3 branches")}</div>
         </div>
 
         <div className="bento-card p-4">
           <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-            Branches Finalized
+            {t("hq.branchesFinalized", "Branches Finalized")}
           </div>
           <div className="text-2xl font-black text-emerald-600 mt-1">
             {warehouseStatuses.filter((w) => w.status === "INVENTORY_DONE").length} / {warehouseStatuses.length || 3}
           </div>
-          <div className="text-[10px] text-slate-400 mt-0.5">Daily audit completion</div>
+          <div className="text-[10px] text-slate-400 mt-0.5">{t("hq.auditCompletion", "Daily audit completion")}</div>
         </div>
 
         <div className="bento-card p-4">
           <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-            Countrywide Net Variance
+            {t("hq.countrywideVariance", "Countrywide Net Variance")}
           </div>
           <div
             className={`text-2xl font-black mt-1 ${nationalDiff < 0 ? "text-rose-600" : nationalDiff > 0 ? "text-emerald-600" : "text-slate-900"
               }`}
           >
-            {nationalDiff > 0 ? `+${nationalDiff}` : nationalDiff} <span className="text-xs font-semibold text-slate-400">units</span>
+            {nationalDiff > 0 ? `+${nationalDiff}` : nationalDiff} <span className="text-xs font-semibold text-slate-400">{t("common.units", "units")}</span>
           </div>
-          <div className="text-[10px] text-slate-400 mt-0.5">Across all therapeutic lines</div>
+          <div className="text-[10px] text-slate-400 mt-0.5">{t("hq.acrossTherapeutic", "Across all therapeutic lines")}</div>
         </div>
       </div>
 
@@ -250,7 +250,7 @@ export default function HQMasterPage() {
                 className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <Download className="w-3.5 h-3.5" />
-                <span>Export Master</span>
+                <span>{t("hq.exportMaster", "Export Master")}</span>
               </button>
             </div>
           </div>
@@ -260,17 +260,17 @@ export default function HQMasterPage() {
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200/80 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                    <th className="py-3 px-4">SKU</th>
-                    <th className="py-3 px-4 min-w-48">Description</th>
-                    <th className="py-3 px-4">Category</th>
-                    <th className="py-3 px-4 text-right">Mulemba Stock</th>
-                    <th className="py-3 px-4 text-right">Palanca Stock</th>
-                    <th className="py-3 px-4 text-right">Lobito Stock</th>
+                    <th className="py-3 px-4">{t("hq.cols.sku", "SKU")}</th>
+                    <th className="py-3 px-4 min-w-48">{t("hq.cols.description", "Description")}</th>
+                    <th className="py-3 px-4">{t("hq.cols.category", "Category")}</th>
+                    <th className="py-3 px-4 text-right">{t("hq.cols.mulembaStock", "Mulemba Stock")}</th>
+                    <th className="py-3 px-4 text-right">{t("hq.cols.palancaStock", "Palanca Stock")}</th>
+                    <th className="py-3 px-4 text-right">{t("hq.cols.lobitoStock", "Lobito Stock")}</th>
                     <th className="py-3 px-4 text-right bg-indigo-50/80 font-black text-indigo-900">
-                      Total Angola Physical
+                      {t("hq.cols.totalAngola", "Total Angola Physical")}
                     </th>
-                    <th className="py-3 px-4 text-right">Sales Today</th>
-                    <th className="py-3 px-4 text-center">Net Variance</th>
+                    <th className="py-3 px-4 text-right">{t("hq.cols.salesToday", "Sales Today")}</th>
+                    <th className="py-3 px-4 text-center">{t("hq.cols.netVariance", "Net Variance")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-slate-700">

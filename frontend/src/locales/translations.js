@@ -72,7 +72,16 @@ export const translations = {
       "required": "Required",
       "physical": "Physical",
       "variance": "Variance",
-      "difference": "Difference"
+      "difference": "Difference",
+      "printNote": "Print Note",
+      "approve": "Approve",
+      "exportExcel": "Export Excel",
+      "order": "Order",
+      "user": "User",
+      "email": "Email",
+      "role": "Role",
+      "enabled": "Enabled",
+      "disabled": "Disabled"
     },
     "nav": {
       "dashboardsSection": "DASHBOARDS",
@@ -233,7 +242,10 @@ export const translations = {
       "openingDisplayLabel": "Opening Display Stock (Auto-rolled):",
       "displayNotice": "Display stock is fixed. If entering an amount other than 5, you must select an approved reason below.",
       "reasonVarianceLabel": "Reason for Display Variance (Mandatory if Changed):",
-      "selectApprovedReason": "Select an approved reason..."
+      "selectApprovedReason": "Select an approved reason...",
+      "packMultiplier": "Pack Multiplier",
+      "openingRolled": "Opening Display Rolled:",
+      "openingRolledDesc": "Previous closing display stock ({qty} units) is auto-carried forward into today's opening. If count is changed, select an authorized reason code below."
     },
     "reconciliation": {
       "title": "Daily Reconciliation Sheet",
@@ -350,7 +362,13 @@ export const translations = {
         "preview": "Previewing {count} products ready for import:",
         "uploadBtn": "Upload & Process {count} Products",
         "processing": "Processing..."
-      }
+      },
+      "uomBox": "Box (Carton Internal)",
+      "uomBottle": "Syrup Bottle",
+      "uomVial": "Injectable Vial",
+      "uomBlister": "Blister / Strip",
+      "uomSachet": "Sachet",
+      "uomPiece": "Piece / Unit"
     },
     "shipments": {
       "title": "Shipments & Transfers Hub",
@@ -385,17 +403,23 @@ export const translations = {
         "invoiceNo": "INVOICE #",
         "receivingWh": "RECEIVING WH",
         "status": "STATUS",
-        "actions": "ACTIONS"
+        "actions": "ACTIONS",
+        "modeNumber": "Mode & Number",
+        "blAwb": "BL / AWB #",
+        "supplierPort": "Supplier / Port",
+        "receivedUnits": "Received Units",
+        "shortage": "Shortage"
       },
       "colsTransfers": {
         "trn": "TRANSFER REF",
         "date": "DATE",
         "from": "FROM BRANCH",
         "to": "TO DESTINATION",
-        "driverVehicle": "DRIVER & VEHICLE",
+        "driverVehicle": "Driver & Vehicle",
         "totalUnits": "TOTAL UNITS",
         "status": "STATUS",
-        "actions": "ACTIONS"
+        "actions": "ACTIONS",
+        "route": "Route"
       },
       "modalArrival": {
         "title": "Add Shipment Arrival",
@@ -413,7 +437,23 @@ export const translations = {
         "receivedCartons": "Received Cartons",
         "damageShortage": "Damage / Shortage Units",
         "addMedicineLine": "+ Add Medicine Line",
-        "saveArrivalBtn": "Save Verified Container Arrival"
+        "saveArrivalBtn": "Save Verified Container Arrival",
+        "freightType": "Freight Type",
+        "containerSea": "Container (Sea)",
+        "airlotAir": "Airlot (Air)",
+        "containerNumber": "Container Number",
+        "airlotNumber": "Airlot Number",
+        "blAwbNo": "BL / AWB Number",
+        "cargoProducts": "Cargo Manifest Products ({count} line items)",
+        "registerSku": "+ Register New SKU",
+        "addRow": "Add Product Row",
+        "recvCtns": "Recv Ctns",
+        "recvUnits": "Recv Units",
+        "registerMedicineSku": "Register New Medicine SKU",
+        "registerSkuSubtitle": "Instantly registers this drug into the master catalog and appends it to your current manifest.",
+        "registerAndAdd": "Register & Add to Manifest",
+        "manifestHeader": "Shipment Arrival Manifest",
+        "manifestSubtitle": "Full verification ledger with manifested cartons, received count, and shortage units."
       },
       "modalTransfer": {
         "title": "Dispatch Inter-Warehouse Transfer",
@@ -429,7 +469,16 @@ export const translations = {
         "cartonsToDispatch": "Cartons to Dispatch",
         "addProductLine": "+ Add Product Line",
         "dispatchBtn": "Dispatch Transfer",
-        "confirmReceiptBtn": "Confirm Receipt & Intake Stock"
+        "confirmReceiptBtn": "Confirm Receipt & Intake Stock",
+        "cartonPacking": "Carton Packing",
+        "quantityCartons": "Quantity of Cartons",
+        "unitsFormula": "Units (Carton Qty × Packing)",
+        "consignmentTotals": "Transfer Consignment Totals:",
+        "totalCartonsLabel": "Total Cartons:",
+        "totalUnitsLabel": "Total Units:",
+        "transferPaperTitle": "Official Transfer Note Paper (Portrait Format)",
+        "printPaperBtn": "Print Transfer Paper (Portrait)",
+        "transferPaperNum": "Transfer Paper Number"
       },
       "waybill": {
         "title": "Official Transfer Waybill",
@@ -449,7 +498,15 @@ export const translations = {
         "discrepancyNotice": "Shortages & Physical Inspection Status",
         "receivingOfficer": "Receiving Port/Warehouse Officer",
         "chiefPharmacist": "Chief Pharmacist / QA Inspector"
-      }
+      },
+      "kpiInwardShipments": "Inward Shipments",
+      "kpiContainersLogged": "Containers & Airlots Logged",
+      "arrivalsTitle": "Verified Sea & Air Shipment Arrivals",
+      "arrivalsSubtitle": "Official cargo manifests with expected vs received cartons and automatic shortage calculations.",
+      "noArrivals": "No shipment arrivals recorded yet. Click 'Add Shipment Arrival' to log new cargo.",
+      "transfersTitle": "Inter-Warehouse Consignments & Transfer Notes",
+      "transfersSubtitle": "Logistics transfers between Luanda (Mulemba, Palanca) and Benguela (Lobito) with physical portrait transfer notes.",
+      "noTransfers": "No inter-warehouse transfers recorded yet. Click 'Create Transfer' to dispatch stock."
     },
     "alerts": {
       "title": "Quality & Discrepancy Alerts",
@@ -499,7 +556,18 @@ export const translations = {
         "zeroExpiring": "Zero batches expiring within {days} days! Warehouse catalog is within safe shelf life.",
         "urgencyHorizon": "Urgency Horizon:",
         "ltDays": "< {days} Days"
-      }
+      },
+      "kpiVariances": "Flagged Variances",
+      "kpiMismatch": "Physical count mismatch",
+      "kpiImpact": "Estimated Value Impact",
+      "kpiWholesale": "At current wholesale pricing",
+      "kpiUnder30": "Batches Under 30 Days",
+      "kpiUrgentClearance": "Urgent clearance or return",
+      "kpiUnder90": "Batches Under 90 Days",
+      "kpiHospitalPriority": "Eligible for hospital prioritization",
+      "variancesTitle": "Active Product Variances (Physical Count ≠ Required Stock)",
+      "variancesSubtitle": "Discrepancies flagged during today's audit cycle at {wh}",
+      "flagsPending": "Flags Pending Review"
     },
     "tracking": {
       "placeholder": "Enter Request ID (REQ-), Transfer (TR-), Container/BL, Count (CNT-), or SKU...",
@@ -509,7 +577,9 @@ export const translations = {
       "noResults": "No matching activities found for \"{query}\"",
       "noResultsSub": "Try searching by Transfer Note (TR-2026-), Arrival (01/26), Request ID (REQ-), or Medicine SKU.",
       "modalTitle": "Unified Activity & Audit Identification Tracker",
-      "modalDesc": "Type any reference number, request correlation ID, transfer waybill, sea container BL, or pharmaceutical SKU to inspect its full lifecycle trail."
+      "modalDesc": "Type any reference number, request correlation ID, transfer waybill, sea container BL, or pharmaceutical SKU to inspect its full lifecycle trail.",
+      "modalFooter": "PostgreSQL Audit Trail Grounded",
+      "escExit": "Press ESC to exit"
     },
     "hq": {
       "title": "Headquarters (HQ) National Master Control",
@@ -544,7 +614,61 @@ export const translations = {
       "inProgress": "In Progress",
       "verified": "Verified",
       "pending": "Pending",
-      "assigned": "Assigned"
+      "assigned": "Assigned",
+      "branchSubtitle": "Mulemba + Palanca + Lobito",
+      "bookedBranches": "Booked across 3 branches",
+      "auditCompletion": "Daily audit completion",
+      "acrossTherapeutic": "Across all therapeutic lines",
+      "exportMaster": "Export Master"
+    },
+    "lookups": {
+      "title": "Master Dropdowns & System Lookups",
+      "subtitle": "Super Admin Control Center • Manage All Selectable Justification Reasons",
+      "addOption": "+ Add Option",
+      "colOrder": "Order",
+      "colKey": "Database Key",
+      "colLabel": "Display Label",
+      "colStatus": "Active Status",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "modalAddTitle": "Add Lookup Option",
+      "internalKey": "Internal Unique Key",
+      "humanLabel": "Human-Readable Label",
+      "sortOrder": "Display Sort Order"
+    },
+    "roles": {
+      "title": "Roles & Dynamic Authorization",
+      "subtitle": "RBAC permission matrix and warehouse user management",
+      "provisionUser": "+ Provision User",
+      "assignedRoles": "Assigned Roles",
+      "colUser": "User",
+      "colEmail": "Email",
+      "colRole": "Role",
+      "colScope": "Warehouse Scope",
+      "colStatus": "Status",
+      "colActions": "Actions",
+      "modalProvision": "Provision New Warehouse User",
+      "username": "Username",
+      "fullName": "Full Name",
+      "password": "Password"
+    },
+    "logs": {
+      "title": "API & System Observability",
+      "subtitle": "PostgreSQL live request log surveillance and exception tracking",
+      "exportJson": "Export JSON",
+      "throughput": "Throughput",
+      "latency": "P99 Latency",
+      "errorRate": "Error Rate",
+      "allLevels": "All Levels"
+    },
+    "login": {
+      "signInTitle": "Sign in to your account",
+      "signInSubtitle": "Enter your assigned staff or supervisor credentials",
+      "usernameLabel": "Username or Email",
+      "passwordLabel": "Password",
+      "keepMeSignedIn": "Keep me signed in",
+      "signInBtn": "Sign In to Portal",
+      "portalBadge": "Multi-Warehouse Inventory & Audit Portal • Angola"
     }
   },
   "pt": {
@@ -613,7 +737,16 @@ export const translations = {
       "required": "Calculado",
       "physical": "Físico",
       "variance": "Variação",
-      "difference": "Diferença"
+      "difference": "Diferença",
+      "printNote": "Imprimir Guia",
+      "approve": "Aprovar",
+      "exportExcel": "Exportar Excel",
+      "order": "Ordem",
+      "user": "Utilizador",
+      "email": "Email",
+      "role": "Cargo",
+      "enabled": "Ativo",
+      "disabled": "Inativo"
     },
     "nav": {
       "dashboardsSection": "PAINÉIS DE CONTROLO",
@@ -774,7 +907,10 @@ export const translations = {
       "openingDisplayLabel": "Estoque Inicial de Vitrine (Automático):",
       "displayNotice": "O estoque da vitrine é fixo. Se inserir valor diferente de 5, selecione um motivo aprovado abaixo.",
       "reasonVarianceLabel": "Motivo da Variação na Vitrine (Obrigatório se alterado):",
-      "selectApprovedReason": "Selecione um motivo aprovado..."
+      "selectApprovedReason": "Selecione um motivo aprovado...",
+      "packMultiplier": "Multiplicador de Embalagem",
+      "openingRolled": "Estoque Inicial de Vitrine Rolado:",
+      "openingRolledDesc": "O estoque final de vitrine anterior ({qty} unidades) foi transitado automaticamente para a abertura de hoje. Se alterado, selecione o motivo abaixo."
     },
     "reconciliation": {
       "title": "Folha de Reconciliação Diária",
@@ -891,7 +1027,13 @@ export const translations = {
         "preview": "Pré-visualização de {count} produtos prontos para importação:",
         "uploadBtn": "Carregar e Processar {count} Produtos",
         "processing": "A processar..."
-      }
+      },
+      "uomBox": "Caixa (Interna)",
+      "uomBottle": "Frasco de Xarope",
+      "uomVial": "Ampola Injetável",
+      "uomBlister": "Blister / Carteira",
+      "uomSachet": "Saqueta",
+      "uomPiece": "Unidade / Peça"
     },
     "shipments": {
       "title": "Centro de Remessas e Transferências",
@@ -926,17 +1068,23 @@ export const translations = {
         "invoiceNo": "Nº DA FATURA",
         "receivingWh": "ARMAZÉM DE RECEÇÃO",
         "status": "ESTADO",
-        "actions": "AÇÕES"
+        "actions": "AÇÕES",
+        "modeNumber": "Modal e Identificação",
+        "blAwb": "Nº de BL / Conhecimento",
+        "supplierPort": "Fornecedor / Porto",
+        "receivedUnits": "Unidades Recebidas",
+        "shortage": "Faltas / Avarias"
       },
       "colsTransfers": {
         "trn": "REF. TRANSFERÊNCIA",
         "date": "DATA",
         "from": "FILIAL DE ORIGEM",
         "to": "DESTINO",
-        "driverVehicle": "MOTORISTA & MATRÍCULA",
+        "driverVehicle": "Motorista & Viatura",
         "totalUnits": "TOTAL DE UNIDADES",
         "status": "ESTADO",
-        "actions": "AÇÕES"
+        "actions": "AÇÕES",
+        "route": "Itinerário"
       },
       "modalArrival": {
         "title": "Registar Chegada de Remessa",
@@ -954,7 +1102,23 @@ export const translations = {
         "receivedCartons": "Caixas Recebidas",
         "damageShortage": "Faltas / Avarias (Unidades)",
         "addMedicineLine": "+ Adicionar Linha de Medicamento",
-        "saveArrivalBtn": "Guardar Receção Verificada de Contentor"
+        "saveArrivalBtn": "Guardar Receção Verificada de Contentor",
+        "freightType": "Tipo de Carga",
+        "containerSea": "Contentor (Marítimo)",
+        "airlotAir": "Lote Aéreo (Avião)",
+        "containerNumber": "Número do Contentor",
+        "airlotNumber": "Número do Lote Aéreo",
+        "blAwbNo": "Número de BL / AWB",
+        "cargoProducts": "Artigos do Manifesto de Carga ({count} linhas)",
+        "registerSku": "+ Cadastrar Novo SKU",
+        "addRow": "Adicionar Linha de Produto",
+        "recvCtns": "Cx. Recebidas",
+        "recvUnits": "Unid. Recebidas",
+        "registerMedicineSku": "Cadastrar Novo SKU de Medicamento",
+        "registerSkuSubtitle": "Regista imediatamente o fármaco no catálogo mestre e adiciona-o ao manifesto atual.",
+        "registerAndAdd": "Registar e Adicionar ao Manifesto",
+        "manifestHeader": "Manifesto de Chegada de Remessa",
+        "manifestSubtitle": "Registo de conferência completo com caixas manifestadas, contagem recebida e unidades em falta."
       },
       "modalTransfer": {
         "title": "Despachar Transferência entre Armazéns",
@@ -970,7 +1134,16 @@ export const translations = {
         "cartonsToDispatch": "Caixas a Despachar",
         "addProductLine": "+ Adicionar Linha de Produto",
         "dispatchBtn": "Despachar Transferência",
-        "confirmReceiptBtn": "Confirmar Receção e Integrar Estoque"
+        "confirmReceiptBtn": "Confirmar Receção e Integrar Estoque",
+        "cartonPacking": "Embalagem por Caixa",
+        "quantityCartons": "Quantidade de Caixas",
+        "unitsFormula": "Unidades (Caixas × Embalagem)",
+        "consignmentTotals": "Totais do Despacho de Transferência:",
+        "totalCartonsLabel": "Total de Caixas:",
+        "totalUnitsLabel": "Total de Unidades:",
+        "transferPaperTitle": "Guia Oficial de Transferência (Formato Vertical)",
+        "printPaperBtn": "Imprimir Guia de Transferência",
+        "transferPaperNum": "Número da Guia de Transferência"
       },
       "waybill": {
         "title": "Guia Oficial de Remessa / Transferência",
@@ -990,7 +1163,15 @@ export const translations = {
         "discrepancyNotice": "Estado de Faltas e Inspeção Física",
         "receivingOfficer": "Oficial de Receção Portuária / Armazém",
         "chiefPharmacist": "Farmacêutico Responsável / Inspetor de Qualidade"
-      }
+      },
+      "kpiInwardShipments": "Remessas Recebidas",
+      "kpiContainersLogged": "Contentores e Cargas Registadas",
+      "arrivalsTitle": "Chegadas de Cargas Marítimas e Aéreas Conferidas",
+      "arrivalsSubtitle": "Manifestos de carga oficiais com caixas esperadas vs recebidas e cálculo automático de faltas.",
+      "noArrivals": "Nenhuma remessa registada ainda. Clique em 'Registar Chegada de Carga' para lançar novo manifesto.",
+      "transfersTitle": "Guias e Transferências entre Armazéns",
+      "transfersSubtitle": "Transferências logísticas entre Luanda (Mulemba, Palanca) e Benguela (Lobito) com guias físicas de transporte.",
+      "noTransfers": "Nenhuma transferência entre armazéns registada ainda. Clique em 'Criar Transferência' para despachar estoque."
     },
     "alerts": {
       "title": "Alertas de Divergências e Validades",
@@ -1040,7 +1221,18 @@ export const translations = {
         "zeroExpiring": "Zero lotes a expirar dentro de {days} dias! O catálogo do armazém está dentro do prazo seguro.",
         "urgencyHorizon": "Horizonte de Urgência:",
         "ltDays": "< {days} Dias"
-      }
+      },
+      "kpiVariances": "Divergências Sinalizadas",
+      "kpiMismatch": "Divergência com estoque calculado",
+      "kpiImpact": "Impacto Financeiro Estimado",
+      "kpiWholesale": "Ao preço de custo/armazenamento",
+      "kpiUnder30": "Lotes a Menos de 30 Dias",
+      "kpiUrgentClearance": "Saída urgente ou devolução ao fornecedor",
+      "kpiUnder90": "Lotes a Menos de 90 Dias",
+      "kpiHospitalPriority": "Prioritários para hospitais e clínicas",
+      "variancesTitle": "Variações Ativas de Produtos (Contagem Física ≠ Estoque Calculado)",
+      "variancesSubtitle": "Divergências registadas no ciclo de auditoria de hoje em {wh}",
+      "flagsPending": "Divergências a Rever"
     },
     "tracking": {
       "placeholder": "Pesquise por ID de Pedido (REQ-), Guia (TR-), Contentor, Contagem (CNT-) ou SKU...",
@@ -1050,7 +1242,9 @@ export const translations = {
       "noResults": "Nenhuma atividade encontrada para \"{query}\"",
       "noResultsSub": "Tente pesquisar por Guia de Transferência (TR-2026-), Chegada (01/26), Pedido (REQ-) ou SKU do medicamento.",
       "modalTitle": "Rastreador Unificado de Atividades e Auditoria",
-      "modalDesc": "Introduza qualquer número de referência, ID de pedido, guia de remessa, BL de contentor ou SKU para inspecionar todo o histórico do ciclo de vida."
+      "modalDesc": "Introduza qualquer número de referência, ID de pedido, guia de remessa, BL de contentor ou SKU para inspecionar todo o histórico do ciclo de vida.",
+      "modalFooter": "Pista de Auditoria Registada em PostgreSQL",
+      "escExit": "Pressione ESC para sair"
     },
     "hq": {
       "title": "Controlo Geral da Sede Nacional (HQ)",
@@ -1085,7 +1279,61 @@ export const translations = {
       "inProgress": "Em Andamento",
       "verified": "Verificado",
       "pending": "Pendente",
-      "assigned": "Atribuído"
+      "assigned": "Atribuído",
+      "branchSubtitle": "Mulemba + Palanca + Lobito",
+      "bookedBranches": "Faturadas nas 3 filiais",
+      "auditCompletion": "Conclusão da auditoria diária",
+      "acrossTherapeutic": "Em todas as linhas terapêuticas",
+      "exportMaster": "Exportar Inventário Geral"
+    },
+    "lookups": {
+      "title": "Listas Mestras e Tabelas do Sistema",
+      "subtitle": "Painel de Administração • Gestão de Motivos e Justificativas de Auditoria",
+      "addOption": "+ Adicionar Opção",
+      "colOrder": "Ordem",
+      "colKey": "Chave de Base de Dados",
+      "colLabel": "Etiqueta Visível",
+      "colStatus": "Estado Ativo",
+      "enabled": "Ativo",
+      "disabled": "Inativo",
+      "modalAddTitle": "Adicionar Opção de Lista",
+      "internalKey": "Chave Única Interna",
+      "humanLabel": "Etiqueta Descritiva",
+      "sortOrder": "Ordem de Apresentação"
+    },
+    "roles": {
+      "title": "Cargos e Permissões Dinâmicas",
+      "subtitle": "Matriz de controlo de acessos (RBAC) e gestão de utilizadores de armazém",
+      "provisionUser": "+ Criar Utilizador",
+      "assignedRoles": "Cargos Atribuídos",
+      "colUser": "Utilizador",
+      "colEmail": "Email",
+      "colRole": "Cargo / Função",
+      "colScope": "Armazém Atribuído",
+      "colStatus": "Estado",
+      "colActions": "Ações",
+      "modalProvision": "Criar Novo Utilizador de Armazém",
+      "username": "Nome de Utilizador",
+      "fullName": "Nome Completo",
+      "password": "Palavra-passe"
+    },
+    "logs": {
+      "title": "Observabilidade e Registos de Sistema",
+      "subtitle": "Vigilância de pedidos em tempo real em PostgreSQL e rastreio de exceções",
+      "exportJson": "Exportar JSON",
+      "throughput": "Volume de Pedidos",
+      "latency": "Latência P99",
+      "errorRate": "Taxa de Erros",
+      "allLevels": "Todos os Níveis"
+    },
+    "login": {
+      "signInTitle": "Iniciar Sessão no Portal",
+      "signInSubtitle": "Introduza as suas credenciais atribuídas de funcionário ou supervisor",
+      "usernameLabel": "Nome de Utilizador ou Email",
+      "passwordLabel": "Palavra-passe",
+      "keepMeSignedIn": "Manter sessão iniciada",
+      "signInBtn": "Entrar no Sistema",
+      "portalBadge": "Portal de Gestão de Inventário e Auditoria • Angola"
     }
   }
 };

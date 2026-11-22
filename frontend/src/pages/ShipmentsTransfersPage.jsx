@@ -511,10 +511,10 @@ export default function ShipmentsTransfersPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bento-card p-4 flex items-center justify-between">
           <div>
-            <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Inward Shipments</div>
+            <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t("shipments.kpiInwardShipments", "Inward Shipments")}</div>
             <div className="text-2xl font-black text-slate-900 mt-1">{arrivals.length}</div>
             <div className="text-[11px] font-semibold text-emerald-600 mt-0.5 flex items-center gap-1">
-              <span>● Containers & Airlots Logged</span>
+              <span>● {t("shipments.kpiContainersLogged", "Containers & Airlots Logged")}</span>
             </div>
           </div>
           <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600">
@@ -542,7 +542,7 @@ export default function ShipmentsTransfersPage() {
             <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t("shipments.kpiBranchTransfers", "Branch Transfers")}</div>
             <div className="text-2xl font-black text-slate-900 mt-1">{transfers.length}</div>
             <div className="text-[11px] font-semibold text-indigo-600 mt-0.5">
-              {transfers.filter((t) => t.status === "IN_TRANSIT").length} In Transit
+              {transfers.filter((t) => t.status === "IN_TRANSIT").length} {t("shipments.statusTransit", "In Transit")}
             </div>
           </div>
           <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600">
@@ -599,10 +599,10 @@ export default function ShipmentsTransfersPage() {
             <div>
               <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                 <Ship className="w-4 h-4 text-emerald-600" />
-                <span>Verified Sea & Air Shipment Arrivals</span>
+                <span>{t("shipments.arrivalsTitle", "Verified Sea & Air Shipment Arrivals")}</span>
               </h3>
               <p className="text-xs text-slate-500">
-                Official cargo manifests with expected vs received cartons and automatic shortage calculations.
+                {t("shipments.arrivalsSubtitle", "Official cargo manifests with expected vs received cartons and automatic shortage calculations.")}
               </p>
             </div>
           </div>
@@ -611,24 +611,24 @@ export default function ShipmentsTransfersPage() {
             <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="bg-slate-50/80 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider text-[11px]">
-                  <th className="py-3 px-4">Shipment #</th>
-                  <th className="py-3 px-4">Arrival Date</th>
-                  <th className="py-3 px-4">Invoice #</th>
-                  <th className="py-3 px-4">Mode & Number</th>
-                  <th className="py-3 px-4">BL / AWB #</th>
-                  <th className="py-3 px-4">Supplier / Port</th>
-                  <th className="py-3 px-4 text-right">Total Cartons</th>
-                  <th className="py-3 px-4 text-right">Received Units</th>
-                  <th className="py-3 px-4 text-right">Shortage</th>
-                  <th className="py-3 px-4 text-center">Status</th>
-                  <th className="py-3 px-4 text-right">Actions</th>
+                  <th className="py-3 px-4">{t("shipments.colsArrivals.shipmentNo", "Shipment #")}</th>
+                  <th className="py-3 px-4">{t("shipments.colsArrivals.arrivalDate", "Arrival Date")}</th>
+                  <th className="py-3 px-4">{t("shipments.colsArrivals.invoiceNo", "Invoice #")}</th>
+                  <th className="py-3 px-4">{t("shipments.colsArrivals.modeNumber", "Mode & Number")}</th>
+                  <th className="py-3 px-4">{t("shipments.colsArrivals.blAwb", "BL / AWB #")}</th>
+                  <th className="py-3 px-4">{t("shipments.colsArrivals.supplierPort", "Supplier / Port")}</th>
+                  <th className="py-3 px-4 text-right">{t("common.cartons", "Total Cartons")}</th>
+                  <th className="py-3 px-4 text-right">{t("shipments.colsArrivals.receivedUnits", "Received Units")}</th>
+                  <th className="py-3 px-4 text-right">{t("shipments.colsArrivals.shortage", "Shortage")}</th>
+                  <th className="py-3 px-4 text-center">{t("common.status", "Status")}</th>
+                  <th className="py-3 px-4 text-right">{t("common.actions", "Actions")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-medium">
                 {arrivals.length === 0 ? (
                   <tr>
                     <td colSpan="11" className="py-8 text-center text-slate-400">
-                      No shipment arrivals recorded yet. Click "Add Shipment Arrival" to log new cargo.
+                      {t("shipments.noArrivals", "No shipment arrivals recorded yet. Click \"Add Shipment Arrival\" to log new cargo.")}
                     </td>
                   </tr>
                 ) : (
@@ -711,10 +711,10 @@ export default function ShipmentsTransfersPage() {
             <div>
               <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                 <Truck className="w-4 h-4 text-indigo-600" />
-                <span>Inter-Warehouse Consignments & Transfer Notes</span>
+                <span>{t("shipments.transfersTitle", "Inter-Warehouse Consignments & Transfer Notes")}</span>
               </h3>
               <p className="text-xs text-slate-500">
-                Logistics transfers between Luanda (Mulemba, Palanca) and Benguela (Lobito) with physical portrait transfer notes.
+                {t("shipments.transfersSubtitle", "Logistics transfers between Luanda (Mulemba, Palanca) and Benguela (Lobito) with physical portrait transfer notes.")}
               </p>
             </div>
           </div>
@@ -723,22 +723,22 @@ export default function ShipmentsTransfersPage() {
             <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="bg-slate-50/80 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider text-[11px]">
-                  <th className="py-3 px-4">Transfer Note #</th>
-                  <th className="py-3 px-4">Initiation Date</th>
-                  <th className="py-3 px-4">Route</th>
-                  <th className="py-3 px-4">Driver & Vehicle</th>
-                  <th className="py-3 px-4 text-center">Items</th>
-                  <th className="py-3 px-4 text-right">Total Cartons</th>
-                  <th className="py-3 px-4 text-right">Total Units</th>
-                  <th className="py-3 px-4 text-center">Status</th>
-                  <th className="py-3 px-4 text-right">Actions</th>
+                  <th className="py-3 px-4">{t("shipments.colsTransfers.trn", "Transfer Note #")}</th>
+                  <th className="py-3 px-4">{t("shipments.colsTransfers.date", "Initiation Date")}</th>
+                  <th className="py-3 px-4">{t("shipments.colsTransfers.route", "Route")}</th>
+                  <th className="py-3 px-4">{t("shipments.colsTransfers.driverVehicle", "Driver & Vehicle")}</th>
+                  <th className="py-3 px-4 text-center">{t("common.items", "Items")}</th>
+                  <th className="py-3 px-4 text-right">{t("common.cartons", "Total Cartons")}</th>
+                  <th className="py-3 px-4 text-right">{t("shipments.colsTransfers.totalUnits", "Total Units")}</th>
+                  <th className="py-3 px-4 text-center">{t("common.status", "Status")}</th>
+                  <th className="py-3 px-4 text-right">{t("common.actions", "Actions")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-medium">
                 {transfers.length === 0 ? (
                   <tr>
                     <td colSpan="9" className="py-8 text-center text-slate-400">
-                      No inter-warehouse transfers recorded yet. Click "Create Transfer" to dispatch stock.
+                      {t("shipments.noTransfers", "No inter-warehouse transfers recorded yet. Click \"Create Transfer\" to dispatch stock.")}
                     </td>
                   </tr>
                 ) : (
@@ -786,7 +786,7 @@ export default function ShipmentsTransfersPage() {
                             title="Print Physical Transfer Paper (Portrait)"
                           >
                             <Printer className="w-3 h-3 text-indigo-600" />
-                            <span>Print Note</span>
+                            <span>{t("common.printNote", "Print Note")}</span>
                           </button>
                           {t.is_incoming && t.status === "IN_TRANSIT" && (
                             <button
@@ -794,7 +794,7 @@ export default function ShipmentsTransfersPage() {
                               className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1 text-[11px] font-bold shadow-2xs cursor-pointer"
                             >
                               <Check className="w-3 h-3" />
-                              <span>Approve</span>
+                              <span>{t("common.approve", "Approve")}</span>
                             </button>
                           )}
                         </div>
@@ -883,7 +883,7 @@ export default function ShipmentsTransfersPage() {
               {/* Row 2: Freight Mode (Container vs Airlot) & Number & BL # & Supplier */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200/80">
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Freight Type</label>
+                  <label className="block text-slate-700 font-bold mb-1">{t("shipments.modalArrival.freightType", "Freight Type")}</label>
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
@@ -894,7 +894,7 @@ export default function ShipmentsTransfersPage() {
                         }`}
                     >
                       <Ship className="w-3.5 h-3.5" />
-                      <span>Container (Sea)</span>
+                      <span>{t("shipments.modalArrival.containerSea", "Container (Sea)")}</span>
                     </button>
                     <button
                       type="button"
@@ -905,7 +905,7 @@ export default function ShipmentsTransfersPage() {
                         }`}
                     >
                       <Plane className="w-3.5 h-3.5" />
-                      <span>Airlot (Air)</span>
+                      <span>{t("shipments.modalArrival.airlotAir", "Airlot (Air)")}</span>
                     </button>
                   </div>
                 </div>
@@ -925,7 +925,7 @@ export default function ShipmentsTransfersPage() {
                 </div>
 
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">BL / AWB Number</label>
+                  <label className="block text-slate-700 font-bold mb-1">{t("shipments.modalArrival.blAwbNo", "BL / AWB Number")}</label>
                   <input
                     type="text"
                     required
@@ -951,7 +951,7 @@ export default function ShipmentsTransfersPage() {
                       title="Register an uncataloged medicine on the spot"
                     >
                       <Plus className="w-3 h-3" />
-                      <span>+ Register New SKU</span>
+                      <span>{t("shipments.modalArrival.registerSku", "+ Register New SKU")}</span>
                     </button>
                     <button
                       type="button"
@@ -959,7 +959,7 @@ export default function ShipmentsTransfersPage() {
                       className="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 font-bold flex items-center gap-1 cursor-pointer"
                     >
                       <Plus className="w-3 h-3" />
-                      <span>Add Product Row</span>
+                      <span>{t("shipments.modalArrival.addRow", "Add Product Row")}</span>
                     </button>
                   </div>
                 </div>
@@ -968,16 +968,16 @@ export default function ShipmentsTransfersPage() {
                   <table className="w-full text-left text-[11px] border-collapse min-w-[900px]">
                     <thead className="bg-slate-100 text-slate-700 font-bold sticky top-0 z-10">
                       <tr>
-                        <th className="py-2 px-2.5">Product</th>
-                        <th className="py-2 px-2 text-center">Packaging</th>
-                        <th className="py-2 px-2 text-right">Total Ctns</th>
-                        <th className="py-2 px-2 text-right">Total Units</th>
-                        <th className="py-2 px-2 text-right">Recv Ctns</th>
-                        <th className="py-2 px-2 text-right">Recv Units</th>
-                        <th className="py-2 px-2 text-right text-rose-600">Shortage</th>
-                        <th className="py-2 px-2">Lot / Batch</th>
-                        <th className="py-2 px-2">Expiry</th>
-                        <th className="py-2 px-2">Remarks</th>
+                        <th className="py-2 px-2.5">{t("products.cols.name", "Product")}</th>
+                        <th className="py-2 px-2 text-center">{t("products.cols.packaging", "Packaging")}</th>
+                        <th className="py-2 px-2 text-right">{t("common.cartons", "Total Ctns")}</th>
+                        <th className="py-2 px-2 text-right">{t("common.units", "Total Units")}</th>
+                        <th className="py-2 px-2 text-right">{t("shipments.modalArrival.recvCtns", "Recv Ctns")}</th>
+                        <th className="py-2 px-2 text-right">{t("shipments.modalArrival.recvUnits", "Recv Units")}</th>
+                        <th className="py-2 px-2 text-right text-rose-600">{t("shipments.colsArrivals.shortage", "Shortage")}</th>
+                        <th className="py-2 px-2">{t("alerts.colsExpiry.batchNo", "Lot / Batch")}</th>
+                        <th className="py-2 px-2">{t("alerts.colsExpiry.expiryDate", "Expiry")}</th>
+                        <th className="py-2 px-2">{t("alerts.colsDifferences.supervisorRemarks", "Remarks")}</th>
                         <th className="py-2 px-2 text-center"></th>
                       </tr>
                     </thead>
@@ -1120,7 +1120,7 @@ export default function ShipmentsTransfersPage() {
                   className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs cursor-pointer flex items-center gap-1.5"
                 >
                   <Check className="w-3.5 h-3.5" />
-                  <span>Log Shipment Arrival</span>
+                  <span>{t("shipments.modalArrival.saveArrivalBtn", "Log Shipment Arrival")}</span>
                 </button>
               </div>
             </form>
@@ -1184,7 +1184,7 @@ export default function ShipmentsTransfersPage() {
               {/* Driver Name & Vehicle Plate */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Driver Name</label>
+                  <label className="block text-slate-700 font-bold mb-1">{t("shipments.modalTransfer.driverName", "Driver Name")}</label>
                   <input
                     type="text"
                     required
@@ -1195,7 +1195,7 @@ export default function ShipmentsTransfersPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Vehicle Plate</label>
+                  <label className="block text-slate-700 font-bold mb-1">{t("shipments.modalTransfer.vehiclePlate", "Vehicle Plate")}</label>
                   <input
                     type="text"
                     required
@@ -1219,7 +1219,7 @@ export default function ShipmentsTransfersPage() {
                     className="px-2 py-1 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 font-bold flex items-center gap-1 cursor-pointer"
                   >
                     <Plus className="w-3 h-3" />
-                    <span>Add Product</span>
+                    <span>{t("shipments.modalTransfer.addProductLine", "Add Product")}</span>
                   </button>
                 </div>
 
@@ -1227,10 +1227,10 @@ export default function ShipmentsTransfersPage() {
                   <table className="w-full text-left text-xs border-collapse">
                     <thead className="bg-slate-50 text-slate-600 font-bold">
                       <tr>
-                        <th className="py-2 px-3">Product</th>
-                        <th className="py-2 px-3 text-center">Carton Packing</th>
-                        <th className="py-2 px-3 text-right">Quantity of Cartons</th>
-                        <th className="py-2 px-3 text-right">Units (Carton Qty × Packing)</th>
+                        <th className="py-2 px-3">{t("products.cols.name", "Product")}</th>
+                        <th className="py-2 px-3 text-center">{t("shipments.modalTransfer.cartonPacking", "Carton Packing")}</th>
+                        <th className="py-2 px-3 text-right">{t("shipments.modalTransfer.quantityCartons", "Quantity of Cartons")}</th>
+                        <th className="py-2 px-3 text-right">{t("shipments.modalTransfer.unitsFormula", "Units (Carton Qty × Packing)")}</th>
                         <th className="py-2 px-2 text-center"></th>
                       </tr>
                     </thead>
@@ -1290,20 +1290,20 @@ export default function ShipmentsTransfersPage() {
 
                 {/* Transfer Totals Strip */}
                 <div className="bg-indigo-50/60 p-3 rounded-xl border border-indigo-100 flex items-center justify-between text-xs font-bold text-indigo-900">
-                  <span>Transfer Consignment Totals:</span>
+                  <span>{t("shipments.modalTransfer.consignmentTotals", "Transfer Consignment Totals:")}</span>
                   <div className="flex items-center gap-4 font-mono">
                     <span>
-                      Total Cartons: <span className="font-black">{totalTransferCartons} ctns</span>
+                      {t("shipments.modalTransfer.totalCartonsLabel", "Total Cartons:")} <span className="font-black">{totalTransferCartons} ctns</span>
                     </span>
                     <span>
-                      Total Units: <span className="font-black">{totalTransferUnits.toLocaleString()}</span>
+                      {t("shipments.modalTransfer.totalUnitsLabel", "Total Units:")} <span className="font-black">{totalTransferUnits.toLocaleString()}</span>
                     </span>
                   </div>
                 </div>
               </div>
 
               <div>
-                <label className="block text-slate-700 font-bold mb-1">Transfer Notes / Waybill Remarks</label>
+                <label className="block text-slate-700 font-bold mb-1">{t("shipments.modalTransfer.purposeNotes", "Transfer Purpose / Notes")}</label>
                 <input
                   type="text"
                   placeholder="e.g. Handover to regional depot before 17:00"
@@ -1326,7 +1326,7 @@ export default function ShipmentsTransfersPage() {
                   className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs cursor-pointer flex items-center gap-1.5"
                 >
                   <Check className="w-3.5 h-3.5" />
-                  <span>Dispatch Transfer & Generate Paper</span>
+                  <span>{t("shipments.modalTransfer.dispatchBtn", "Dispatch Transfer & Generate Paper")}</span>
                 </button>
               </div>
             </form>
@@ -1343,7 +1343,7 @@ export default function ShipmentsTransfersPage() {
               <div className="flex items-center gap-2">
                 <Printer className="w-5 h-5 text-indigo-600" />
                 <span className="text-sm font-bold text-slate-900">
-                  Official Transfer Note Paper (Portrait Format)
+                  {t("shipments.modalTransfer.transferPaperTitle", "Official Transfer Note Paper (Portrait Format)")}
                 </span>
               </div>
               <div className="flex items-center gap-2">
@@ -1352,14 +1352,14 @@ export default function ShipmentsTransfersPage() {
                   className="px-4 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs cursor-pointer"
                 >
                   <Printer className="w-3.5 h-3.5" />
-                  <span>Print Transfer Paper (Portrait)</span>
+                  <span>{t("shipments.modalTransfer.printPaperBtn", "Print Transfer Paper (Portrait)")}</span>
                 </button>
                 <button
                   onClick={() => exportTransferManifestToExcel(viewTransferModal)}
                   className="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-1 cursor-pointer"
                 >
                   <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Export Excel</span>
+                  <span>{t("common.exportExcel", "Export Excel")}</span>
                 </button>
                 <button
                   onClick={() => setViewTransferModal(null)}
@@ -1393,7 +1393,7 @@ export default function ShipmentsTransfersPage() {
                     </div>
                   </div>
                   <div className="text-right shrink-0">
-                    <div className="text-xs font-bold text-slate-500 uppercase">Transfer Paper Number</div>
+                    <div className="text-xs font-bold text-slate-500 uppercase">{t("shipments.modalTransfer.transferPaperNum", "Transfer Paper Number")}</div>
                     <div className="text-base font-black font-mono text-indigo-700 mt-0.5">
                       {viewTransferModal.transfer_number}
                     </div>
@@ -1438,12 +1438,12 @@ export default function ShipmentsTransfersPage() {
                   <thead>
                     <tr className="bg-slate-100 border-b border-slate-400 font-bold text-slate-900">
                       <th className="py-2.5 px-3 border-r border-slate-400 text-center w-12">Sr. no</th>
-                      <th className="py-2.5 px-3 border-r border-slate-400">Name of Products</th>
+                      <th className="py-2.5 px-3 border-r border-slate-400">{t("products.cols.name", "Name of Products")}</th>
                       <th className="py-2.5 px-3 border-r border-slate-400 text-center">
-                        Carton Packing (Qty in a Carton)
+                        {t("shipments.modalTransfer.cartonPacking", "Carton Packing (Qty in a Carton)")}
                       </th>
-                      <th className="py-2.5 px-3 border-r border-slate-400 text-right">Quantity of Cartons</th>
-                      <th className="py-2.5 px-3 text-right">Units (Carton Qty × Packing)</th>
+                      <th className="py-2.5 px-3 border-r border-slate-400 text-right">{t("shipments.modalTransfer.quantityCartons", "Quantity of Cartons")}</th>
+                      <th className="py-2.5 px-3 text-right">{t("shipments.modalTransfer.unitsFormula", "Units (Carton Qty × Packing)")}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-300">
@@ -1486,7 +1486,7 @@ export default function ShipmentsTransfersPage() {
               <div className="pt-6 border-t border-slate-200 grid grid-cols-2 gap-8 text-xs">
                 <div className="space-y-8">
                   <div>
-                    <span className="font-bold text-slate-700 block">Dispatched & Released By:</span>
+                    <span className="font-bold text-slate-700 block">{t("shipments.waybill.dispatchOfficer", "Dispatched & Released By:")}</span>
                     <span className="text-[11px] text-slate-500">Warehouse Dispatcher Signature</span>
                   </div>
                   <div className="border-b border-slate-400 w-4/5 pt-4"></div>
@@ -1495,7 +1495,7 @@ export default function ShipmentsTransfersPage() {
 
                 <div className="space-y-8">
                   <div>
-                    <span className="font-bold text-slate-700 block">Received & Inspected By:</span>
+                    <span className="font-bold text-slate-700 block">{t("shipments.waybill.receivingSupervisor", "Received & Inspected By:")}</span>
                     <span className="text-[11px] text-slate-500">
                       {extractDestinationBranch(viewTransferModal.to_warehouse_name)} Branch Supervisor
                     </span>
@@ -1518,10 +1518,10 @@ export default function ShipmentsTransfersPage() {
                 <Ship className="w-5 h-5 text-emerald-600" />
                 <div>
                   <h3 className="text-base font-bold text-slate-900">
-                    Shipment Arrival Manifest — {viewArrivalModal.shipment_number || viewArrivalModal.arrival_number}
+                    {t("shipments.modalArrival.manifestHeader", "Shipment Arrival Manifest")} — {viewArrivalModal.shipment_number || viewArrivalModal.arrival_number}
                   </h3>
                   <p className="text-xs text-slate-500">
-                    Full verification ledger with manifested cartons, received count, and shortage units.
+                    {t("shipments.modalArrival.manifestSubtitle", "Full verification ledger with manifested cartons, received count, and shortage units.")}
                   </p>
                 </div>
               </div>
@@ -1531,7 +1531,7 @@ export default function ShipmentsTransfersPage() {
                   className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs cursor-pointer"
                 >
                   <FileSpreadsheet className="w-3.5 h-3.5" />
-                  <span>Export to Excel (.csv)</span>
+                  <span>{t("common.exportExcel", "Export to Excel (.csv)")}</span>
                 </button>
                 <button
                   onClick={() => setViewArrivalModal(null)}
@@ -1570,14 +1570,14 @@ export default function ShipmentsTransfersPage() {
                 <thead className="bg-slate-50 text-slate-700 font-bold text-[11px] uppercase">
                   <tr>
                     <th className="py-2.5 px-3">Sr</th>
-                    <th className="py-2.5 px-3">Product Name</th>
-                    <th className="py-2.5 px-3 text-center">Packaging</th>
-                    <th className="py-2.5 px-3 text-right">Manifest Ctns</th>
-                    <th className="py-2.5 px-3 text-right">Received Ctns</th>
-                    <th className="py-2.5 px-3 text-right">Received Units</th>
-                    <th className="py-2.5 px-3 text-right text-rose-600">Shortage</th>
-                    <th className="py-2.5 px-3">Batch #</th>
-                    <th className="py-2.5 px-3">Expiry</th>
+                    <th className="py-2.5 px-3">{t("products.cols.name", "Product Name")}</th>
+                    <th className="py-2.5 px-3 text-center">{t("products.cols.packaging", "Packaging")}</th>
+                    <th className="py-2.5 px-3 text-right">{t("common.cartons", "Manifest Ctns")}</th>
+                    <th className="py-2.5 px-3 text-right">{t("shipments.modalArrival.recvCtns", "Received Ctns")}</th>
+                    <th className="py-2.5 px-3 text-right">{t("shipments.colsArrivals.receivedUnits", "Received Units")}</th>
+                    <th className="py-2.5 px-3 text-right text-rose-600">{t("shipments.colsArrivals.shortage", "Shortage")}</th>
+                    <th className="py-2.5 px-3">{t("alerts.colsExpiry.batchNo", "Batch #")}</th>
+                    <th className="py-2.5 px-3">{t("alerts.colsExpiry.expiryDate", "Expiry")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -1639,10 +1639,10 @@ export default function ShipmentsTransfersPage() {
               <div>
                 <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                   <Package className="w-4 h-4 text-emerald-600" />
-                  <span>Register New Medicine SKU</span>
+                  <span>{t("shipments.modalArrival.registerMedicineSku", "Register New Medicine SKU")}</span>
                 </h3>
                 <p className="text-[11px] text-slate-500">
-                  Instantly registers this drug into the master catalog and appends it to your current manifest.
+                  {t("shipments.modalArrival.registerSkuSubtitle", "Instantly registers this drug into the master catalog and appends it to your current manifest.")}
                 </p>
               </div>
               <button onClick={() => setShowQuickAddModal(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer">
@@ -1714,7 +1714,7 @@ export default function ShipmentsTransfersPage() {
                   className="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs cursor-pointer flex items-center gap-1.5"
                 >
                   <Check className="w-3.5 h-3.5" />
-                  <span>Register & Add to Manifest</span>
+                  <span>{t("shipments.modalArrival.registerAndAdd", "Register & Add to Manifest")}</span>
                 </button>
               </div>
             </form>

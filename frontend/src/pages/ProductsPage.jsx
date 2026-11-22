@@ -547,12 +547,12 @@ export default function ProductsPage() {
                     onChange={(e) => setFormUom(e.target.value)}
                     className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white text-xs font-medium"
                   >
-                    <option value="Box">Box (Carton Internal)</option>
-                    <option value="Bottle">Syrup Bottle</option>
-                    <option value="Vial">Injectable Vial</option>
-                    <option value="Blister / Strip">Blister / Strip</option>
-                    <option value="Sachet">Sachet</option>
-                    <option value="Piece / Unit">Piece / Unit</option>
+                    <option value="Box">{t("products.uomBox", "Box (Carton Internal)")}</option>
+                    <option value="Bottle">{t("products.uomBottle", "Syrup Bottle")}</option>
+                    <option value="Vial">{t("products.uomVial", "Injectable Vial")}</option>
+                    <option value="Blister / Strip">{t("products.uomBlister", "Blister / Strip")}</option>
+                    <option value="Sachet">{t("products.uomSachet", "Sachet")}</option>
+                    <option value="Piece / Unit">{t("products.uomPiece", "Piece / Unit")}</option>
                   </select>
                 </div>
 

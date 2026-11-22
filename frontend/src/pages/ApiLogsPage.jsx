@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import { apiRequest } from "../services/api";
 import {
   Terminal,
@@ -24,6 +25,7 @@ import {
 } from "lucide-react";
 
 export default function ApiLogsPage() {
+  const { t } = useLanguage();
   const [logs, setLogs] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [levelFilter, setLevelFilter] = useState("ALL");
@@ -101,7 +103,7 @@ export default function ApiLogsPage() {
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
               <Terminal className="w-5 h-5 text-indigo-600" />
-              <span>API & System Observability</span>
+              <span>{t("logs.title", "API & System Observability")}</span>
             </h1>
             <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold border border-slate-200">
               Super Admin Audit Trail
@@ -124,7 +126,7 @@ export default function ApiLogsPage() {
             className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bold flex items-center gap-2 shadow-xs transition-colors cursor-pointer"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>Export JSON</span>
+            <span>{t("logs.exportJson", "Export JSON")}</span>
           </button>
         </div>
       </div>
